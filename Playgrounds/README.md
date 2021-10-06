@@ -4,7 +4,7 @@ This folder contains a set of tutorials that can help you get started with Fireb
 ## Using the playgrounds
 Each playground is a jupyter notebook file organized in different directories. Most of these notebook files ***need GPU*** devices and therefore your notebook server needs to run on a GPU machine with at least 4 Nvidia GPU cards. Here is how you can start the server on a GPU machine and access and execute the notebooks remotely:
 
-### 1) Follow the instruction in the [intallation documentation](http://kopartifactory.interdigital.com:9090/FireballDocs/1.5.1/source/installation.html).
+### 1) Follow the instruction in the [intallation documentation](https://interdigitalinc.github.io/Fireball/html/source/installation.html).
 
 ### 2) The playgrounds use the following datasets:
 - [MNIST](http://yann.lecun.com/exdb/mnist/)
