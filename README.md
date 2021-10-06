@@ -12,10 +12,10 @@ Fireball is a Deep Neural Network (DNN) library for creating, training, evaluati
 - Export the models to ONEX, Tensorflow, or CoreML even after applying low-rank decomposition, pruning, and/or quantization.
 
 ## Fireball Documentation
-* [Documentation Home](http://kopartifactory.interdigital.com:9090/FireballDocs/1.5.1/)
-* [Installation](http://kopartifactory.interdigital.com:9090/FireballDocs/1.5.1/source/installation.html)
-* [Fireball Layers](http://kopartifactory.interdigital.com:9090/FireballDocs/1.5.1/source/layers.html)
-* [Fireball API](http://kopartifactory.interdigital.com:9090/FireballDocs/1.5.1/source/model.html)
+* [Documentation Home](https://interdigitalinc.github.io/Fireball/html/)
+* [Installation](https://interdigitalinc.github.io/Fireball/html//source/installation.html)
+* [Fireball Layers](https://interdigitalinc.github.io/Fireball/html//source/layers.html)
+* [Fireball API](https://interdigitalinc.github.io/Fireball/html//source/model.html)
 
 ## Installing Fireball
 ***Note***: Fireball currently works with python 3.6 and 3.7 and uses Tensorflow 1.14. Support for newer python and tensorflow versions are comming soon.
