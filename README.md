@@ -1,3 +1,5 @@
+![ID-Fireball-logo](Playgrounds/Fireball.png)
+
 # Fireball
 Fireball is a Deep Neural Network (DNN) library for creating, training, evaluating, quantizing, and compressing DNN based models across a range of applications. Here is a summary of main features:
 - Easily create any network structure using a limited set of fundamental building blocks chained together in a text string.
@@ -50,3 +52,6 @@ From the root of this repo, issue one of the following commands (for **GPU** and
 python3 setup.py bdist_wheel --build-number=0.GPU
 python3 setup.py bdist_wheel --build-number=0.NoGPU
 ```
+## Authors
+
+* Shahab Hamidi-Rad, InterDigital AI Lab.
