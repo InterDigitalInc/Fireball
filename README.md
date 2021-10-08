@@ -32,12 +32,12 @@ pip install --upgrade setuptools
 
 Use this for GPU machines
 ```
-cd fireball
+cd Fireball
 pip install dist/fireball-1.5.1-0.GPU-py3-none-any.whl
 ```
 or for machines with no GPUs:
 ```
-cd fireball
+cd Fireball
 pip install dist/fireball-1.5.1-0.NoGPU-py3-none-any.whl
 ```
 

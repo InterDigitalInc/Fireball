@@ -347,6 +347,7 @@ class Model:
         self.learningRateInit = 0.01
         self.lrDecayStep = 0
         self.learningRatePieces = None
+        self.learningRateWarmUp = 0
         self.trainAllBatch = 0              # Train only non-transferred params before this batch, all params after.
         if learningRate is None:
             assert self.trainDs is None, "learningRate must be a specified when a training dataset is provided!"
@@ -371,7 +372,6 @@ class Model:
             assert len(learningRate[0]) == 2, "Piecewise Learning Rate must be a list of 2-tuples!"
             assert learningRate[0][0] == 0, "First entry in the list must specify the initial learning rate (0, <initRate>)!"
             
-            self.learningRateWarmUp = 0
             if type(learningRate[0][1])==str:
                 assert learningRate[0][1].lower() == "warmup", "Invalid syntax! Did you mean (0, 'WarmUp') for the first tuple?"
                 self.learningRateWarmUp = learningRate[1][0]
@@ -687,7 +687,7 @@ class Model:
             
             * **quiet (Boolean)**: True means there are no messages printed during the execution of the function.
                 
-            * **runQuantized (Boolean)**: True means include the codebooks and lookup functionality in the exported model so that the quantized model is executed at the inference time. This makes the exported model smaller at the expense of slightly increased execution time during the inference. If this is False for a quantized model, Fireball de-quantizes all parameters and includes the de-quantized information in the exported model. If this model is not quantized, then this argument is ignored.
+            * **runQuantized (Boolean)**: True means include the codebooks and lookup functionality in the exported model so that the quantized model is executed at the inference time. This makes the exported model smaller at the expense of slightly increased execution time during the inference. If this is False for a quantized model, Fireball de-quantizes all parameters and includes the de-quantized information in the exported model. If this model is not quantized, then this argument is ignored. The default is False.
             
             * **classNames (list of strings)**: If present, it must contains a list of class names for a classification model. The class names are then included in the exported model so that at the inference time the actual labels can easily be returned. If this is not present, then the class names are not included in the exported model and the inference code needs to convert predicted classes to the actual labels by some other means.
                 
@@ -716,7 +716,7 @@ class Model:
             
             * **quiet (Boolean)**: True means there are no messages printed during the execution of the function.
                 
-            * **runQuantized (Boolean)**: True means include the codebooks and lookup functionality in the exported model so that the quantized model is executed at the inference time. This makes the exported model smaller at the expense of slightly increased execution time during the inference. If this is False for a quantized model, Fireball de-quantizes all parameters and includes the de-quantized information in the exported model. If this model is not quantized, then this argument is ignored.
+            * **runQuantized (Boolean)**: True means include the codebooks and lookup functionality in the exported model so that the quantized model is executed at the inference time. This makes the exported model smaller at the expense of slightly increased execution time during the inference. If this is False for a quantized model, Fireball de-quantizes all parameters and includes the de-quantized information in the exported model. If this model is not quantized, then this argument is ignored. The default is False.
             
             * **classNames (list of str)**: If present, it must contains a list of class names for a classification model. The class names are then included in the exported model so that at the inference time the actual labels can easily be returned. If this is not present, then the class names are not included in the exported model and the inference code needs to convert predicted classes to the actual labels by some other means.
         """
