@@ -39,6 +39,7 @@ For more info see `Keras image utilities <https://github.com/keras-team/keras-ap
 # 04/17/2020              Shahab Hamidi-Rad       Completed the documentation.
 # 12/04/2020              Shahab Hamidi-Rad       The labels[s] are now keeps the class for sample no. 's' instead of
 #                                                 samples[s][2].
+# 10/11/2021              Shahab Hamidi-Rad       Added support for downloading datasets.
 # **********************************************************************************************************************
 import numpy as np
 import cv2
@@ -104,6 +105,29 @@ class ImageNetDSet(BaseDSet):
         
         self.dsName = self.dsName.split('%')[0]     # Remove the percentage info now that we don't need it anymore
         self.preProcessing = preProcessing
+
+    # ******************************************************************************************************************
+    @classmethod
+    def download(cls, dataFolder=None):
+        r"""
+        This class method can be called to download the ImageNet dataset files from a Fireball
+        online repository. Please note that this does not include the training dataset. Only
+        Tuning and Test datasets are downloaded. All image files have already been resized to
+        224x224.
+        
+        Parameters
+        ----------
+        dataFolder: str
+            The folder where dataset files are saved. If this is not provided, then
+            a folder named "data" is created in the home directory of the current user and the
+            dataset folders and files are created there.
+        """
+        files = ['ILSVRC2012Tune224.zip',
+                 'ILSVRC2012Test224.zip',
+                 'TrainDataset.csv',
+                 'TuneDataset.csv',
+                 'ValDataset.csv']
+        BaseDSet.download("ImageNet", files, dataFolder)
 
     # ******************************************************************************************************************
     def __repr__(self):

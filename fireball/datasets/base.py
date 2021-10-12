@@ -14,12 +14,17 @@ This file contains the implementation of the base dataset class for all other da
 # 11/19/2020              Shahab Hamidi-Rad       Improved calculation top-K accuracy. Also added more
 #                                                 arguments to control the behavior of the evaluation
 #                                                 functions.
+# 10/11/2021              Shahab Hamidi-Rad       Added support for downloading datasets.
 # **********************************************************************************************************************
 import numpy as np
 import os
 import time
 from threading import Thread
 from queue import Queue
+import zipfile
+import yaml
+import urllib.request as urlreq
+
 from ..printutils import myPrint
 
 # **********************************************************************************************************************
@@ -1056,3 +1061,145 @@ class BaseDSet:
                 kappaStrs = ['Poor', 'Fair', 'Moderate', 'Good', 'Excellent']
                 print('Kappa: %f (%s)'%(kappa, kappaStrs[ max(int((kappa-.01)/.2),0) ]))
         return results
+
+    # ******************************************************************************************************************
+    @classmethod
+    def downloadAndExtractZipFile(cls, zipFileUrl, destFolder):
+        # Example fir zipFileUrl: "http://images.cocodataset.org/zips/val2017.zip"
+        # Example for destFolder: "/data/mscoco/"
+        destFileName = zipFileUrl[zipFileUrl.rfind('/')+1:] # Example: "val2017.zip"
+        dotExt = zipFileUrl[zipFileUrl.rfind('.'):]         # Example: ".zip"
+        destFilePath = destFolder + destFileName            # Example:  /data/mscoco/val2017.zip
+        destExtractionFolder = destFilePath[:-len(dotExt)]  # Example: "/data/mscoco/val2017"
+        
+        if os.path.exists(destExtractionFolder):
+            return True
+
+        if not os.path.exists(destFilePath):
+            # Example: /data/mscoco/val2017.zip does not exist
+            try:
+                print('Downloading from "%s" ...'%(zipFileUrl))
+                urlreq.urlretrieve(zipFileUrl, destFilePath)
+            except:
+                # Failed to download from the given folder. We can try again below from other locations
+                print('  Failed!')
+                if os.path.exists(destFilePath): os.remove(destFilePath)
+                return False
+
+        try:
+            print('Extracting "%s" ...'%(destFilePath))
+            with zipfile.ZipFile(destFilePath, 'r') as zipFile:
+                zipFile.extractall(destFolder)
+            print('Deleting "%s" ...'%(destFilePath))
+            os.remove(destFilePath)
+            return True
+            
+        except:
+            # Failed to extract! Maybe zip file was corrupted. Deleting the zip file.
+            print('  Failed!')
+            print('Deleting "%s" ...'%(destFilePath))
+            os.remove(destFilePath)
+                
+        return False
+
+    # ******************************************************************************************************************
+    @classmethod
+    def download(cls, folderName, files, destDataFolder=None):
+        r"""
+        This class method can be called to download dataset files from their original source or a
+        Fireball online repository. This method is usually called internally by one of the
+        derived classes.
+        
+        Parameters
+        ----------
+        folderName: str
+            A string containing the name of the dataset folder. This is used both for Fireball
+            repository and the destination folder name on local machine.
+
+        files: list of str
+            A list of strings. Each item in the list can be a file name or a URL.
+            
+                * URL: In this case the URL is tried first (which is usually the original location of the dataset files). If for any reason the file cannot be downloaded then the file name is extracted from the URL and it is downloaded from the Fireball repository.
+                * Name: In this case the file is downloaded directly from the Fireball repository.
+            
+            If the downloaded file is a zip file, it is extracted to the dataset directory.
+            
+        destDataFolder: str
+            The folder where dataset folders and files are saved. If this is not provided, then
+            a folder named "data" is created in the home directory of the current user and the
+            dataset folders and files are created there.
+        """
+        if destDataFolder is None: destDataFolder = os.path.expanduser("~")+'/data'
+
+        if destDataFolder[-1] != '/':   destDataFolder+='/' # Example: /data/ or /home/shahab/data/
+        if folderName[-1] != '/':       folderName+='/'     # Example: mscoco/
+        destFolder = destDataFolder + folderName            # Example: /data/mscoco/
+        if not os.path.exists(destFolder):
+            print('Creating folder "%s" ...'%(destFolder))
+            os.makedirs(destFolder)
+        elif os.path.isfile(destFolder):
+            raise ValueError("'%s' must be a directory but it is a file!"%(destFolder))
+
+        alreadyDownloaded = set()
+        for file in files:
+            # Examples for file: 'http://images.cocodataset.org/zips/val2017.zip' or 'train2014.zip'
+            if file[:7].lower()!='http://':                     continue
+            destFileName = file[file.rfind('/')+1:]             # Example: val2017.zip
+            destFilePath = destFolder + destFileName            # Example:  /data/mscoco/val2017.zip
+            dotExt = file[file.rfind('.'):]                     # Example:  .zip
+            isZip = dotExt in ['.zip', '.gz']
+            if isZip:
+                if cls.downloadAndExtractZipFile(file, destFolder): alreadyDownloaded.add(destFileName)
+                continue
+            
+            elif not os.path.exists(destFilePath):
+                # Not a zip file
+                # Example: /data/ImageNet/TrainDataset.csv does not exist
+                try:
+                    print('Downloading from "%s" ...'%(file))
+                    urlreq.urlretrieve(file, destFilePath)
+                    alreadyDownloaded.add(destFileName)
+
+                except:
+                    # Failed to download from the given folder. We can try again below from other locations
+                    print('  Failed!')
+                    if os.path.exists(destFilePath): os.remove(destFilePath)
+                    continue
+            else:
+                # Not a zip file and already exists
+                alreadyDownloaded.add(destFileName)
+
+        # Some of the files have already been downloaded and are in 'alreadyDownloaded' set.
+        locInfoUrl = "https://interdigitalinc.github.io/Fireball/LocInfo.yml"
+        locInfo = yaml.safe_load(urlreq.urlopen(locInfoUrl).read())
+        for location in locInfo['dsetLocations']:
+            if location[-1] != '/': location+='/'
+            for file in files:
+                destFileName = file[file.rfind('/')+1:] if file[:7].lower()=='http://' else file  # Example: val2017.zip
+                if destFileName in alreadyDownloaded: continue
+                
+                fileUrl = location + folderName + destFileName
+                destFilePath = destFolder + destFileName            # Example:  /data/mscoco/val2017.zip
+                dotExt = file[file.rfind('.'):]                     # Example:  .zip
+                isZip = dotExt in ['.zip', '.gz']
+
+                if isZip:
+                    if cls.downloadAndExtractZipFile(fileUrl, destFolder): alreadyDownloaded.add(destFileName)
+                    continue
+                
+                elif not os.path.exists(destFilePath):
+                    # Not a zip file
+                    # Example: /data/ImageNet/TrainDataset.csv does not exist
+                    try:
+                        print('Downloading from "%s" ...'%(fileUrl))
+                        urlreq.urlretrieve(fileUrl, destFilePath)
+                        alreadyDownloaded.add(destFileName)
+
+                    except:
+                        # Failed to download from the given folder. We can try again below from other locations
+                        print('  Failed!')
+                        if os.path.exists(destFilePath): os.remove(destFilePath)
+                        continue
+                else:
+                    # Not a zip file and already exists
+                    alreadyDownloaded.add(destFileName)

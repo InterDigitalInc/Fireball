@@ -10,6 +10,7 @@ This file contains some common utility functions that are used by the modules in
 #                                       different files.
 # **********************************************************************************************************************
 import numpy as np
+import os
 
 # **********************************************************************************************************************
 # python 2/3 compatibility (Remove when dropping support for python2.7)
@@ -112,5 +113,3 @@ def getCurrentGpus(returnHalfGpus=False):
         return [-1]
 
     return gpus
-
-

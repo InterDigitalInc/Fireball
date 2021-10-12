@@ -20,6 +20,7 @@ Use the ``MnistDSetUnitTest.py`` file in the ``UnitTest/Datasets`` directory to 
 #                                       for Fine-Tuning datasets, merging, and splitting
 #                                       datasets.
 # 04/23/2020    Shahab Hamidi-Rad       Completed the documentation.
+# 10/11/2021    Shahab Hamidi-Rad       Added support for downloading datasets.
 # **********************************************************************************************************************
 import struct
 import numpy as np
@@ -71,6 +72,22 @@ class MnistDSet(BaseDSet):
 
         super().__init__(dsName, dataPath, samples, labels, batchSize)
         self.dsName = self.dsName.split('%')[0]     # Remove the percentage info now that we don't need it anymore
+
+    # ******************************************************************************************************************
+    @classmethod
+    def download(cls, dataFolder=None):
+        r"""
+        This class method can be called to download the MNIST dataset files from a
+        Fireball online repository.
+        
+        Parameters
+        ----------
+        dataFolder: str
+            The folder where dataset files are saved. If this is not provided, then
+            a folder named "data" is created in the home directory of the current user and the
+            dataset folders and files are created there.
+        """
+        BaseDSet.download("mnist", ['mnist.zip'], dataFolder)
 
     # ******************************************************************************************************************
     @classmethod

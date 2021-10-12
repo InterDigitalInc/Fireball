@@ -140,6 +140,7 @@ Note
 # 11/16/2020    Shahab Hamidi-Rad       Because of the new BERT implementation, we don't need the "noPadLen" to be
 #                                       included for every sample in the dataset. So, from now on, each sample in the
 #                                       dataset is specified by a tuple of (tokenIds, tokenTypes)
+# 10/11/2021    Shahab Hamidi-Rad       Added support for downloading datasets.
 # **********************************************************************************************************************
 import json
 import numpy as np
@@ -199,6 +200,22 @@ class SquadDSet(BaseDSet):
         self.labelShape = (2,)                      # Start and End Indexes
         self.__class__.evalMetricName = 'Accuracy'
             
+    # ******************************************************************************************************************
+    @classmethod
+    def download(cls, dataFolder=None):
+        r"""
+        This class method can be called to download the SQuAD dataset files from a Fireball
+        online repository.
+        
+        Parameters
+        ----------
+        dataFolder: str
+            The folder where dataset files are saved. If this is not provided, then
+            a folder named "data" is created in the home directory of the current user and the
+            dataset folders and files are created there.
+        """
+        BaseDSet.download("SQuAD", ['SQuAD.zip'], dataFolder)
+
     # ******************************************************************************************************************
     def getSamplesAndLabels(self, fileName):
         r"""

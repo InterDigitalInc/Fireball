@@ -43,6 +43,7 @@ This implementation assumes the following files/folders exist in the `dataPath` 
 #                                                 datasets.
 # 04/21/2020              Shahab Hamidi-Rad       Completed the documentation.
 # 04/23/2020              Shahab Hamidi-Rad       Now using daemonic threads.
+# 10/11/2021              Shahab Hamidi-Rad       Added support for downloading datasets.
 # **********************************************************************************************************************
 import numpy as np
 import os
@@ -171,6 +172,26 @@ class CocoDSet(BaseDSet):
         self.anchorBoxes = None
         self.anchorsBoxesP1P2 = None
         self.__class__.evalMetricName = 'mAP'
+
+    # ******************************************************************************************************************
+    @classmethod
+    def download(cls, dataFolder=None):
+        r"""
+        This class method can be called to download the COCO dataset files from their original
+        source or a Fireball online repository.
+        
+        Parameters
+        ----------
+        dataFolder: str
+            The folder where dataset files are saved. If this is not provided, then
+            a folder named "data" is created in the home directory of the current user and the
+            dataset folders and files are created there.
+        """
+        files = ['annotations.zip',
+                 'http://images.cocodataset.org/zips/train2014.zip',
+                 'http://images.cocodataset.org/zips/val2014.zip',
+                 'http://images.cocodataset.org/zips/val2017.zip']
+        BaseDSet.download("mscoco", files, dataFolder)
 
     # ******************************************************************************************************************
     @classmethod

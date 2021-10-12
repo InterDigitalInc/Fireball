@@ -94,6 +94,9 @@ layers currently supported by Fireball.
 #                                           supported for pruned models.
 #                                         * Support for Warm-up learning rate scheduling. See the explanation for the
 #                                           "learningRate" argument of the Model's __init__ method for more info.
+# 10/11/2021    Shahab                  Fireball 1.5.1 features:
+#                                         * First public version.
+#                                         * Added support for downloading from model zoo.
 # **********************************************************************************************************************
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -102,6 +105,9 @@ import sys
 import os
 import time
 import json
+import urllib.request as urlreq
+import yaml
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 import fireball
@@ -372,6 +378,7 @@ class Model:
             assert len(learningRate[0]) == 2, "Piecewise Learning Rate must be a list of 2-tuples!"
             assert learningRate[0][0] == 0, "First entry in the list must specify the initial learning rate (0, <initRate>)!"
             
+            self.learningRateWarmUp = 0
             if type(learningRate[0][1])==str:
                 assert learningRate[0][1].lower() == "warmup", "Invalid syntax! Did you mean (0, 'WarmUp') for the first tuple?"
                 self.learningRateWarmUp = learningRate[1][0]
@@ -427,6 +434,69 @@ class Model:
         self.quiet = False
         self.bestMetric = None
         self.bestEpochInfo = None
+
+    # ******************************************************************************************************************
+    @classmethod
+    def downloadFromZoo(cls, modelName, destFolder, modelType=None):
+        r"""
+        A class method used to download a model from an online Fireball model zoo.
+        
+        Parameters
+        ----------
+        modelName: str
+            A string containing the name of the model. If the "modelType" parameter is not
+            provided, then this name must include the file extension to help identify the type
+            of the model.
+            
+        destFolder: str
+            The folder where the downloaded model file is saved.
+            
+        modelType: str
+            The type of the model. Currently the following types are supported:
+            
+                * 'Fireball': Fireball models. (Extension: fbm)
+                * 'CoreML': Models exported to CoreML ready to be deployed to iOS. (Extension: mlmodel)
+                * 'ONNX': Models exported to ONNX. (Extension: onnx)
+                * 'NPZ': Numpy 'npz' files containing the model information. (Extension: npz)
+        """
+        type2ext = {'Fireball': "fbm", 'CoreML': 'mlmodel', 'NPZ':'npz', 'ONNX':'onnx'}
+        ext2Type = {v:k for k,v in type2ext.items()}
+
+        if modelType is None:
+            # Try getting model type from extension:
+            ext = os.path.splitext(modelName)[-1][1:].lower()
+            if ext not in ext2Type:
+                raise Exception("Unknown model type '%s'"%(ext))
+            modelType = ext2Type[ext]
+        else:
+            ext = type2ext[modelType]
+
+        if destFolder[-1] != '/': destFolder += '/'
+        if not os.path.exists(destFolder):
+            print('Creating folder "%s" ...'%(destFolder))
+            os.makedirs(destFolder)
+        elif os.path.isfile(destFolder):
+            raise ValueError("The destination must be a directory!")
+
+        modelFileName = modelName if modelName[-len(ext)-1:].lower() == ('.'+ext) else (modelName + "." + ext)
+        destFilePath = destFolder + modelFileName
+        
+        if os.path.exists(destFilePath):
+            return
+        
+        locInfoUrl = "https://interdigitalinc.github.io/Fireball/LocInfo.yml"
+        locInfo = yaml.safe_load(urlreq.urlopen(locInfoUrl).read())
+        for location in locInfo['modelLocations']:
+            if location[-1] != '/': location+='/'
+            modelUrl = "%s%s/%s"%(location, modelType, modelFileName)
+            try:
+                print('Downloading from "%s" ...'%(modelUrl))
+                urlreq.urlretrieve(modelUrl, destFilePath)
+                print('  Success!')
+                break
+            except:
+                print('  Failed!')
+                continue
 
     # ******************************************************************************************************************
     @classmethod
@@ -687,7 +757,7 @@ class Model:
             
             * **quiet (Boolean)**: True means there are no messages printed during the execution of the function.
                 
-            * **runQuantized (Boolean)**: True means include the codebooks and lookup functionality in the exported model so that the quantized model is executed at the inference time. This makes the exported model smaller at the expense of slightly increased execution time during the inference. If this is False for a quantized model, Fireball de-quantizes all parameters and includes the de-quantized information in the exported model. If this model is not quantized, then this argument is ignored. The default is False.
+            * **runQuantized (Boolean)**: True means include the codebooks and lookup functionality in the exported model so that the quantized model is executed at the inference time. This makes the exported model smaller at the expense of slightly increased execution time during the inference. If this is False for a quantized model, Fireball de-quantizes all parameters and includes the de-quantized information in the exported model. If this model is not quantized, then this argument is ignored.
             
             * **classNames (list of strings)**: If present, it must contains a list of class names for a classification model. The class names are then included in the exported model so that at the inference time the actual labels can easily be returned. If this is not present, then the class names are not included in the exported model and the inference code needs to convert predicted classes to the actual labels by some other means.
                 
@@ -716,7 +786,7 @@ class Model:
             
             * **quiet (Boolean)**: True means there are no messages printed during the execution of the function.
                 
-            * **runQuantized (Boolean)**: True means include the codebooks and lookup functionality in the exported model so that the quantized model is executed at the inference time. This makes the exported model smaller at the expense of slightly increased execution time during the inference. If this is False for a quantized model, Fireball de-quantizes all parameters and includes the de-quantized information in the exported model. If this model is not quantized, then this argument is ignored. The default is False.
+            * **runQuantized (Boolean)**: True means include the codebooks and lookup functionality in the exported model so that the quantized model is executed at the inference time. This makes the exported model smaller at the expense of slightly increased execution time during the inference. If this is False for a quantized model, Fireball de-quantizes all parameters and includes the de-quantized information in the exported model. If this model is not quantized, then this argument is ignored.
             
             * **classNames (list of str)**: If present, it must contains a list of class names for a classification model. The class names are then included in the exported model so that at the inference time the actual labels can easily be returned. If this is not present, then the class names are not included in the exported model and the inference code needs to convert predicted classes to the actual labels by some other means.
         """
