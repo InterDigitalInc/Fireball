@@ -15,12 +15,9 @@ Setting up datasets
 Fireball playgrounds use the following datasets:
 
 * `MNIST <http://yann.lecun.com/exdb/mnist/>`_
-* `CIFAR-100 <https://www.cs.toronto.edu/~kriz/cifar.html>`_
 * `ImageNet <http://image-net.org/index>`_
 * `COCO <https://cocodataset.org>`_
 * `SQuAD <https://rajpurkar.github.io/SQuAD-explorer/>`_
-* `GLUE <https://gluebenchmark.com>`_
-* `RadioML <https://www.deepsig.ai/datasets>`_
 
 Some of the above datasets require some pre-processing before they can be used by Fireball. Please refer to the corresponding python files in the ``fireball/datasets`` folder for more information on how to prepare these datasets.
 
@@ -38,4 +35,6 @@ Notes
 * Some of the tasks in the playgrounds can take a long time to complete. If you don't want to lose you notebook server if the connection to the server is lost for any reason, you can run the notebook server in a ``tmux`` session which keeps it running when your ssh connection closes.
 
 * In the first cell of each notebook file, there is a "gpus" variable that specifies which GPUs to use. If you want to use a different set of GPU cards, please modify this line accordingly before starting the process.
+
+* If a required dataset is not available on the machine, the first cell of the playground files tries to download and install the dataset. For some large datasets, this may take a long time. Please be patient and avoid interrupting the process during the download.
 

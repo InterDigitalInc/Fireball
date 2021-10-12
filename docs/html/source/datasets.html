@@ -542,6 +542,34 @@ and confusion matrix is not calculated.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="fireball.datasets.base.BaseDSet.download">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folderName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destDataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.download" title="Permalink to this definition"></a></dt>
+<dd><p>This class method can be called to download dataset files from their original source or a
+Fireball online repository. This method is usually called internally by one of the
+derived classes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>folderName</strong> (<em>str</em>) – A string containing the name of the dataset folder. This is used both for Fireball
+repository and the destination folder name on local machine.</p></li>
+<li><p><strong>files</strong> (<em>list of str</em>) – <p>A list of strings. Each item in the list can be a file name or a URL.</p>
+<blockquote>
+<div><ul>
+<li><p>URL: In this case the URL is tried first (which is usually the original location of the dataset files). If for any reason the file cannot be downloaded then the file name is extracted from the URL and it is downloaded from the Fireball repository.</p></li>
+<li><p>Name: In this case the file is downloaded directly from the Fireball repository.</p></li>
+</ul>
+</div></blockquote>
+<p>If the downloaded file is a zip file, it is extracted to the dataset directory.</p>
+</p></li>
+<li><p><strong>destDataFolder</strong> (<em>str</em>) – The folder where dataset folders and files are saved. If this is not provided, then
+a folder named “data” is created in the home directory of the current user and the
+dataset folders and files are created there.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -599,6 +627,20 @@ Use the <code class="docutils literal notranslate"><span class="pre">MnistDSetUn
 <li><p><strong>labels</strong> (<em>numpy array</em><em> or </em><em>None</em>) – If specified, it is a numpy array of int32 values. Each label is an int32 number between 0 and 9 indicating the class for each sample.</p></li>
 <li><p><strong>batchSize</strong> (<em>int</em>) – The default batch size used in the “batches” method.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fireball.datasets.mnist.MnistDSet.download">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.mnist.MnistDSet.download" title="Permalink to this definition"></a></dt>
+<dd><p>This class method can be called to download the MNIST dataset files from a
+Fireball online repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
+a folder named “data” is created in the home directory of the current user and the
+dataset folders and files are created there.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -938,6 +980,22 @@ Use the <code class="docutils literal notranslate"><span class="pre">MnistDSetUn
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="fireball.datasets.imagenet.ImageNetDSet.download">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.imagenet.ImageNetDSet.download" title="Permalink to this definition"></a></dt>
+<dd><p>This class method can be called to download the ImageNet dataset files from a Fireball
+online repository. Please note that this does not include the training dataset. Only
+Tuning and Test datasets are downloaded. All image files have already been resized to
+224x224.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
+a folder named “data” is created in the home directory of the current user and the
+dataset folders and files are created there.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="fireball.datasets.imagenet.ImageNetDSet.getImage">
 <span class="sig-name descname"><span class="pre">getImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.imagenet.ImageNetDSet.getImage" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a numpy array containing the image information for the image file specified by the <cite>fileName</cite>.</p>
@@ -1243,6 +1301,20 @@ The default value of .1 results in creating a new dataset with %10 of the traini
 <li><p><strong>keepAr</strong> (<em>Boolean</em>) – This specifies whether the aspect ratio of the image should be kept when it is resized.</p></li>
 <li><p><strong>numWorkers</strong> (<em>int</em>) – The number of worker threads used to load the images.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fireball.datasets.coco.CocoDSet.download">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.download" title="Permalink to this definition"></a></dt>
+<dd><p>This class method can be called to download the COCO dataset files from their original
+source or a Fireball online repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
+a folder named “data” is created in the home directory of the current user and the
+dataset folders and files are created there.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2028,6 +2100,20 @@ Use the <code class="docutils literal notranslate"><span class="pre">SquadDSetUn
 <li><p><strong>tokenizer</strong> (<em>Tokenizer object</em><em>, </em><em>optional</em>) – The tokenizer used to tokenize the text info in the dataset files.</p></li>
 <li><p><strong>numWorkers</strong> (<em>int</em><em>, </em><em>optional</em>) – If numWorkers is more than zero, “numWorkers” worker threads are created to process and prepare future batches in parallel.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fireball.datasets.squad.SquadDSet.download">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.squad.SquadDSet.download" title="Permalink to this definition"></a></dt>
+<dd><p>This class method can be called to download the SQuAD dataset files from a Fireball
+online repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
+a folder named “data” is created in the home directory of the current user and the
+dataset folders and files are created there.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -305,6 +305,32 @@ batches “w” is specified by the next tuple in the list.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="fireball.model.Model.downloadFromZoo">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">downloadFromZoo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destFolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelType</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.downloadFromZoo" title="Permalink to this definition"></a></dt>
+<dd><p>A class method used to download a model from an online Fireball model zoo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modelName</strong> (<em>str</em>) – A string containing the name of the model. If the “modelType” parameter is not
+provided, then this name must include the file extension to help identify the type
+of the model.</p></li>
+<li><p><strong>destFolder</strong> (<em>str</em>) – The folder where the downloaded model file is saved.</p></li>
+<li><p><strong>modelType</strong> (<em>str</em>) – <p>The type of the model. Currently the following types are supported:</p>
+<blockquote>
+<div><ul>
+<li><p>’Fireball’: Fireball models. (Extension: fbm)</p></li>
+<li><p>’CoreML’: Models exported to CoreML ready to be deployed to iOS. (Extension: mlmodel)</p></li>
+<li><p>’ONNX’: Models exported to ONNX. (Extension: onnx)</p></li>
+<li><p>’NPZ’: Numpy ‘npz’ files containing the model information. (Extension: npz)</p></li>
+</ul>
+</div></blockquote>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="fireball.model.Model.loadModelFrom">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">loadModelFrom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.loadModelFrom" title="Permalink to this definition"></a></dt>
 <dd><p>This is a class method that is used to read the network information from a file and return the results.</p>
