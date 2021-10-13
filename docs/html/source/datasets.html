@@ -807,6 +807,20 @@ dataset folders and files are created there.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="fireball.datasets.cifar.CifarDSet.download">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.cifar.CifarDSet.download" title="Permalink to this definition"></a></dt>
+<dd><p>This class method can be called to download the CIFAR-100 dataset files from a Fireball
+online repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
+a folder named “data” is created in the home directory of the current user and the
+dataset folders and files are created there.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="fireball.datasets.cifar.CifarDSet.split">
 <span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Valid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeatable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.cifar.CifarDSet.split" title="Permalink to this definition"></a></dt>
 <dd><p>This function splits the current dataset and returns a portion of data as a new <cite>CifarDSet</cite> object. The current object is then updated to keep the remaining samples.</p>
@@ -3143,6 +3157,20 @@ a list of what can be included in this dictionary.</p>
 </div></blockquote>
 </p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fireball.datasets.radioml.RadioMlDSet.download">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.radioml.RadioMlDSet.download" title="Permalink to this definition"></a></dt>
+<dd><p>This class method can be called to download the RadioML dataset files from a Fireball
+online repository.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
+a folder named “data” is created in the home directory of the current user and the
+dataset folders and files are created there.</p>
 </dd>
 </dl>
 </dd></dl>
