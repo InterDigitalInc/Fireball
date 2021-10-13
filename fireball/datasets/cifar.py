@@ -78,6 +78,22 @@ class CifarDSet(BaseDSet):
 
     # ******************************************************************************************************************
     @classmethod
+    def download(cls, dataFolder=None):
+        r"""
+        This class method can be called to download the CIFAR-100 dataset files from a Fireball
+        online repository.
+        
+        Parameters
+        ----------
+        dataFolder: str
+            The folder where dataset files are saved. If this is not provided, then
+            a folder named "data" is created in the home directory of the current user and the
+            dataset folders and files are created there.
+        """
+        BaseDSet.download("CIFAR-100", ['CIFAR-100.zip'], dataFolder)
+
+    # ******************************************************************************************************************
+    @classmethod
     def getSamplesAndLabels(cls, fileName, coarseLabels):
         """
         This class method loads the samples and labels form the dataset files.

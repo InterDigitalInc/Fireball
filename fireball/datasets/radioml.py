@@ -175,6 +175,23 @@ class RadioMlDSet(BaseDSet):
 
     # ******************************************************************************************************************
     @classmethod
+    def download(cls, dataFolder=None):
+        r"""
+        This class method can be called to download the RadioML dataset files from a Fireball
+        online repository.
+        
+        Parameters
+        ----------
+        dataFolder: str
+            The folder where dataset files are saved. If this is not provided, then
+            a folder named "data" is created in the home directory of the current user and the
+            dataset folders and files are created there.
+        """
+        
+        BaseDSet.download("RadioML", ['RML2016_10b.zip'], dataFolder)
+
+    # ******************************************************************************************************************
+    @classmethod
     def configure(cls, testRatio=.5, tuneRatio=0.1, validRatio=0.1, version=2016):
         r"""
         Configures the :py:class:`RadioMlDSet` class. If a behavior other than the default is needed, this function can be called to prepare the class before instantiating the dataset instances.

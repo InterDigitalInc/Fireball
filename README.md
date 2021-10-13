@@ -11,7 +11,7 @@ Fireball is a Deep Neural Network (DNN) library for creating, training, evaluati
 - Apply K-Means quantization on network parameters to further reduce the size of model. 
 - Retrain your model after applying low-rank decomposition, pruning, and/or quantization.
 - Compress models using arithmetic entropy coding.
-- Export the models to ONEX, Tensorflow, or CoreML even after applying low-rank decomposition, pruning, and/or quantization.
+- Export the models to ONNX, Tensorflow, or CoreML even after applying low-rank decomposition, pruning, and/or quantization.
 
 ## Fireball Documentation
 * [Documentation Home](https://interdigitalinc.github.io/Fireball/html/)
