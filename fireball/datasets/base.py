@@ -532,6 +532,8 @@ class BaseDSet:
             a list of what can be included in this dictionary.
             
                 * **maxSamples (int)**: The max number of samples from this dataSet to be processed for the evaluation of the model. If not specified, all samples are used (default behavior).
+                
+                * **sampleIndexes (list of ints)**: A list of sample indexes from this dataset to be processed for the evaluation of the model. If not specified, all samples are used. (default behavior).
 
                 * **topK (int)**: For classification cases, this indicates whether a "top-K" accuracy value should also be calculated. For example for ImageNet dataset classification, usually the top-5 accuracy value is used (topK=5) besides the top-1. If it is zero (default), the top-K error is not calculated. This is ignored for regression cases.
 

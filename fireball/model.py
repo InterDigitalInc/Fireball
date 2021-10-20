@@ -262,7 +262,6 @@ class Model:
                         300 to 399  0.05            All trainable
                         400 to end  0.01            All trainable
                         ==========  ==============  ====================
-                    
 
         optimizer : str
             The type of optimizer used for training. Available options are: 'GradientDescent', 'Adam' (Default), and 'Momentum'. If not specified, "Momentum" is used for classification and "Adam" for regression problems.
@@ -2039,7 +2038,7 @@ class Model:
             if self.trainingState.get('testMetric', None) is not None:
                 print('  Test %-22s%s'%(self.trainDs.evalMetricName+':', floatStr(self.trainingState['testMetric'],5)))
             if self.trainingState.get('validMetric', None) is not None:
-                print('  Validation %-16s%s'%(self.trainDs.evalMetricName+':', floatStr(self.trainingState['testMetric'],5)))
+                print('  Validation %-16s%s'%(self.trainDs.evalMetricName+':', floatStr(self.trainingState['validMetric'],5)))
             if self.trainingState['bestEpoch'] is not None:
                 e, b, lr, ls, tm, vm = self.trainingState['bestEpoch']
                 if e==self.trainingState['epoch']:
