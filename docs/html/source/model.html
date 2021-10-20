@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Model &mdash; Fireball 1.5.1 1.5.1 documentation</title>
+  <title>Model &mdash; Fireball 1.5.1 Documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -264,42 +264,34 @@ batches “w” is specified by the next tuple in the list.</p>
 </li>
 </ul>
 </p></li>
-</ul>
-</dd>
-</dl>
-<dl>
-<dt>optimizer<span class="classifier">str</span></dt><dd><p>The type of optimizer used for training. Available options are: ‘GradientDescent’, ‘Adam’ (Default), and ‘Momentum’. If not specified, “Momentum” is used for classification and “Adam” for regression problems.</p>
-</dd>
-<dt>lossFunction<span class="classifier">function</span></dt><dd><p>A function that is used to calculate the loss in the training mode. This is used to define a customized loss function. This is used by the model to calculate the loss during the training. The function takes the following arguments:</p>
+<li><p><strong>optimizer</strong> (<em>str</em>) – The type of optimizer used for training. Available options are: ‘GradientDescent’, ‘Adam’ (Default), and ‘Momentum’. If not specified, “Momentum” is used for classification and “Adam” for regression problems.</p></li>
+<li><p><strong>lossFunction</strong> (<em>function</em>) – <p>A function that is used to calculate the loss in the training mode. This is used to define a customized loss function. This is used by the model to calculate the loss during the training. The function takes the following arguments:</p>
 <blockquote>
-<div><ul class="simple">
+<div><ul>
 <li><p>layers: A “Layers” object as defined in the “Layers.py” file. This keeps a list of all the layers in the model that may be used for the calculation of the loss.</p></li>
 <li><p>predictions: The output(s) of the network just before the output layer. This is a tuple containing all outputs of the network.</p></li>
 <li><p>groundTruths: The batch of labels used for the training step. This is a tuple containing all label objects. The tuple usually contains the placeholders created in the Layer’s “makePlaceholders” function.</p></li>
 </ul>
 </div></blockquote>
-</dd>
-<dt>blocks<span class="classifier">list</span></dt><dd><p>A list of Block objects or <em>blockInfo</em> strings that extend fireball’s predefined layers and can be used in the <em>layersInfo</em> string. For more information about how blocks work, please refer to <a class="reference internal" href="layers.html#blocks"><span class="std std-ref">Blocks</span></a>.</p>
-</dd>
-<dt>modelFilePath<span class="classifier">str</span></dt><dd><p>The path to the model file used to load this model. Only set when the makeFromFile is used to create a model.</p>
-</dd>
-<dt>saveModelFileName<span class="classifier">str</span></dt><dd><p>The file name to use when saving the trained network information. A training session can be resumed using information in the saved file.</p>
+</p></li>
+<li><p><strong>blocks</strong> (<em>list</em>) – A list of Block objects or <em>blockInfo</em> strings that extend fireball’s predefined layers and can be used in the <em>layersInfo</em> string. For more information about how blocks work, please refer to <a class="reference internal" href="layers.html#blocks"><span class="std std-ref">Blocks</span></a>.</p></li>
+<li><p><strong>modelFilePath</strong> (<em>str</em>) – The path to the model file used to load this model. Only set when the makeFromFile is used to create a model.</p></li>
+<li><p><strong>saveModelFileName</strong> (<em>str</em>) – <p>The file name to use when saving the trained network information. A training session can be resumed using information in the saved file.</p>
 <p>If the “saveBest” argument is True, then this file name is also used to create another file that saves the network with best results so far during the training. If this argument is None, then the “savePeriod” and “saveBest” arguments are ignored and the network information is not saved during the training. If this argument is True, then the file name “SavedModel” will be used to save the training information.</p>
-</dd>
-<dt>savePeriod<span class="classifier">int</span></dt><dd><p>The number of epochs before saving the current training state. The training can be resumed using the files saved during the training.</p>
+</p></li>
+<li><p><strong>savePeriod</strong> (<em>int</em>) – <p>The number of epochs before saving the current training state. The training can be resumed using the files saved during the training.</p>
 <p>Ignored if “saveModelFileName” is None. If this is set to None or 0, then the trained network is saved only once at the end of training. In this case if the training is interrupted for any reason, the training restarts from the begining in the next session (all training info is lost).</p>
-</dd>
-<dt>saveBest<span class="classifier">Boolean</span></dt><dd><p>If true, the network with best results so far during the training will be saved in a separate file. This is useful when the network performance degrades as more training epochs are processed. Ignored if “saveModelFileName” is None.</p>
-</dd>
-<dt>gpus<span class="classifier">Number, List, or str</span></dt><dd><p>If this is a list, it should contain the integers specifying the GPU devices to be used. For example [0,3] means this class will use the “/gpu:0” and “/gpu:3” devices during the training and inference.</p>
+</p></li>
+<li><p><strong>saveBest</strong> (<em>Boolean</em>) – If true, the network with best results so far during the training will be saved in a separate file. This is useful when the network performance degrades as more training epochs are processed. Ignored if “saveModelFileName” is None.</p></li>
+<li><p><strong>gpus</strong> (<em>Number</em><em>, </em><em>List</em><em>, or </em><em>str</em>) – <p>If this is a list, it should contain the integers specifying the GPU devices to be used. For example [0,3] means this class will use the “/gpu:0” and “/gpu:3” devices during the training and inference.</p>
 <p>If this is a string, it can be “All” or “Half” which means use all or half of the detected gpu devices correspondingly. Or it can be a comma delimited list of gpu numbers for example: “1,3”.</p>
 <p>If this is an integer, that number would specify the only GPU device that will be used.</p>
 <p>If this is None, this class uses half of the detected GPUs. (Same as passing the “Half” string)</p>
 <p>Use [-1] to disable GPU usage and run on CPU.</p>
-</dd>
-<dt>netParams<span class="classifier">list</span></dt><dd><p>This parameter is only used internally when this constructor function is called from “makeFromFile”. It is a list of NetParam objects.</p>
-</dd>
-<dt>trainingState<span class="classifier">dict</span></dt><dd><p>This parameter is only used internally when this constructor function is called from “makeFromFile”. It contains the training state that can be used to resume an interrupted training session.</p>
+</p></li>
+<li><p><strong>netParams</strong> (<em>list</em>) – This parameter is only used internally when this constructor function is called from “makeFromFile”. It is a list of NetParam objects.</p></li>
+<li><p><strong>trainingState</strong> (<em>dict</em>) – This parameter is only used internally when this constructor function is called from “makeFromFile”. It contains the training state that can be used to resume an interrupted training session.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

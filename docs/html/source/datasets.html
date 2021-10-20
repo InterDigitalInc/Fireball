@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Datasets &mdash; Fireball 1.5.1 1.5.1 documentation</title>
+  <title>Datasets &mdash; Fireball 1.5.1 Documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -326,6 +326,7 @@ a list of what can be included in this dictionary.</p>
 <blockquote>
 <div><ul>
 <li><p><strong>maxSamples (int)</strong>: The max number of samples from this dataSet to be processed for the evaluation of the model. If not specified, all samples are used (default behavior).</p></li>
+<li><p><strong>sampleIndexes (list of ints)</strong>: A list of sample indexes from this dataset to be processed for the evaluation of the model. If not specified, all samples are used. (default behavior).</p></li>
 <li><p><strong>topK (int)</strong>: For classification cases, this indicates whether a “top-K” accuracy value should also be calculated. For example for ImageNet dataset classification, usually the top-5 accuracy value is used (topK=5) besides the top-1. If it is zero (default), the top-K error is not calculated. This is ignored for regression cases.</p></li>
 <li><p><strong>confMat (Boolean)</strong>: For classification cases, this indicates whether the confusion matrix should be calculated. If the number of classes is more than 10, this argument is ignored and confusion matrix is not calculated. This is ignored for regression cases.</p></li>
 <li><p><strong>expAcc (Boolean or None)</strong>: Ignored for regression cases. For classification cases:</p>
