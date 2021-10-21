@@ -326,6 +326,65 @@ class GlueDSet(BaseDSet):
         return repStr
 
     # ******************************************************************************************************************
+    @classmethod
+    def download(cls, taskName, dataFolder=None):
+        r"""
+        This class method can be called to download the GLUE dataset files.
+        
+        Parameters
+        ----------
+        taskName : str
+            The name of task for which the dataset files will be downloaded. If set to ``"All"`` the dataset
+            files for all GLUE tasks will be downloaded. Otherwise it should be one of the following:
+                * ``"CoLA"``: The Corpus of Linguistic Acceptability
+                * ``"SST-2"``: The Stanford Sentiment Treebank
+                * ``"MRPC"``: Microsoft Research Paraphrase Corpus
+                * ``"STS-B"``: Semantic Textual Similarity Benchmark
+                * ``"QQP"``: Quora Question Pairs
+                * ``"MNLI-M"``: MultiNLI Matched
+                * ``"MNLI-MM"``: MultiNLI Mismatched
+                * ``"QNLI"``: Question NLI
+                * ``"RTE"``: Recognizing Textual Entailment
+                * ``"WNLI"``: Winograd NLI
+                * ``"SNLI"``: Stanford NLI Corpus
+                * ``"AX"``: Auxiliary Task (GLUE Diagnostic Dataset)
+
+        dataFolder: str
+            The folder where dataset files are saved. If this is not provided, then
+            a folder named "data" is created in the home directory of the current user and the
+            dataset folders and files are created there. In other words, the default data folder
+            is ``~/data``
+        """
+        taskLo = taskName.lower()
+        if taskLo == 'cola':        files = ['https://dl.fbaipublicfiles.com/glue/data/CoLA.zip']
+        elif taskLo == 'sst-2':     files = ['https://dl.fbaipublicfiles.com/glue/data/SST-2.zip']
+        elif taskLo == 'mrpc':      files = ['MRPC.zip']
+        elif taskLo == 'sts-b':     files = ['https://dl.fbaipublicfiles.com/glue/data/STS-B.zip']
+        elif taskLo == 'qqp':       files = ['QQP.zip']
+        elif taskLo in ['mnli','mnli-m', 'mnli-mm']: files = ['https://dl.fbaipublicfiles.com/glue/data/MNLI.zip']
+        elif taskLo == 'qnli':      files = ['QNLI.zip']
+        elif taskLo == 'rte':       files = ['https://dl.fbaipublicfiles.com/glue/data/RTE.zip']
+        elif taskLo == 'wnli':      files = ['https://dl.fbaipublicfiles.com/glue/data/WNLI.zip']
+        elif taskLo == 'snli':      files = ['SNLI.zip']
+        elif taskLo == 'ax':        files = ['diagnostic.zip']
+        elif taskLo == 'all':
+            files = ['https://dl.fbaipublicfiles.com/glue/data/CoLA.zip',
+                     'https://dl.fbaipublicfiles.com/glue/data/SST-2.zip',
+                     'MRPC.zip',
+                     'https://dl.fbaipublicfiles.com/glue/data/STS-B.zip',
+                     'QQP.zip',
+                     'https://dl.fbaipublicfiles.com/glue/data/MNLI.zip',
+                     'QNLI.zip',
+                     'https://dl.fbaipublicfiles.com/glue/data/RTE.zip',
+                     'https://dl.fbaipublicfiles.com/glue/data/WNLI.zip',
+                     'SNLI.zip',
+                     'diagnostic.zip']
+        else:
+            raise ValueError("Unsupported Task \"%s\"!"%(self.taskName))
+        files += ['vocab.txt']
+        BaseDSet.download("GLUE", files, dataFolder)
+
+    # ******************************************************************************************************************
     def loadSamples(self):
         r"""
         This function is called by the constructor of :py:class:`BaseDSet` to load the samples and labels of this dataset based on `taskName`, `dsName`, and `dataPath`.

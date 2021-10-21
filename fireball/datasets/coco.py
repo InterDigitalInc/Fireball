@@ -177,15 +177,15 @@ class CocoDSet(BaseDSet):
     @classmethod
     def download(cls, dataFolder=None):
         r"""
-        This class method can be called to download the COCO dataset files from their original
-        source or a Fireball online repository.
+        This class method can be called to download the COCO dataset files.
         
         Parameters
         ----------
         dataFolder: str
             The folder where dataset files are saved. If this is not provided, then
             a folder named "data" is created in the home directory of the current user and the
-            dataset folders and files are created there.
+            dataset folders and files are created there. In other words, the default data folder
+            is ``~/data``
         """
         files = ['annotations.zip',
                  'http://images.cocodataset.org/zips/train2014.zip',

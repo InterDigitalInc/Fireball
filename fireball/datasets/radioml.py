@@ -185,7 +185,8 @@ class RadioMlDSet(BaseDSet):
         dataFolder: str
             The folder where dataset files are saved. If this is not provided, then
             a folder named "data" is created in the home directory of the current user and the
-            dataset folders and files are created there.
+            dataset folders and files are created there. In other words, the default data folder
+            is ``~/data``
         """
         
         BaseDSet.download("RadioML", ['RML2016_10b.zip'], dataFolder)

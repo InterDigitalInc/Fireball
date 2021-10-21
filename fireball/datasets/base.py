@@ -1131,6 +1131,7 @@ class BaseDSet:
             a folder named "data" is created in the home directory of the current user and the
             dataset folders and files are created there.
         """
+        def isOrgSource(file): return (file[:7].lower()=='http://') or (file[:8].lower()=='https://')
         if destDataFolder is None: destDataFolder = os.path.expanduser("~")+'/data'
 
         if destDataFolder[-1] != '/':   destDataFolder+='/' # Example: /data/ or /home/shahab/data/
@@ -1145,7 +1146,7 @@ class BaseDSet:
         alreadyDownloaded = set()
         for file in files:
             # Examples for file: 'http://images.cocodataset.org/zips/val2017.zip' or 'train2014.zip'
-            if file[:7].lower()!='http://':                     continue
+            if not isOrgSource(file):                           continue
             destFileName = file[file.rfind('/')+1:]             # Example: val2017.zip
             destFilePath = destFolder + destFileName            # Example:  /data/mscoco/val2017.zip
             dotExt = file[file.rfind('.'):]                     # Example:  .zip
@@ -1177,7 +1178,7 @@ class BaseDSet:
         for location in locInfo['dsetLocations']:
             if location[-1] != '/': location+='/'
             for file in files:
-                destFileName = file[file.rfind('/')+1:] if file[:7].lower()=='http://' else file  # Example: val2017.zip
+                destFileName = file[file.rfind('/')+1:] if isOrgSource(file) else file  # Example: val2017.zip
                 if destFileName in alreadyDownloaded: continue
                 
                 fileUrl = location + folderName + destFileName
