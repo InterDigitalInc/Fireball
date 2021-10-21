@@ -635,13 +635,13 @@ Use the <code class="docutils literal notranslate"><span class="pre">MnistDSetUn
 <dl class="py method">
 <dt class="sig sig-object py" id="fireball.datasets.mnist.MnistDSet.download">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.mnist.MnistDSet.download" title="Permalink to this definition"></a></dt>
-<dd><p>This class method can be called to download the MNIST dataset files from a
-Fireball online repository.</p>
+<dd><p>This class method can be called to download the MNIST dataset files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
-dataset folders and files are created there.</p>
+dataset folders and files are created there. In other words, the default data folder
+is <code class="docutils literal notranslate"><span class="pre">~/data</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -816,7 +816,8 @@ online repository.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
-dataset folders and files are created there.</p>
+dataset folders and files are created there. In other words, the default data folder
+is <code class="docutils literal notranslate"><span class="pre">~/data</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1005,7 +1006,8 @@ Tuning and Test datasets are downloaded. All image files have already been resiz
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
-dataset folders and files are created there.</p>
+dataset folders and files are created there. In other words, the default data folder
+is <code class="docutils literal notranslate"><span class="pre">~/data</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1323,13 +1325,13 @@ The default value of .1 results in creating a new dataset with %10 of the traini
 <dl class="py method">
 <dt class="sig sig-object py" id="fireball.datasets.coco.CocoDSet.download">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.download" title="Permalink to this definition"></a></dt>
-<dd><p>This class method can be called to download the COCO dataset files from their original
-source or a Fireball online repository.</p>
+<dd><p>This class method can be called to download the COCO dataset files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
-dataset folders and files are created there.</p>
+dataset folders and files are created there. In other words, the default data folder
+is <code class="docutils literal notranslate"><span class="pre">~/data</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2122,13 +2124,13 @@ Use the <code class="docutils literal notranslate"><span class="pre">SquadDSetUn
 <dl class="py method">
 <dt class="sig sig-object py" id="fireball.datasets.squad.SquadDSet.download">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.squad.SquadDSet.download" title="Permalink to this definition"></a></dt>
-<dd><p>This class method can be called to download the SQuAD dataset files from a Fireball
-online repository.</p>
+<dd><p>This class method can be called to download the SQuAD dataset files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
-dataset folders and files are created there.</p>
+dataset folders and files are created there. In other words, the default data folder
+is <code class="docutils literal notranslate"><span class="pre">~/data</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2918,6 +2920,41 @@ a list of what can be included in this dictionary.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="fireball.datasets.glue.GlueDSet.download">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taskName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.glue.GlueDSet.download" title="Permalink to this definition"></a></dt>
+<dd><p>This class method can be called to download the GLUE dataset files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>taskName</strong> (<em>str</em>) – <p>The name of task for which the dataset files will be downloaded. If set to <code class="docutils literal notranslate"><span class="pre">&quot;All&quot;</span></code> the dataset
+files for all GLUE tasks will be downloaded. Otherwise it should be one of the following:</p>
+<blockquote>
+<div><ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;CoLA&quot;</span></code>: The Corpus of Linguistic Acceptability</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;SST-2&quot;</span></code>: The Stanford Sentiment Treebank</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;MRPC&quot;</span></code>: Microsoft Research Paraphrase Corpus</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;STS-B&quot;</span></code>: Semantic Textual Similarity Benchmark</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;QQP&quot;</span></code>: Quora Question Pairs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;MNLI-M&quot;</span></code>: MultiNLI Matched</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;MNLI-MM&quot;</span></code>: MultiNLI Mismatched</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;QNLI&quot;</span></code>: Question NLI</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;RTE&quot;</span></code>: Recognizing Textual Entailment</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;WNLI&quot;</span></code>: Winograd NLI</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;SNLI&quot;</span></code>: Stanford NLI Corpus</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;AX&quot;</span></code>: Auxiliary Task (GLUE Diagnostic Dataset)</p></li>
+</ul>
+</div></blockquote>
+</p></li>
+<li><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
+a folder named “data” is created in the home directory of the current user and the
+dataset folders and files are created there. In other words, the default data folder
+is <code class="docutils literal notranslate"><span class="pre">~/data</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="fireball.datasets.glue.GlueDSet.makeDatasets">
 <em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">makeDatasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taskName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dsNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train,Dev,Test'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.glue.GlueDSet.makeDatasets" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates several datasets in one-shot as specified by <cite>dsNames</cite> parameter.</p>
@@ -3171,7 +3208,8 @@ online repository.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
-dataset folders and files are created there.</p>
+dataset folders and files are created there. In other words, the default data folder
+is <code class="docutils literal notranslate"><span class="pre">~/data</span></code></p>
 </dd>
 </dl>
 </dd></dl>
