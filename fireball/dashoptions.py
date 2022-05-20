@@ -9,6 +9,7 @@ This file contains the implementation for "DashOption" utility class for handlin
 # 11/17/2016    Shahab Hamidi-Rad       First version of the file.
 # 12/14/2016    Shahab                  Added support for automatic handling of new
 #                                       lines in the description of the options.
+# 05/12/2022                            Added the new "contains" method.
 # **********************************************************************************************************************
 import sys
 
@@ -153,6 +154,10 @@ class DashOptions:
         else:                   self.optionals[ optionName ] = newOption
         self.optionNames.append( optionName )
 
+    # ************************************************************************************************
+    def contains(self, optionName):
+        return (optionName in self.optionNames)
+        
     # ************************************************************************************************
     def get(self, optionName):
         if optionName in self.requireds:    return self.requireds[ optionName ].value

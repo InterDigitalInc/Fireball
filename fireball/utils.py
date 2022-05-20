@@ -113,3 +113,37 @@ def getCurrentGpus(returnHalfGpus=False):
         return [-1]
 
     return gpus
+
+# **********************************************************************************************************************
+def printVersionInfo():
+    """
+    printVersionInfo
+    This is function prints version information about Fireball, python, and some of the main packages used by Fireball.
+    """
+    from . import __version__
+    import tensorflow as tf
+    import sys
+    print("Fireball Version:        %s"%(__version__))
+    print("Python Version:          %s"%(sys.version))
+    print("TensorFlow Version:      %s"%(tf.__version__))
+    print("Numpy Version:           %s"%(np.__version__))
+    try:
+        import onnx
+        print("ONNX Version:            %s"%(onnx.__version__))
+    except:
+        pass
+    try:
+        import onnxruntime
+        print("ONNX Runtime Version:    %s"%(onnxruntime.__version__))
+    except:
+        pass
+    try:
+        import coremltools
+        print("CoreML Version:          %s"%(coremltools.__version__))
+    except:
+        pass
+    try:
+        import cv2
+        print("OpenCV Version:          %s"%(cv2.__version__))
+    except:
+        pass

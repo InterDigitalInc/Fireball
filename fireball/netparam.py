@@ -8,6 +8,8 @@ This file contains the implementation for NetParam object.
 # ------------  --------------------    -----------------------------------------------------------------------------
 # 02/04/2021    Shahab Hamidi-Rad       Created the file. Moved the original implementation from the "layers.py" file
 #                                       to this file.
+# 05/12/2022    Shahab                  Adding support for calculating and maintaining the number of bytes for NetParam
+#                                       objects.
 # **********************************************************************************************************************
 import numpy as np
 import time
@@ -28,7 +30,7 @@ def pruneWorker(netParam, mseUb):       return netParam.prune(mseUb)
 class NetParam:
     # NetParam encapsulates a single network parameter.
     # A NetParam can be operate in 2 different modes:
-    #   Mode TF: Tensorflow parameter (For example when used in a tensorflow graph for training or inference)
+    #   Mode TF: TensorFlow parameter (For example when used in a TensorFlow graph for training or inference)
     #   Mode NP: Numpy parameter (For example when saving/loading to files)
     # Regardless of the mode, a NetParam can also be:
     #   Quantized: In this case codebook is not None
@@ -80,7 +82,12 @@ class NetParam:
             if codebook is not None:        self.numBytesRam += 4*len(self.codebook)
             if self.bitMask is not None:    self.numBytesRam += self.numParams
             self.numBytesRam += 4       # Additional overhead for shape and flags
-            
+
+            # numBytes is used for compression optimization purposes
+            self.numBytes = self.numParams * bytesPerVal
+            if codebook is not None:        self.numBytes += 4*len(self.codebook)
+            if self.bitMask is not None:    self.numBytes += 4*int(np.ceil(self.size/32.0))
+
             self.numBytesDisk = self.numParams * bytesPerVal
             if codebook is not None:        self.numBytesDisk += 4*len(self.codebook)
             if self.bitMask is not None:
@@ -138,7 +145,8 @@ class NetParam:
             retStr += '\n    %s: %s'%('codebookSize', str(self.codebookSize))
         retStr += '\n    %s: %s'%('numBytesRam', str(self.numBytesRam))
         retStr += '\n    %s: %s'%('numBytesDisk', str(self.numBytesDisk))
-        
+        retStr += '\n    %s: %s'%('numBytes', str(self.numBytes))
+
         retStr += '\n    %s: %s'%('rawVal', 'x'.join(str(x) for x in self.rawVal.shape) + (" (%s)"%str(self.rawVal.dtype)))
         if self.bitMask is not None:
             retStr += '\n    %s: %s'%('bitMask', 'x'.join(str(x) for x in self.bitMask.shape) + (" (%s)"%str(self.bitMask.dtype)))
@@ -155,6 +163,7 @@ class NetParam:
             self.numParams = npNetParam.numParams
             self.numBytesRam = npNetParam.numBytesRam
             self.numBytesDisk = npNetParam.numBytesDisk
+            self.numBytes = npNetParam.numBytes
             self.initialized = True
         else:
             # This is when the parameter is made from scratch (Randomly or constant)
@@ -169,7 +178,8 @@ class NetParam:
             self.numParams = self.size
             self.numBytesRam = self.size * 4
             self.numBytesDisk = self.size * 4
-
+            self.numBytes = self.size * 4
+            
     # ******************************************************************************************************************
     def packMasks(self):
         flatMask = self.bitMask.flatten()
@@ -379,8 +389,8 @@ class NetParam:
                         if verbose: myPrint('Not pruned! (No Reduction - numPruned=%d)'%(prunedNetParam.numPruned))
                         prunedNetParam = None
                     elif minReductionPercent is not None:
-                        newNumBytes = prunedNetParam.numBytesDisk
-                        orgNumBytes = netParam.numBytesDisk
+                        newNumBytes = prunedNetParam.numBytes
+                        orgNumBytes = netParam.numBytes
                         reductionPercent = (orgNumBytes-newNumBytes)*100.0/orgNumBytes
                         if reductionPercent < minReductionPercent:
                             if verbose: myPrint('Not pruned! (Small Reduction. %.1f%% < %d%%)'%(reductionPercent,
@@ -420,8 +430,8 @@ class NetParam:
                 else:                       prunedNetParam = None
                 if prunedNetParam is not None:
                     if minReductionPercent is not None:
-                        newNumBytes = prunedNetParam.numBytesDisk
-                        orgNumBytes = netParam.numBytesDisk
+                        newNumBytes = prunedNetParam.numBytes
+                        orgNumBytes = netParam.numBytes
                         reductionPercent = (orgNumBytes-newNumBytes)*100.0/orgNumBytes
                         if reductionPercent < minReductionPercent:
                             prunedNetParam = None

@@ -14,44 +14,16 @@ Fireball is a Deep Neural Network (DNN) library for creating, training, evaluati
 - Export the models to ONNX, Tensorflow, or CoreML even after applying low-rank decomposition, pruning, and/or quantization.
 
 ## Fireball Documentation
-* [Documentation Home](https://interdigitalinc.github.io/Fireball/html/)
 * [Installation](https://interdigitalinc.github.io/Fireball/html//source/installation.html)
+* [Documentation Home](https://interdigitalinc.github.io/Fireball/html/)
 * [Fireball Layers](https://interdigitalinc.github.io/Fireball/html//source/layers.html)
 * [Fireball API](https://interdigitalinc.github.io/Fireball/html//source/model.html)
-
-## Installing Fireball
-***Note***: Fireball currently works with python 3.6 and 3.7 and uses Tensorflow 1.14. Support for newer python and tensorflow versions are comming soon.
-1. Create a virtual environment:
-```
-python3 -m venv ve
-source ve/bin/activate
-pip install --upgrade pip
-pip install --upgrade setuptools
-```
-2. Install Fireball:
-
-Use this for GPU machines
-```
-cd Fireball
-pip install dist/fireball-1.5.1-0.GPU-py3-none-any.whl
-```
-or for machines with no GPUs:
-```
-cd Fireball
-pip install dist/fireball-1.5.1-0.NoGPU-py3-none-any.whl
-```
 
 ## Playgrounds
 The Playgrounds folder contains a set of tutorials explaining how to use Fireball for some common deep learning models such as object detection and NLP tasks.
 
 [Getting started with Fireball Playgrounds](Playgrounds/README.md)
 
-## Creating Dist Files after modifications
-From the root of this repo, issue one of the following commands (for **GPU** and **Non-GPU** installations correspondingly):
-```
-python3 setup.py bdist_wheel --build-number=0.GPU
-python3 setup.py bdist_wheel --build-number=0.NoGPU
-```
 ## Authors
 
 * Shahab Hamidi-Rad, InterDigital AI Lab.

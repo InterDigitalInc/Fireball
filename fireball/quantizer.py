@@ -133,7 +133,7 @@ def getEntropy(indexes, orgCounts=None, fast=False):
 
         indexesList = indexes.flatten().tolist()
         for idx in indexesList:
-            p = np.float(counts[idx])/countSum      # Probability of idx
+            p = np.float32(counts[idx])/countSum      # Probability of idx
             entropy += -np.log2(p)                  # Entropy: Low prob. => less number of bits
             counts[idx] += adaptive
             countSum += adaptive
@@ -259,7 +259,7 @@ def quantizeCodebook(dataArray, symCount, **kwargs):
         codebookSize = len(centers)
         assert codebookSize==symCount, \
                "codebookSize (%d) must be equal to original symCount (%d) when \
-               'reuseEmptyClusters' is True!"(codebookSize,symCount)
+               'reuseEmptyClusters' is True!"%(codebookSize,symCount)
 
     if trainedQuantization:
         return np.uint32(indexes), np.float32(codebook), memCounts, getMse(dataArray, codebook[indexes])

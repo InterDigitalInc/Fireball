@@ -16,6 +16,10 @@ function "Layers::__init__" below.
 #                                       Also added support for ONNX export (See the buildOnnx functions).
 #                                       Support for export to CoreML was also updated. Now the buildCml functions
 #                                       handle the CoreML export functionality for each type of layer.
+# 05/12/2022    Shahab                  Added support for Leaky ReLU.
+#                                       For Low-Rank Decomposition, we now cashe the SVD results.
+#                                       Added the RS post activation for Reshape.
+#                                       Added the "getNumBytes" and "Prune" methods to the layer classes.
 # **********************************************************************************************************************
 import numpy as np
 
@@ -566,6 +570,7 @@ class Layer(object):
                         'sig': (tf.nn.sigmoid, 'Sigmoid', 4),
                         'soft': (tf.nn.softmax, 'Softmax', 5),
                         'gelu': (gelu, 'GELU', 6),
+                        'lrelu': (tf.nn.leaky_relu, 'LReLU', 7),
                      }
     name = "UNKNOWN"
     def __init__(self, layers, layerIndex, scope, argsInfo, actStr, parent):
@@ -596,6 +601,8 @@ class Layer(object):
         self.layerOuts = {'training':[], 'inference':[]}
         self.l2Loss = None
         
+        self.cachedSvd = None   # Used to prevent running SVD again and again when using Low-Rank Decomposition
+
         self.netParams = None
         argVals = {argName: argDefault for argName,_,argDefault in self.argsDic.values() }
         self.updateArgVals(argVals, argsInfo)
@@ -776,6 +783,10 @@ class Layer(object):
         return NetParam.toNpValues(self.netParams, self.model.session)
 
     # ******************************************************************************************************************
+    def getNumBytes(self):
+        return sum(netParam.numBytes for netParam in self.netParams)
+
+    # ******************************************************************************************************************
     def getNpParams(self):
         return NetParam.toNp(self.netParams, self.model.session)
 
@@ -946,7 +957,7 @@ class Layer(object):
             outputName = inputName
             
         else:
-            raise NotImplementedError("'%s' Activation not implemented!"%(self.activation))
+            raise NotImplementedError("'%s' Activation not implemented for ONNX export!"%(self.activation))
         
         return outputName
 
@@ -976,7 +987,7 @@ class Layer(object):
         elif self.activation == 'none':
             outputName = inputName
         else:
-            raise NotImplementedError("'%s' Activation not implemented!"%(self.activation))
+            raise NotImplementedError("'%s' Activation not implemented for CoreML export!"%(self.activation))
         
         return outputName
 
@@ -995,13 +1006,16 @@ class Layer(object):
         if self.activation != 'none':
             tfName = Layer.activationInfo[self.activation][1]
             actFuncName = { 'relu': 'tf.nn.relu', 'selu': 'tf.nn.selu', 'tanh': 'tf.nn.tanh', 'sig': 'tf.nn.sigmoid',
-                            'soft': 'tf.nn.softmax', 'gelu': 'gelu' }
+                            'soft': 'tf.nn.softmax', 'gelu': 'gelu', 'lrelu': 'tf.nn.leaky_relu' }
             tfBuilder.addToGraph("out = %s(out, name='%s')"%(actFuncName[self.activation], tfName))
 
     # ******************************************************************************************************************
     def buildPostActivation(self, outputs, isTraining):
         for p, pa in enumerate(self.postActivations):
-            if pa.name in ['MP','AP']:
+            if pa.name == 'RS':
+                outputs += [ tf.reshape(outputs[-1], [-1] + pa.shape) ]
+
+            elif pa.name in ['MP','AP']:
                 kernelX, kernelY = pa.kernel
                 strideX, strideY = pa.stride
                 poolFunc = tf.nn.max_pool2d if pa.name=='MP' else tf.nn.avg_pool
@@ -1120,7 +1134,11 @@ class Layer(object):
         outputName = inputName
         for p, pa in enumerate(self.postActivations):
             s = self.deepScope(pa.name)
-            if pa.name in ['MP','AP']:
+            if pa.name == 'RS':
+                outputName = onnxBuilder.addReshape(inputName, [-1] + pa.shape)
+                inputName = outputName
+                
+            elif pa.name in ['MP','AP']:
                 kernelX, kernelY = pa.kernel
                 strideX, strideY = pa.stride
                 
@@ -1183,7 +1201,12 @@ class Layer(object):
     def buildCmlPostActivation(self, cmlBuilder, inputName):
         for p, pa in enumerate(self.postActivations):
             s = self.deepScope(pa.name)
-            if pa.name in ['MP','AP']:
+            if pa.name == 'RS':
+                outputName = s[:-1]
+                cmlBuilder.add_reshape(outputName, inputName, outputName, tuple(pa.shape), mode=0)
+                inputName = outputName
+                
+            elif pa.name in ['MP','AP']:
                 outputName = s[:-1]
                 kernelX, kernelY = pa.kernel
                 strideX, strideY = pa.stride
@@ -1251,7 +1274,10 @@ class Layer(object):
     # ******************************************************************************************************************
     def buildTfPostActivation(self, tfBuilder):
         for p, pa in enumerate(self.postActivations):
-            if pa.name in ['MP','AP']:
+            if pa.name=='RS':
+                tfBuilder.addToGraph("out = tf.reshape(out, [-1, %s])"%(', '.join(str(x) for x in pa.shape)))
+
+            elif pa.name in ['MP','AP']:
                 kernelX, kernelY = pa.kernel
                 strideX, strideY = pa.stride
                 poolFunc = 'tf.nn.max_pool2d' if pa.name=='MP' else 'tf.nn.avg_pool'
@@ -1306,8 +1332,12 @@ class Layer(object):
 
     # ******************************************************************************************************************
     def decomposeMatrix(self, w, rankInfo):
-        u, s, vT = np.linalg.svd(w, full_matrices=True)
-            
+        if self.cachedSvd is None:
+            u, s, vT = np.linalg.svd(w, full_matrices=True)
+            self.cachedSvd = (u, s, vT)
+        else:
+            u, s, vT = self.cachedSvd
+
         def getGH(r):
             ssr = np.sqrt(s[:r])
             return u[:,:r]*ssr, np.diag(ssr).dot(vT[:r,:])
@@ -1368,6 +1398,48 @@ class Layer(object):
         mse = np.square(g.dot(h)-w).mean()
         
         return rank, g, h, mse
+
+    # ******************************************************************************************************************
+    def prune(self, mseUB):
+        prunedNetParams = []
+        infoStrs = ''
+        orgBytes = self.getNumBytes()
+        prunedBytes = 0
+        numPrunedNetParam = 0
+        
+        assert (self.name in ['EMB', 'FC', 'CONV', 'DWCN']), "%s: Cannot prune '%s' layers!"%(self.scope, self.name)
+
+        netParams = self.getNpParams()
+        if self.name == 'EMB':
+            # For this case we have w, t, and p. only is prune w (it may or may not be decomposed)
+            netParams = netParams[0:2] if self.isDecomposed() else netParams[0:1]
+
+        for netParam in netParams:
+            newNetParam = None
+            if (netParam.codebook is None) and (netParam.bitMask is None) and (netParam.dim > 1):
+                numPrunedNetParam += 1
+                newNetParam, mse, nzmav = netParam.prune(mseUB)  # nzmav: Non-Zero Min Absolute Value
+                if newNetParam is not None:
+                    if newNetParam.numPruned < int(np.ceil(netParam.size/32.0)):
+                        newNetParam = None
+            
+            if newNetParam is None:
+                prunedNetParams += [ netParam ]
+                prunedBytes += netParam.numBytes
+            else:
+                prunedNetParams += [ newNetParam ]
+                prunedBytes += newNetParam.numBytes
+
+        if orgBytes == prunedBytes:
+            infoStr = '%s => Cannot prune!'%(self.scope)
+        elif numPrunedNetParam == 1:
+            changeStr = 'Reduction: %.1f%%'%((orgBytes-prunedBytes)*100.0/orgBytes)
+            infoStr = '%s => nzmav=%f, MSE=%f, Bytes: %d->%d (%s)'%(self.scope, nzmav, mse, orgBytes, prunedBytes, changeStr)
+        else:
+            changeStr = 'Reduction: %.1f%%'%((orgBytes-prunedBytes)*100.0/orgNumParams)
+            infoStr = '%s => Multiple Params, Bytes: %d->%d (%s)'%(self.scope, orgBytes, prunedBytes, changeStr)
+
+        return prunedNetParams, prunedBytes, infoStr
 
     # ******************************************************************************************************************
     def decompose(self, session, decInfo, decomposeDWCN=True):
@@ -1787,6 +1859,10 @@ class TensorInLayer(Layer):
     # ******************************************************************************************************************
     def getOutShape(self, inShape):
         self.inShape = self.outShape = self.shape
+        
+        for pa in self.postActivations:
+            self.outShape = pa.getOutShape( self.outShape )
+
         return self.outShape
     
     # ******************************************************************************************************************
@@ -1799,9 +1875,12 @@ class TensorInLayer(Layer):
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
         # input is a tuple (of placeholders) with one tensor.
+        outputs = [ input[0] ]
+        self.buildPostActivation(outputs, isTraining)  # Sometimes we want to reshape the input tensors
+
         outKey = 'training' if isTraining else 'inference'
-        self.layerOuts[outKey] = [ input[0] ]
-        return input[0], None
+        self.layerOuts[outKey] = outputs
+        return outputs[-1], None
 
     # ******************************************************************************************************************
     def buildOnnx(self, onnxBuilder, inputName):
@@ -3295,7 +3374,7 @@ class BnLayer(Layer):
         moments = None
         with tf.name_scope(self.scope):
             if isTraining:
-                batchMean, batchVar = tf.nn.moments(input, [0,1,2], keep_dims=False, name='BatchMeanAndVar')
+                batchMean, batchVar = tf.nn.moments(input, [0,1,2], keepdims=False, name='BatchMeanAndVar')
                 outputs += [ tf.nn.batch_normalization(input, batchMean, batchVar, self.beta, self.gamma,
                                                        self.epsilon, name='BatchNorm') ]
                 moments = [ (batchMean, self.movingMean), (batchVar, self.movingVar) ]
@@ -3360,7 +3439,7 @@ class BnLayer(Layer):
                                  "    movingVar = self.makeVariable('MovingVar', shape, 1, trainable=False)",
                                  "",
                                  "    if isTraining:",
-                                 "        batchMean, batchVar = tf.nn.moments(layerIn, [0,1,2], keep_dims=False, name='BatchMeanAndVar')",
+                                 "        batchMean, batchVar = tf.nn.moments(layerIn, [0,1,2], keepdims=False, name='BatchMeanAndVar')",
                                  "        out = tf.nn.batch_normalization(layerIn, batchMean, batchVar, beta, gamma, epsilon, name='BatchNorm')",
                                  "        moments = [ (batchMean, movingMean), (batchVar, movingVar) ]",
                                  "    else:",
@@ -3433,7 +3512,7 @@ class LnLayer(Layer):
         outputs = []
         moments = None
         with tf.name_scope(self.scope):
-            mean, variance = tf.nn.moments(input, [-1], keep_dims=True, name='MeanAndVar')
+            mean, variance = tf.nn.moments(input, [-1], keepdims=True, name='MeanAndVar')
             outputs += [ tf.nn.batch_normalization(input, mean, variance, self.beta, self.gamma,
                                                    self.epsilon, name='LayerNorm') ]
 
@@ -3499,7 +3578,7 @@ class LnLayer(Layer):
                                  "    beta = self.makeVariable('Beta', shape, 0)",
                                  "    gamma = self.makeVariable('Gamma', shape, 1)",
                                  "",
-                                 "    mean, variance = tf.nn.moments(layerIn, [-1], keep_dims=True, name='MeanAndVar')",
+                                 "    mean, variance = tf.nn.moments(layerIn, [-1], keepdims=True, name='MeanAndVar')",
                                  "    return tf.nn.batch_normalization(layerIn, mean, variance, beta, gamma, epsilon, name='LayerNorm')",
                                  ""))
         
@@ -3945,6 +4024,29 @@ class BertLayer(Layer):
         tfBuilder.graphIndent -= 1
 
     # ******************************************************************************************************************
+    def prune(self, mseUB):
+        prunedNetParams = []
+        infoStrs = ''
+        orgBytes = self.getNumBytes()
+        prunedBytes = 0
+
+        for layer in [self.queryFc, self.keyFc, self.valueFc, self.selfFc, self.selfLn, self.intermediateFc, self.outFc, self.outLn]:
+            if layer.name != 'FC':
+                prunedNetParams += layer.getNpParams()
+                prunedBytes += layer.getNumBytes()
+                continue
+            
+            newNetParams, layerPrunedBytes, infoStr = layer.prune(mseUB)
+
+            infoStrs += '    ' + infoStr + '\n'
+            prunedNetParams += newNetParams
+            prunedBytes += layerPrunedBytes
+
+        if orgBytes == prunedBytes: infoStr = '%s => Cannot prune!'%(self.scope)
+        else:                       infoStrs = self.scope + '\n' + infoStrs[:-1]
+        return prunedNetParams, prunedBytes, infoStrs
+
+    # ******************************************************************************************************************
     def decompose(self, session, decInfo, decomposeDWCN=True):
         newBertParams = []
         numNewParams = 0
@@ -4252,6 +4354,38 @@ class AggregateFeatureMaps(Layer):
                               "tfBoxes = tf.reshape( tf.concat(boxes, axis=1), [-1, %d, 4] )"%(totalBoxes),
                               ""))
         tfBuilder.graphIndent -= 1
+
+    # ******************************************************************************************************************
+    def prune(self, mseUB):
+        prunedNetParams = []
+        infoStrs = ''
+        orgBytes = self.getNumBytes()
+        prunedBytes = 0
+
+        for f, (pa, fm) in enumerate(self.layers.paFms):
+            if self.classLayers[f].name in ['FC', 'CONV', 'DWCN']:
+                newNetParams, layerPrunedBytes, infoStr = self.classLayers[f].prune(mseUB)
+                
+                prunedNetParams += newNetParams
+                prunedBytes += layerPrunedBytes
+                infoStrs += '    ' + infoStr + '\n'
+            else:
+                prunedNetParams += self.classLayers[f].getNpParams()
+                prunedBytes += self.classLayers[f].getNumBytes()
+
+            if self.boxLayers[f].name in ['FC', 'CONV', 'DWCN']:
+                newNetParams, layerPrunedBytes, infoStr = self.boxLayers[f].prune(mseUB)
+                
+                prunedNetParams += newNetParams
+                prunedBytes += layerPrunedBytes
+                infoStrs += '    ' + infoStr + '\n'
+            else:
+                prunedNetParams += self.boxLayers[f].getNpParams()
+                prunedBytes += self.boxLayers[f].getNumBytes()
+
+        if orgBytes == prunedBytes: infoStr = '%s => Cannot prune!'%(self.scope)
+        else:                       infoStrs = self.scope + '\n' + infoStrs[:-1]
+        return prunedNetParams, prunedBytes, infoStrs
 
     # ******************************************************************************************************************
     def decompose(self, session, decInfo, decomposeDWCN=True):
@@ -5232,6 +5366,27 @@ class PostActivation(object):
         return byteList
 
 # **********************************************************************************************************************
+class PaReshape(PostActivation):
+    argsDic = {
+                's': ('shape', 'u*?', None)
+              }
+    orderedKeys = 's'
+    name = 'RS'
+    # ******************************************************************************************************************
+    def __init__(self, layer, argsInfo):
+        super().__init__(layer, argsInfo)
+
+    # ******************************************************************************************************************
+    def getOutShape(self, inShape ):
+        if np.prod(inShape) != np.prod(self.shape):
+            raise ValueError( "Input shape (%s) does not match the specified shape (%s) for RS!"%(str(inShape),str(self.shape)) )
+        return self.shape
+
+    # ******************************************************************************************************************
+    def getShortDesc(self):
+        return 'RS: %s'%("x".join(str(x) for x in self.shape))
+
+# **********************************************************************************************************************
 class PaMaxPool(PostActivation):
     argsDic = {
                 'k': ('kernel', 'uxu', None),
@@ -5571,6 +5726,7 @@ PostActivation.paClasses = {
     'sel':  (PaSelect, 11),
     'wsum':  (PaWeightedSum, 12),
     'tup':  (PaTupple, 13),
+    'rs': (PaReshape, 14)
 }
 
 # **********************************************************************************************************************
@@ -5799,6 +5955,43 @@ class BlockInstance(Layer):
         pathLayersStrs = [ 'ID' if p[0] is None else Layers.getLayersStr(p) for p in self.pathsLayers ]
         blockStrs += [ ';'.join(pathLayersStrs) ]
         return '|'.join(blockStrs)
+
+    # ******************************************************************************************************************
+    def getNumBytes(self):
+        numBytes = 0
+        for pathLayers in self.pathsLayers:
+            for layer in pathLayers:
+                if layer is None: continue
+                numBytes += layer.getNumBytes()
+        return numBytes
+       
+    # ******************************************************************************************************************
+    def prune(self, mseUB):
+        prunedNetParams = []
+        infoStrs = ''
+        orgBytes = self.getNumBytes()
+        prunedBytes = 0
+
+        totalPrunedParams = 0
+        for pathLayers in self.pathsLayers:
+            for layer in pathLayers:
+                if layer is None: continue
+                
+                if layer.name in ['FC', 'CONV', 'DWCN']:
+                    newNetParams, layerPrunedBytes, infoStr = layer.prune(mseUB)
+                    
+                    prunedNetParams += newNetParams
+                    prunedBytes += layerPrunedBytes
+                    infoStrs += '    ' + infoStr + '\n'
+                    continue
+                        
+                prunedNetParams += layer.getNpParams()
+                prunedBytes += layer.getNumBytes()
+
+
+        if orgBytes == prunedBytes: infoStr = '%s => Cannot prune!'%(self.scope)
+        else:                       infoStrs = self.scope + '\n' + infoStrs[:-1]
+        return prunedNetParams, prunedBytes, infoStrs
 
     # ******************************************************************************************************************
     def decompose(self, session, decInfo, decomposeDWCN=True):

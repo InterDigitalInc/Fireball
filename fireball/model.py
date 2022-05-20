@@ -97,6 +97,9 @@ layers currently supported by Fireball.
 # 10/11/2021    Shahab                  Fireball 1.5.1 features:
 #                                         * First public version.
 #                                         * Added support for downloading from model zoo.
+# 05/12/2022    Shahab                  Fireball 2.0.0 features:
+#                                         * createLrModel now receives additional options with "kwargs".
+#                                         * Added the new method createPrunedModel
 # **********************************************************************************************************************
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -946,7 +949,7 @@ class Model:
         return model
 
     # ******************************************************************************************************************
-    def createLrModel(self, modelPath, lrParams, decomposeDWCN=True):
+    def createLrModel(self, modelPath, lrParams, **kwargs):
         r"""
         This function converts the specified parameters of this model to Low-Rank tensors based on the information in ``lrParams`` and then saves the resulting model to a file specified by ``modelPath``.
         
@@ -960,10 +963,22 @@ class Model:
             
             The second parameter is the upper bound of the MSE between the original tensor and it's low-rank equivalent. The best "rank" value is found using this MSE value.
             
-        decomposeDWCN : Boolean
-            If false, the depth-wise convolutional layers are skipped. Otherwise, (the default), they are decomposed if specified in the lrParams.
+        **kwargs : dict
+            A set of additional arguments. Here is a list of arguments that are currently supported:
+            
+            * **decomposeDWCN (Boolean)**: If false, the depth-wise convolutional layers are skipped. Otherwise, (the default), they are decomposed if specified in the lrParams.
+
+            * **quiet (Boolean)**: True means there are no messages printed during the execution of the function.
+             
+        Returns
+        -------
+        int
+            Total number of parameters in the model after applying low-rank decomposition.
         """
 
+        quiet = kwargs.get('quiet', False)
+        decomposeDWCN = kwargs.get('decomposeDWCN', True)
+        
         newLayersStr = ''
         newParams = []
         prevStage = 0
@@ -983,7 +998,7 @@ class Model:
                 newLayerParams, decLayerStr, newNumLayerParams, infoStr = layer.decompose(self.session,
                                                                                           ('lr', layerMseUB, None),
                                                                                           decomposeDWCN)
-                print("  " + infoStr)
+                if not quiet:   print("  " + infoStr)
                 if newLayerParams is None:
                     layerStr = layer.getLayerStr()
                     layerParams = layer.netParamValues
@@ -1011,8 +1026,58 @@ class Model:
         
         newLayersStr = newLayersStr[1:]
         self.save(modelPath, newLayersStr, self.layers.blocks+newBlocks, newParams )
-        print('Total New Parameters: {:,}'.format(newNumParams))
+        if not quiet:   print('Total New Parameters: {:,}'.format(newNumParams))
+        return newNumParams
 
+    # ******************************************************************************************************************
+    def createPrunedModel(self, modelPath, prnParams, **kwargs):
+        r"""
+        This function reduces the number of non-zero parameters by pruning the ones close to zero. The pruning is applied to the layers specified in the ``prnParams``. The resulting model is saved to the file specified by ``modelPath``.
+        
+        Parameters
+        ----------
+        modelPath : str
+            The path to the file that contains the model information for the converted (pruned) model.
+          
+        prnParams : list
+            This contains a list of tuples. The first element in each tuple is a layer name that specifies the layer to modify.
+            
+            The second parameter is the upper bound of the MSE between the original tensor and it's pruned version.
+            
+        **kwargs : dict
+            A set of additional arguments. Here is a list of arguments that are currently supported:
+            
+            * **quiet (Boolean)**: True means there are no messages printed during the execution of the function.
+             
+        Returns
+        -------
+        int
+            Total size of non-zero parameters in bytes.
+        """
+        quiet = kwargs.get('quiet', False)
+        
+        newNetParams = []
+        newBlocks = []
+        newNumParams = 0
+        prunedBytes = 0
+        for layer in self.layers:
+            layerMseUB = None
+            for l,(layerScope, mseUB) in enumerate(prnParams):
+                if layer.scope != layerScope:   continue
+                layerMseUB = mseUB
+            if layerMseUB is None:
+                newNetParams += layer.getNpParams()
+                prunedBytes += layer.getNumBytes()
+            else:
+                newLayerNetParams, layerPrunedBytes, infoStr = layer.prune(layerMseUB)
+                if not quiet:   print("  " + infoStr)
+                newNetParams += newLayerNetParams
+                prunedBytes += layerPrunedBytes
+
+        self.save(modelPath, netParams=newNetParams )
+        if not quiet:   print('Total New Parameters Size (bytes): {:,}'.format(prunedBytes))
+        return prunedBytes
+    
     # ******************************************************************************************************************
     @classmethod
     def pruneModel(cls, inputModelPath, outputModelPath, mseUb, **kwargs):

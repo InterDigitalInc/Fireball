@@ -336,18 +336,18 @@ class GlueDSet(BaseDSet):
         taskName : str
             The name of task for which the dataset files will be downloaded. If set to ``"All"`` the dataset
             files for all GLUE tasks will be downloaded. Otherwise it should be one of the following:
-                * ``"CoLA"``: The Corpus of Linguistic Acceptability
-                * ``"SST-2"``: The Stanford Sentiment Treebank
-                * ``"MRPC"``: Microsoft Research Paraphrase Corpus
-                * ``"STS-B"``: Semantic Textual Similarity Benchmark
-                * ``"QQP"``: Quora Question Pairs
-                * ``"MNLI-M"``: MultiNLI Matched
-                * ``"MNLI-MM"``: MultiNLI Mismatched
-                * ``"QNLI"``: Question NLI
-                * ``"RTE"``: Recognizing Textual Entailment
-                * ``"WNLI"``: Winograd NLI
-                * ``"SNLI"``: Stanford NLI Corpus
-                * ``"AX"``: Auxiliary Task (GLUE Diagnostic Dataset)
+            * ``"CoLA"``: The Corpus of Linguistic Acceptability
+            * ``"SST-2"``: The Stanford Sentiment Treebank
+            * ``"MRPC"``: Microsoft Research Paraphrase Corpus
+            * ``"STS-B"``: Semantic Textual Similarity Benchmark
+            * ``"QQP"``: Quora Question Pairs
+            * ``"MNLI-M"``: MultiNLI Matched
+            * ``"MNLI-MM"``: MultiNLI Mismatched
+            * ``"QNLI"``: Question NLI
+            * ``"RTE"``: Recognizing Textual Entailment
+            * ``"WNLI"``: Winograd NLI
+            * ``"SNLI"``: Stanford NLI Corpus
+            * ``"AX"``: Auxiliary Task (GLUE Diagnostic Dataset)
 
         dataFolder: str
             The folder where dataset files are saved. If this is not provided, then

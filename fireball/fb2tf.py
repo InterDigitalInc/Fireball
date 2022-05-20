@@ -12,6 +12,7 @@ containing the parameters of the network.
 # 10/29/2020    Shahab                  Completed the first version for Tensorflow export functionality.
 # 11/29/2020    Shahab                  Created the TfBuilder class and moved all the functionality into
 #                                       this class.
+# 05/12/2022    Shahab                  A Minor fix to support TF2.
 # **********************************************************************************************************************
 import numpy as np
 import tensorflow as tf
@@ -67,6 +68,7 @@ class TfBuilder:
                                    "except: tf1 = tf",
                                    "try:    import tensorflow.random as tfr",
                                    "except: tfr = tf",
+                                   "tf1.disable_eager_execution()",
                                    "",
                                    "SEED = 36478",
                                    "exportPath = os.path.dirname(os.path.realpath(__file__))",

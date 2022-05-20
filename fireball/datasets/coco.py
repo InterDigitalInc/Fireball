@@ -688,8 +688,8 @@ class CocoDSet(BaseDSet):
         imgH,imgW,_ = img.shape
         imgSize = (imgW, imgH)
         if keepAr != True:
-            scaleX = np.float(res) / imgW
-            scaleY = np.float(res) / imgH
+            scaleX = np.float32(res) / imgW
+            scaleY = np.float32(res) / imgH
             resizedImg = cv2.resize(img, (res, res),
                                     interpolation = (cv2.INTER_AREA if scaleX<1.0 else cv2.INTER_CUBIC))
             
@@ -829,10 +829,10 @@ class CocoDSet(BaseDSet):
 
         movedBoxes = boxes.copy()
         if boxFormat.lower() in ['p1size', 'centersize']:
-            movedBoxes = movedBoxes*np.float(newRes)/res
+            movedBoxes = movedBoxes*np.float32(newRes)/res
             movedBoxes[:,:2] += [offset[0], offset[1]]
         else:
-            movedBoxes = movedBoxes*np.float(newRes)/res
+            movedBoxes = movedBoxes*np.float32(newRes)/res
             flippedBoxes = [offset[0], offset[1], offset[0], offset[1]]
         
         return movedImg, movedBoxes
@@ -1327,8 +1327,8 @@ class CocoDSet(BaseDSet):
                                                     #   0: The detected object should be ignored (based on Area/maxDet)
                                                     #  -1: The detected object was not matched to any ground-truth
                                                     #      (False Positive)
-        numGts = [np.zeros(A, dtype=np.float) for _ in range(numClasses)]   # For each class this is a numpy array of
-                                                                            # type np.float and shape (A,). Each element
+        numGts = [np.zeros(A, dtype=np.float32) for _ in range(numClasses)] # For each class this is a numpy array of
+                                                                            # type np.float32 and shape (A,). Each element
                                                                             # is the number of ground-truth objects for
                                                                             # the specified area size and maxDet
 
@@ -1511,8 +1511,8 @@ class CocoDSet(BaseDSet):
             classScores = classScores[aIndexes, iIndexes, dtScoreIndexes]                       # [ A x I x D ]
             
             tp = (classMatches==1)
-            tpCum = np.cumsum( tp, -1, np.float)                      # [ A x I x D ]   Increased when we have a TP
-            numPredCum = np.cumsum( (classMatches!=0), -1, np.float)  # [ A x I x D ]   Increased when we have a pred
+            tpCum = np.cumsum( tp, -1, np.float32)                      # [ A x I x D ]   Increased when we have a TP
+            numPredCum = np.cumsum( (classMatches!=0), -1, np.float32)  # [ A x I x D ]   Increased when we have a pred
             
             precision = np.divide(tpCum, numPredCum, out=np.zeros_like(tpCum), where=numPredCum!=0) # [ A x I x D ]
             classNumGts = classNumGts.reshape(A, 1, 1)
