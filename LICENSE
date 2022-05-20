@@ -125,7 +125,7 @@ relating to the Software, the following statement shall be inserted:
 In any publication, the latest publication about the software shall be properly
 cited. The latest publication currently is:
 
-"Fireball Version 1.5.1”
+"Fireball Version 2.0.0”
 
 In any oral communication relating to the Software and/or its use, the Licensee
 shall orally indicate that the Software is InterDigital’s property.
@@ -232,15 +232,17 @@ prior agreements or understanding.
  
 Exhibit A – Open source parts
 
-tensorflow
-numpy
-pyyaml
-opencv-python
-coremltools
-onnx
-onnxruntime
-matplotlib
-pillow
-notebook
-netron
+Python Package     License Type (As of Sep. 2021)
+----------------   ----------------------------------------
+tensorflow         Apache License 2.0
+numpy              BSD license
+pyyaml             MIT License
+opencv-python      MIT License
+coremltools        BSD 3-Clause "New" or "Revised" License
+onnx               Apache License 2.0
+onnxruntime        MIT License
+matplotlib         PSF license
+pillow             HPND License
+notebook           BSD 3-Clause "New" or "Revised" License
+netron             MIT License
 
