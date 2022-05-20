@@ -26,7 +26,7 @@ Replace the <IP_ADDRESS> with the IP address of your GPU machine.
 ### 4) Open the Jupyter Notebook starting page:
 Copy the address printed by the Jupyter Notebook in the terminal, open a browser window, and paste the address in the address bar. 
 
-### 5) Open ```Contents.ipynb``` to start navigating through "Fireball Playgrounds".
+### 5) Open the [Contents](./Contents.ipynb) notebook to start navigating through "Fireball Playgrounds".
 
 **Note 1**: Some of the tasks in the playgrounds can take a long time to complete. If you don't want to lose you notebook server if the connection to the server is lost for any reason, you can run the notebook server in a ```tmux``` session which keeps it running when your ssh connection closes.
 
