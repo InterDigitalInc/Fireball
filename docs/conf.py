@@ -21,7 +21,7 @@ import fireball
 release = fireball.__version__
 
 project = 'Fireball ' + release
-copyright = '2021, InterDigital, Inc. All Rights Reserved'
+copyright = '2022, InterDigital, Inc. All Rights Reserved'
 author = 'Shahab Hamidi-Rad'
 
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Fireball 2.0.0 Documentation</title>
+  <title>Installation &mdash; Fireball 1.5.1 Documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -27,7 +27,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> Fireball 2.0.0
+            <a href="../index.html" class="icon icon-home"> Fireball 1.5.1
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -44,8 +44,8 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installation-for-apple-m1">Installation for Apple M1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#installation-on-unix-and-macos-intel">Installation on Unix and MacOS (Intel)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-a-virtual-environment">Create a virtual environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#install-fireball">Install Fireball</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="playgrounds.html">Playgrounds</a></li>
@@ -69,7 +69,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">Fireball 2.0.0</a>
+          <a href="../index.html">Fireball 1.5.1</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -89,35 +89,26 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
-<p>Fireball currently works with <strong>python 3.8</strong> or later and uses <strong>Tensorflow 2.7</strong> or later.</p>
-<section id="installation-for-apple-m1">
-<h2>Installation for Apple M1<a class="headerlink" href="#installation-for-apple-m1" title="Permalink to this headline"></a></h2>
-<p>For apple M1 machines, you need to use conda environment management system. First create a conda environment, activate it, and install the required conda packages:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create --name FB2 <span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9 -y
-conda activate FB2
-pip install -U pip setuptools wheel
-conda install cmake -y
-conda install -c conda-forge protobuf numpy -y
-conda install -c apple tensorflow-deps -y
-</pre></div>
-</div>
-<p>Now install fireball:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> Fireball
-pip install -e .
+<p>Fireball currently works with <strong>python 3.6 and 3.7</strong> and uses <strong>Tensorflow 1.14</strong>. Support for newer python and tensorflow versions are comming soon.</p>
+<section id="create-a-virtual-environment">
+<h2>Create a virtual environment<a class="headerlink" href="#create-a-virtual-environment" title="Permalink to this headline"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m venv ve
+<span class="nb">source</span> ve/bin/activate
+pip install --upgrade pip
+pip install --upgrade setuptools
 </pre></div>
 </div>
 </section>
-<section id="installation-on-unix-and-macos-intel">
-<h2>Installation on Unix and MacOS (Intel)<a class="headerlink" href="#installation-on-unix-and-macos-intel" title="Permalink to this headline"></a></h2>
-<p>First create a virtual environment:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m venv ve
-<span class="nb">source</span> ve/bin/activate
-pip install --upgrade pip setuptools
+<section id="install-fireball">
+<h2>Install Fireball<a class="headerlink" href="#install-fireball" title="Permalink to this headline"></a></h2>
+<p>For GPU machines:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> Fireball
+pip install dist/fireball-1.5.1-0.GPU-py3-none-any.whl
 </pre></div>
 </div>
-<p>Then install Fireball:</p>
+<p>or for machines with no GPUs:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> Fireball
-pip install -e .
+pip install dist/fireball-1.5.1-0.NoGPU-py3-none-any.whl
 </pre></div>
 </div>
 </section>
@@ -134,7 +125,7 @@ pip install -e .
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, InterDigital, Inc. All Rights Reserved.</p>
+    <p>&#169; Copyright 2021, InterDigital, Inc. All Rights Reserved.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

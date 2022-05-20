@@ -1,30 +1,41 @@
 Installation
 ============
 
-Fireball currently works with **python 3.6 and 3.7** and uses **Tensorflow 1.14**. Support for newer python and tensorflow versions are comming soon.
+Fireball currently works with **python 3.8** or later and uses **Tensorflow 2.7** or later.
 
-Create a virtual environment
-----------------------------
+Installation for Apple M1
+-------------------------
+For apple M1 machines, you need to use conda environment management system. First create a conda environment, activate it, and install the required conda packages:
+
+.. code-block:: bash
+
+    conda create --name FB2 python=3.9 -y
+    conda activate FB2
+    pip install -U pip setuptools wheel
+    conda install cmake -y
+    conda install -c conda-forge protobuf numpy -y
+    conda install -c apple tensorflow-deps -y
+
+Now install fireball:
+
+.. code-block:: bash
+
+    cd Fireball
+    pip install -e .
+
+Installation on Unix and MacOS (Intel)
+--------------------------------------
+First create a virtual environment:
 
 .. code-block:: bash
 
     python3 -m venv ve
     source ve/bin/activate
-    pip install --upgrade pip
-    pip install --upgrade setuptools
+    pip install --upgrade pip setuptools
 
-Install Fireball
-----------------
-For GPU machines:
+Then install Fireball:
 
 .. code-block:: bash
 
     cd Fireball
-    pip install dist/fireball-1.5.1-0.GPU-py3-none-any.whl
-
-or for machines with no GPUs:
-
-.. code-block:: bash
-
-    cd Fireball
-    pip install dist/fireball-1.5.1-0.NoGPU-py3-none-any.whl
+    pip install -e .

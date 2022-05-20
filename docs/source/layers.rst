@@ -1,8 +1,8 @@
 *layersInfo*
 ============
-In Fireball the model's network structure is specified by a single text string called *layersInfo*. When a model is defined for the first time, the *layersInfo* should be passed to the :py:class:`fireball.model.Model` class constructor. This information is saved to the `*.fbm` files when the model is saved.
+In Fireball the model's network structure is specified by a single text string called *layersInfo*. When a model is defined for the first time, the *layersInfo* should be passed to the :py:class:`fireball.model.Model` class constructor. This information is saved to the fireball model file `(*.fbm)` when the model is saved.
 
-Most common deep neural network structure can be implemented using the Fireball layers. The main building blocks of *layersInfo* are the layers of the network. Several layers can be grouped together. In Fireball these groups are called *stages*.
+Most common deep neural network structures can be implemented using the Fireball layers. The main building blocks of *layersInfo* are the layers of the network. Several layers can be grouped together. In Fireball these groups are called *stages*.
 
 *layersInfo* Syntax
 -------------------
@@ -18,7 +18,7 @@ Please note that using *stages* is optional. If there is no semicolon in the *la
 
 Different parts of a *layerInfo* are separated by colons (:). They fall in one of the following three categories:
 
-    * **Layer Type**: The first part of each layer specifies the type of layer (for example a :ref:`Fully Connected layer<FC>` or a :ref:`Convolutional Layer<CONV>`). The related attributes for the layer (such as number of output channels or kernel size) follow the type separated by underscore characters. Each attribute is specified by a letter and one or more numbers or letters. Please refer to :ref:`Layer Specifications<LAYERSPECS>` for detail explanation of supported layers. Here are some examples::
+    * **Layer Type**: The first part of each layer specifies the type of layer (for example a :ref:`Fully Connected layer<FC>` or a :ref:`Convolutional Layer<CONV>`). The related attributes for the layer (such as number of output channels or kernel size) follow the layer type separated by underscore characters. Each attribute is specified by a letter and one or more numbers or letters. Please refer to :ref:`Layer Specifications<LAYERSPECS>` for detail explanation of supported layers. Here are some examples::
     
             # A Fully Connected layer with 128 output channels
                 "FC_O128"
@@ -38,7 +38,7 @@ Different parts of a *layerInfo* are separated by colons (:). They fall in one o
                 "CONV_K3_S2_O16:ReLU"
 
 
-    * **Post-Activations**: In Fireball, any process that occurs at the output of a layer after the activation function and before the next layer, is called *Post-Activation* (for examples the average pooling process). Generally post-activation processes do not involve any network parameters. The attributes of a post-activation (such as the drop-rate for a drop-out post-activation) follow the type separated by underscore characters. A layer can have multiple *Post-Activations* that are separated by the colon (:) characters. Please refer to the :ref:`Post-Activations<POSTACTIVATION>` section for a list of supported Post-Activations and their detail explanation. Here are some examples::
+    * **Post-Activations**: In Fireball, any process that occurs at the output of a layer after the activation function and before the next layer, is called *Post-Activation* (for example the average pooling process). Generally post-activation processes do not involve any network parameters. The attributes of a post-activation (such as the drop-rate for a drop-out post-activation) follow the type separated by underscore characters. A layer can have multiple *Post-Activations* that are separated by the colon (:) characters. Please refer to the :ref:`Post-Activations<POSTACTIVATION>` section for a list of supported Post-Activations and their detail explanation. Here are some examples::
 
             # A Fully Connected layer with 128 output channels with
             # Tangent Hyperbolic activation function, and drop-out with drop-rate 0.3
@@ -100,6 +100,7 @@ Activation Functions
 Currently the following activation functions are supported by Fireball:
 
     * ReLU: Rectified Linear Unit
+    * LReLU: Leaky Rectified Linear Unit
     * GeLU: Gaussian Error Linear Unit
     * SeLU: Scaled Exponential Linear Unit
     * Tanh: Tangent Hyperbolic
@@ -118,6 +119,7 @@ Post-Activations
 ----------------
 Currently the following post-activations are supported by Fireball:
 
+    * :ref:`RS: Reshape <RS>`
     * :ref:`MP: Max Pooling <MP>`
     * :ref:`AP: Average Pooling <AP>`
     * :ref:`TP: Transformer pooling <TP>` (NLP)
@@ -132,7 +134,7 @@ Currently the following post-activations are supported by Fireball:
     * :ref:`WSUM: Weighted Sum Netmarks <WSUM>`
     * :ref:`TUP: Tuple netmarks <TUP>`
 
-Each post-activation can have zero or more attributes. Each post-activation attribute is specified by a letter which specifies the attribute (such as 'R' for "Drop-Rate") followed by the value for the attribute which can be one or more numbers or letters.
+Each post-activation can have zero or more attributes. Each post-activation attribute is specified by a letter indicating the attribute (For example 'R' for "Drop-Rate") followed by the value for the attribute which can be one or more numbers or letters.
 
 Here is a list of general rules for post-activations:
 
@@ -140,7 +142,7 @@ Here is a list of general rules for post-activations:
     * Post-activation attributes are separated by underscore characters.
     * Post-activation attributes can come in any order.
     * A layer can have zero or more post-activations.
-    * In the *layerInfo* string, post-activation should always be after the activation function. If no activation function is used for a layer the ``None`` can be used in its place or it can be left empty. Here is an example::
+    * In the *layerInfo* string, post-activation should always be after the activation function. If no activation function is used for a layer the ``None`` can be used in its place or it can be left empty. Here are some examples::
     
             # A Fully Connected layer with 128 output channels with
             # no activation function, and drop-out with drop-rate 0.3
@@ -204,7 +206,7 @@ Embedding Input layer is used with NLP and some other Time-Series tasks. Usually
 
 For each sample, the embedding input layer receives 2 arrays:
 
-    * TokenIds: A list of integer values that are the token ID of the tokens in a sequence. The token IDs are actually the indexes to a vocabulary of tokens (Using *WordPiece* subword segmentation algorithm).
+    * TokenIds: A list of integer values that are the token IDs of the tokens in a sequence. The token IDs are actually the indexes to a vocabulary of tokens (Using *WordPiece* subword segmentation algorithm).
     * TokenTypes: A list of integer values with the same length as `TokenIds` that indicate the type of each token in the `TokenIds` list. For example in question-answering tasks the question and context tokens are concatenated and fed to the model as "TokenIds". The `TokenTypes` array has 0's for the question tokens and 1's for the context tokens.
     
 The input to this layer is a tuple of tensors (TokenIds, TokenTypes). Each tensor is of the shape (batchSize, maxLen). When a batch of sequences is given to the model (For example during training), the sequences are padded with 0's so that all of them have the same length.
@@ -221,7 +223,7 @@ Attributes
         This is the maximum sequence length supported by this layer (and the model). In other words this is the maximum number of tokens in the inputs to the layer. The default is 512.
 
     vocabSize : V, optional, default: 30522
-        The size of vocabulary. By default this 30522, which is the total number of tokens defined in WordPiece.
+        The size of vocabulary. By default, this is set to 30522, which is the total number of tokens defined in WordPiece.
         
     rank : R, optional, default: 0
         This is used for Low-Rank models. Low-Rank decomposition is an algorithm used by Fireball to reduce the number of parameters of a model. If this layer is a low-rank decomposed layer, the rank attribute is a positive number specifying the rank of decomposed word embedding matrix. Otherwise for regular models, this is set to 0 which is the default. In most cases this should be left unchanged when composing *layersInfo*. The method :py:meth:`~fireball.model.Model.createLrModel` can be used to reduce the number of parameters of the model. When this method is called, it automatically assigns a `rank` value for each decomposed layer.
@@ -307,22 +309,18 @@ Here are some examples::
     # Kernel size 3x3, stride 2 along width and 1 along height,
     # 128 output channels, "SAME" padding
         "CONV_K3_S2x1_O128_Ps"
-
-    # 1-D convolution with kernel size 5, stride 1,
-    # 64 output channels, "VALID" padding, No biases
-        "FC_K1x5_O64_B0"
         
     # Kernel size 5x3 or shape (3,5), stride 1, 128 output channels,
     # padding: Left: 2, right: 3, top: 1, bottom: 1
         "CONV_K5x3_O128_P2x3x1x1"
         
     # Kernel size 3x3, stride 1, dilation 6, 1024 output
-    # channels, "SAME" padding
-        "CONV_K3_D6_O1024_Ps"
+    # channels, "SAME" padding, No biases
+        "CONV_K3_D6_O1024_Ps_B0"
         
 .. _DWCN:
 
-DWCN: Depth-wise Convolutional Layer
+DWCN: Depth-Wise Convolutional Layer
 ------------------------------------
 This layer implements a depth-wise convolution operation on the input tensor.
 
@@ -446,7 +444,7 @@ Attributes
 
 .. note::
 
-    Since this layer includes the softmax function (for multi-class classification) and sigmoid function (for binary classification) for inference, there is no need to add these activation functions to the last Fully Connected layer of the model (The one just before this output layer).
+    Since this layer includes the softmax function (for multi-class classification) or sigmoid function (for binary classification), there is no need to add these activation functions to the last Fully Connected layer of the model (The one just before this output layer).
 
 .. _REG:
 
@@ -485,6 +483,22 @@ ANSWER: Answer Output Layer
 This output layer is used for question-answering models (such as the model for SQuAD). It outputs the start and end indexes of the predicted answer in a given context for a given question.
 
 This layer does not have any attributes.
+
+.. _RS:
+
+RS: Reshape
+-----------
+This post-activation reshapes the output of current layer to the specified shape. The specified shape must be compatible with current shape of layer output.
+
+Attributes
+^^^^^^^^^^
+    shape : S
+        The shape of output. The values for different dimensions of the output tensor are separated by '/'.
+
+Here is an example::
+
+    # Reshape the output of the fully connected layer to matrixes of 4x64
+        "FC_O256:ReLU:RS_S4/64"
 
 .. _MP:
 
