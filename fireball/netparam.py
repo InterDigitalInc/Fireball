@@ -29,7 +29,7 @@ def pruneWorker(netParam, mseUb):       return netParam.prune(mseUb)
 # **********************************************************************************************************************
 class NetParam:
     # NetParam encapsulates a single network parameter.
-    # A NetParam can be operate in 2 different modes:
+    # A NetParam can operate in 2 different modes:
     #   Mode TF: TensorFlow parameter (For example when used in a TensorFlow graph for training or inference)
     #   Mode NP: Numpy parameter (For example when saving/loading to files)
     # Regardless of the mode, a NetParam can also be:

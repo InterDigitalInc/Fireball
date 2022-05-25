@@ -20,6 +20,8 @@ function "Layers::__init__" below.
 #                                       For Low-Rank Decomposition, we now cashe the SVD results.
 #                                       Added the RS post activation for Reshape.
 #                                       Added the "getNumBytes" and "Prune" methods to the layer classes.
+# 05/24/2022    Shahab                  Added support for ELU.
+#                                       Added support for exporting Elu, SeLU, Leaky ReLU to ONNX/CoreML
 # **********************************************************************************************************************
 import numpy as np
 
@@ -571,6 +573,7 @@ class Layer(object):
                         'soft': (tf.nn.softmax, 'Softmax', 5),
                         'gelu': (gelu, 'GELU', 6),
                         'lrelu': (tf.nn.leaky_relu, 'LReLU', 7),
+                        'elu': (tf.nn.elu, 'ELU', 8),
                      }
     name = "UNKNOWN"
     def __init__(self, layers, layerIndex, scope, argsInfo, actStr, parent):
@@ -929,11 +932,16 @@ class Layer(object):
     # ******************************************************************************************************************
     def buildOnnxActivation(self, onnxBuilder, inputName):
         outputName = inputName
-        if self.activation in ['relu', 'tanh', 'sig', 'soft']:
-            actName = {"relu":'Relu' , "tanh":'Tanh', "sig":'Sigmoid', "soft":'Softmax'}
+        if self.activation in ['relu', 'elu', 'selu', 'tanh', 'sig', 'soft']:
+            actName = {"relu":'Relu', "elu":'Elu', "selu":'Selu', "tanh":'Tanh', "sig":'Sigmoid', "soft":'Softmax'}
             s = self.deepScope(actName[self.activation])
             outputName = s[:-1]
             onnxBuilder.addNode(actName[self.activation], [ inputName ], [outputName], outputName)
+
+        elif self.activation == 'lrelu':
+            s = self.deepScope('LeakyRelu')
+            outputName = s[:-1]
+            onnxBuilder.addNode('LeakyRelu', [inputName], [outputName], outputName, alpha=0.2)
 
         elif self.activation == 'gelu':
             s = self.deepScope('GeLU')
@@ -963,25 +971,35 @@ class Layer(object):
 
     # ******************************************************************************************************************
     def buildCmlActivation(self, cmlBuilder, inputName):
-        if self.activation in ['relu', 'tanh', 'sig']:
-            actName = {"relu":'RELU' , "tanh":'TANH', "sig":'SIGMOID'}
-            s = self.deepScope(actName[self.activation])
-            outputName = s[:-1]
+        if self.activation in ['relu', 'lrelu', 'elu', 'tanh', 'sig']:
+            actName = {"relu":'RELU' , "lrelu":'LEAKYRELU', "elu":'ELU' ,"tanh":'TANH', "sig":'SIGMOID'}
+            p = {"lrelu":[0.2], "elu": 1.0}.get(self.activation, None)
+            outputName = self.deepScope(actName[self.activation])[:-1]
             cmlBuilder.add_activation(name =           outputName,
                                       non_linearity =  actName[self.activation],
                                       input_name =     inputName,
-                                      output_name =    outputName)
-            
-        elif self.activation == 'soft':
-            s = self.deepScope('SOFTMAX')
+                                      output_name =    outputName,
+                                      params =         p)
+
+        elif self.activation == 'selu':
+            s = self.deepScope('SELU')
+            alpha, beta = 1.6732632423543772, 1.0507009873554805
+            cmlBuilder.add_activation(name =           s+"ELU",
+                                      non_linearity =  "ELU",
+                                      input_name =     inputName,
+                                      output_name =    s+"ELU",
+                                      params =         alpha)
             outputName = s[:-1]
+            cmlBuilder.add_scale(outputName, np.float32([beta]), None, False, s+"ELU", outputName, shape_scale=[1])
+        
+        elif self.activation == 'soft':
+            outputName = self.deepScope('SOFTMAX')[:-1]
             cmlBuilder.add_softmax(name =              outputName,
                                    input_name =        inputName,
                                    output_name =       outputName)
 
         elif self.activation == 'gelu':
-            s = self.deepScope('GELU')
-            outputName = s[:-1]
+            outputName = self.deepScope('GELU')[:-1]
             cmlBuilder.add_gelu(outputName, inputName, outputName, mode='TANH_APPROXIMATION')
 
         elif self.activation == 'none':
@@ -1005,7 +1023,7 @@ class Layer(object):
         
         if self.activation != 'none':
             tfName = Layer.activationInfo[self.activation][1]
-            actFuncName = { 'relu': 'tf.nn.relu', 'selu': 'tf.nn.selu', 'tanh': 'tf.nn.tanh', 'sig': 'tf.nn.sigmoid',
+            actFuncName = { 'relu': 'tf.nn.relu', 'elu': 'tf.nn.elu', 'selu': 'tf.nn.selu', 'tanh': 'tf.nn.tanh', 'sig': 'tf.nn.sigmoid',
                             'soft': 'tf.nn.softmax', 'gelu': 'gelu', 'lrelu': 'tf.nn.leaky_relu' }
             tfBuilder.addToGraph("out = %s(out, name='%s')"%(actFuncName[self.activation], tfName))
 
@@ -2557,8 +2575,9 @@ class FcLayer(Layer):
             param0 = NetParam('NP', rawVal, param0.codebook, bitMask, param0.trainable, param0.name)
             
         wName, gName, hName, bName = ((s+x) for x in ['Weights', 'G', 'H', 'Biases'])
-        bNameList = [bName] if self.hasBias else []
-        
+        if self.hasBias:    onnxBuilder.addNetParam(bName, params[-1])
+        else:               onnxBuilder.addParam(bName, 'float', [1], [0.0])
+
         if self.rank > 0:
             onnxBuilder.addNetParam(gName, param0)
             onnxBuilder.addNetParam(hName, params[1])
@@ -2569,14 +2588,11 @@ class FcLayer(Layer):
 
             # Using the default values for the attributes: alpha=1, beta=1, transA=0, transB=0
             outputName = s + ("xGHplusB" if self.hasBias else "xGH")
-            onnxBuilder.addNode('Gemm', [inputName, hName] + bNameList, [outputName], s+'GemmH')
+            onnxBuilder.addNode('Gemm', [inputName, hName, bName], [outputName], s+'GemmH')
         else:
             onnxBuilder.addNetParam(wName, param0)
             outputName = s + ("xWplusB" if self.hasBias else "xW")
-            onnxBuilder.addNode('Gemm', [inputName, wName] + bNameList, [outputName], s+'Gemm')
-
-        if self.hasBias:
-            onnxBuilder.addNetParam(bName, params[-1])
+            onnxBuilder.addNode('Gemm', [inputName, wName, bName], [outputName], s+'Gemm')
 
         if len(self.inShape)==2:
             # For NLP models, we reshape the output to [BatchSize, seqLen, outSize]
@@ -4658,13 +4674,18 @@ class RegOutLayer(Layer):
         
     # ******************************************************************************************************************
     def buildCml(self, cmlBuilder, inputName):
-        del cmlBuilder.spec.description.output[-1]   # Delete the dummy input
+        del cmlBuilder.spec.description.output[-1]   # Delete the dummy Output
+        s = self.deepScope()
         if len(self.shape)==3:
             # Assume it is an image and the "self.shape" to channel first
             cmlBuilder.addOutput('Output', (self.shape[2], self.shape[0], self.shape[1]), 'float',
                                  "The predicted output of the model.")
         else:
-            cmlBuilder.addOutput('Output', tuple(self.shape), 'float', "The predicted output of the model.")
+            cmlBuilder.add_scale(s+"Scale1", 1, None, False, inputName, 'Output', shape_scale=[1])
+            # Rank of output must always be at least 3:
+            outShape = self.shape if len(self.shape)>=3 else ([1]*(3-len(self.shape)) + self.shape)
+            cmlBuilder.addOutput('Output', tuple(outShape), 'float', "The predicted output of the model.")
+
         return 'Output'
 
     # ******************************************************************************************************************
