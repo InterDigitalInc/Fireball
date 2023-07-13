@@ -21,28 +21,30 @@ import setuptools
 
 if m1Installation:
     installedPackages = [ "tensorflow-macos==2.8.0",
-                          'numpy==1.22.3',
+                          'numpy==1.23.5',
                           "tensorflow-metal==0.4.0",
+                          "protobuf==3.20.3",
                           'pyyaml==6.0',
                           'opencv-python==4.5.5.64',
                           'coremltools==5.2.0',
                           'onnx==1.11.0',
                           "onnxruntime-silicon==1.11.1",
-                          'matplotlib==3.5.1',
+                          'matplotlib',
                           'pillow==9.1.0',
-                          'notebook==6.4.10',
+                          'notebook',
                           'netron' ]
 else:
     installedPackages = [ "tensorflow==2.8.0",
-                          'numpy==1.22.3',
+                          'numpy==1.23.5',
+                          "protobuf==3.20.3",
                           'pyyaml==6.0',
                           'opencv-python==4.5.5.64',
                           'coremltools==5.2.0',
                           'onnx==1.11.0',
                           "onnxruntime==1.11.1",
-                          'matplotlib==3.5.1',
+                          'matplotlib',
                           'pillow==9.1.0',
-                          'notebook==6.4.10',
+                          'notebook',
                           'netron' ]
 
 setuptools.setup(name="fireball",
