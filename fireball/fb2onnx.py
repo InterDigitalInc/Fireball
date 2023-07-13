@@ -44,7 +44,8 @@ class OnnxBuilder:
         self.outputs = []
         self.runQuantized = False
         self.classNames = None
-        
+        self.hasDimensionsNode = False
+
     # ******************************************************************************************************************
     def addNode(self, opType, ins, outs, name=None, **kwargs):
         self.nodes += [ oh.make_node(opType, inputs=ins, outputs=outs, name=name, **kwargs) ]
@@ -113,7 +114,7 @@ class OnnxBuilder:
 
     # ******************************************************************************************************************
     def makeShape(self, name, dimsStr):
-        nameToIdx = {'batchSize':0, 'seqLen':1, 'vocabSize':2, 'outSize':3, '1':-2, '-1':-1}
+        nameToIdx = {'batchSize':0, 'seqLen':1, 'outSize':2, 'vocabSize':3, '1':-2, '-1':-1}
         dimStrs = dimsStr.split(',')
         indexes = [nameToIdx[dimStr] for dimStr in dimStrs]
         self.addParam(name+'/Idx', 'int64', [len(indexes)], indexes)

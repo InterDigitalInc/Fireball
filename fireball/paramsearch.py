@@ -39,10 +39,9 @@ gpusForThread = None
 availableThreads = None
 
 # **********************************************************************************************************************
-def startWorker(threadId, params):
+def startWorker(threadId, params, combinationNo):
     resultsFileName = '%sParamSearch.csv'%(sys.argv[0].split('.')[0])
     command = '%s %s -saveResults=%s '%(PYTHON_STR, sys.argv[0], resultsFileName)
-
     if 'workerId' in params:    params['workerId'] = threadId
     for key, value in keyVals(params):
         if value is None:       command += ' -'+key
@@ -50,10 +49,9 @@ def startWorker(threadId, params):
         elif str(value)=='+':   command += ' -'+key
         elif value!='-':        command += ' -%s=%s'%(key, str(value))
         
-    if quietProcesses == False:
-        printCommand('    ' + command, logFile)
-    else:
-        printInfo('Worker %02d: Command-Line:\n    %s'%(threadId, command), logFile)
+    if quietProcesses:
+        printInfo('Worker %02d: Starting combination %d, Command-Line:'%(threadId, combinationNo), logFile)
+    printCommand('    ' + command, logFile)
 
     FNULL = open(os.devnull, 'w') if quietProcesses else None
     process = subprocess.Popen(shlex.split(command), shell=False, stdout=FNULL, stderr=subprocess.STDOUT)
@@ -61,23 +59,28 @@ def startWorker(threadId, params):
         if shouldStop:  process.terminate()
         time.sleep(.5)
 
-    if (process.returncode != 0) and (shouldStop==False):
-        printError('Worker %02d: The process returned %d!'%(threadId, process.returncode), logFile)
+    return process.returncode
 
 # **********************************************************************************************************************
 def processOneCombination(params, combinationStr, combinationNo, threadId):
     global availableThreads
     threadStates[threadId]['workingOn'] = combinationStr
-    startWorker(threadId, params)
+
+    t0 = time.time()
+    returnCode = startWorker(threadId, params, combinationNo)
+    dt = time.time()-t0
+    if (returnCode != 0) and (shouldStop==False):
+        printError('Worker %02d: Combination %d, The process returned %d! (%.2f Sec.)'%(threadId, combinationNo, returnCode, dt), logFile)
+
     if shouldStop:
-        printInfo('Worker %02d: Forced Stop while Processing combination %d (%s).'%(threadId, combinationNo, combinationStr), logFile)
+        printInfo('Worker %02d: Forced Stop while Processing combination %d (%s, %.2f Sec.).'%(threadId, combinationNo, combinationStr, dt), logFile)
     else:
-        updateProgressAndSave(combinationStr, combinationNo, threadId)
+        updateProgressAndSave(combinationStr, combinationNo, threadId, dt)
     availableThreads += [threadId]
 
 # **********************************************************************************************************************
 savingInProgress = False
-def updateProgressAndSave(combinationStr, combinationNo, threadId):
+def updateProgressAndSave(combinationStr, combinationNo, threadId, dt):
     global savingInProgress
     while savingInProgress:
         while savingInProgress: time.sleep(.5)
@@ -87,7 +90,7 @@ def updateProgressAndSave(combinationStr, combinationNo, threadId):
     if (threadId!=0) and (combinationStr is not None):
         threadStates[threadId]['processed'] += [combinationStr]
         threadStates[threadId]['workingOn'] = None
-        printInfo('Worker %02d: Finished Processing combination %d (%s).'%(threadId, combinationNo, combinationStr), logFile)
+        printInfo('Worker %02d: Finished Processing combination %d (%s, %.2f Sec.).'%(threadId, combinationNo, combinationStr, dt), logFile)
 
     yamlData = { 'numWorkers': numWorkers, 'threadStates': threadStates }
     yamlFile = '%sParamSearch.yml'%(sys.argv[0].split('.')[0])
@@ -228,6 +231,7 @@ def saveResults(resultsCsvFile, paramValues, model=None):
     paramNames, paramValues = zip(*paramValues)
     
     def quotedStr(s):
+        if type(s) in [list, np.ndarray]: return "[%s]"%("  ".join(str(x) for x in s))
         return '"%s"'%(str(s)) if ',' in str(s) else str(s)
         
     if os.path.exists(resultsCsvFile)==False:

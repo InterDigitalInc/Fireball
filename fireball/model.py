@@ -100,6 +100,15 @@ layers currently supported by Fireball.
 # 05/12/2022    Shahab                  Fireball 2.0.0 features:
 #                                         * createLrModel now receives additional options with "kwargs".
 #                                         * Added the new method createPrunedModel
+# 06/21/2022    Shahab                  Fireball 2.0.1 features:
+#                                         * Added the new method "createQuantizedModel".
+#                                         * Fixed a problem in "evalBatch".
+#                                         * Added support for calculation of inference flops. See the function
+#                                           "getFlops".
+#                                         * Less frequent updates during the training which helps with browser load when
+#                                           running in Jupyter Notebook.
+#                                         * Added support for using TensorBoard in Tensorflow Version 2.x.
+#                                         * Added the new getInferenceTime method.
 # **********************************************************************************************************************
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -125,6 +134,11 @@ except: pass
 import tensorflow as tf
 try:    import tensorflow.compat.v1 as tf1
 except: tf1 = tf
+
+# Need to disable eager in TF2.x
+try:    tf1.disable_eager_execution()
+except: pass
+
 import logging
 tf.get_logger().setLevel(logging.ERROR)
 
@@ -191,7 +205,7 @@ class Model:
         numEpochs : int
             Total number of Epochs to train the model.
             
-        regFactor : float
+        regFactor : float, default = 0.0
             Regularization Factor. If this is zero, then L2 regularization is disabled for all layers. Otherwise, if this is non-zero, then L2 regularization is enabled. In this case:
             
                 * If a factor is specified in the L2R post-activation, the specified value is used for that layer.
@@ -358,7 +372,7 @@ class Model:
         self.learningRateWarmUp = 0
         self.trainAllBatch = 0              # Train only non-transferred params before this batch, all params after.
         if learningRate is None:
-            assert self.trainDs is None, "learningRate must be a specified when a training dataset is provided!"
+            assert self.trainDs is None, "learningRate must be specified when a training dataset is provided!"
         elif type(learningRate) == tuple:
             # Exponential decay:
             assert len(learningRate) in [2,3], "Need two or three entries for Exponential Decay Learning Rate!"
@@ -1077,7 +1091,71 @@ class Model:
         self.save(modelPath, netParams=newNetParams )
         if not quiet:   print('Total New Parameters Size (bytes): {:,}'.format(prunedBytes))
         return prunedBytes
-    
+
+    # ******************************************************************************************************************
+    def createQuantizedModel(self, modelPath, qParams, **kwargs):
+        r"""
+        This function quantizes the parameters of the model. The quantization is applied to the layers specified in the ``qParams``. The resulting model is saved to the file specified by ``modelPath``.
+        
+        Parameters
+        ----------
+        modelPath : str
+            The path to the file that contains the model information for the quantized model.
+          
+        qParams : list
+            This contains a list of tuples. The first element in each tuple is a layer name that specifies the layer to quantize.
+            
+            The second parameter is the upper bound of the MSE (``mseUb``) between the original tensor and it's quantized version.
+            
+        **kwargs : dict
+            A set of additional arguments. Here is a list of arguments that are currently supported:
+                    
+            * **reuseEmptyClusters (Boolean)**: True (default) means keep reusing/reassigning empty clusters during the K-Means algorithm. In this case, the final number of clusters is a power of 2 (between ``minBits`` and ``maxBits``). False means we remove the empty clusters from the codebook and the final number of clusters may not be a power of 2. (between ``minSymCount`` and ``maxSymCount``)
+            
+            * **weightsOnly (Boolean)**: True (default) means quantize only weight matrixes. Biases and BatchNorm parameters are not quantized. False means quantize any network parameter if possible.
+
+            * **minSymCount (int)**: The minimum number of symbols in the quantized tensors. Fireball does a binary search between ``minSymCount`` and ``maxSymCount`` to find the best symbol count that results in a quantization error (MSE) below the specified ``mseUb``. The found symbol count is used for the initial size of codebook. The default is 4. Ignored if ``reuseEmptyClusters`` is True.
+
+            * **maxSymCount (int)**: The maximum number of symbols in the quantized tensors. Fireball does a binary search between ``minSymCount`` and ``maxSymCount`` to find the best symbol count that results in a quantization error (MSE) below the specified ``mseUb``. The found symbol count is used for the initial size of codebook. The default is 4096. Ignored if ``reuseEmptyClusters`` is True.
+
+            * **minBits (int)**: The minimum number of quantization bits for the quantized tensors. Fireball searches for  the lowest quantization bits (``qBits``) between ``minBits`` and ``maxBits`` that results in a quantization error (MSE) below the specified ``mseUb``. The quantization bits found ``qBits`` defines the codebook size (codebookSize=symCount=2^qBits). The default is 2. Ignored if ``reuseEmptyClusters`` is False.
+
+            * **maxBits (int)**: The maximum number of quantization bits for the quantized tensors. Fireball searches for  the lowest quantization bits (``qBits``) between ``minBits`` and ``maxBits`` that results in a quantization error (MSE) below the specified ``mseUb``. The found ``qBits`` value defines the codebook size (codebookSize=symCount=2^qBits). The default is 12. Ignored if ``reuseEmptyClusters`` is False.
+
+            * **quiet (Boolean)**: True means there are no messages printed during the execution of the function.
+                        
+        Returns
+        -------
+        int
+            Total size of quantized parameters in bytes.
+        """
+        quiet = kwargs.get('quiet', False)
+        if not quiet:   print('Creating quantized model ...')
+
+        newNetParams = []
+        newBlocks = []
+        newNumParams = 0
+        quantizedBytes = 0
+        for layer in self.layers:
+            layerMseUB = None
+            for l,(layerScope, mseUB) in enumerate(qParams):
+                if layer.scope != layerScope:   continue
+                layerMseUB = mseUB
+                
+            if layerMseUB is None:
+                newNetParams += layer.getNpParams()
+                quantizedBytes += layer.getNumBytes()
+            else:
+                kwargs['mseUb'] = layerMseUB
+                newLayerNetParams, layerQuantizedBytes, infoStr = layer.quantize(**kwargs)
+                if not quiet:   print("  " + infoStr)
+                newNetParams += newLayerNetParams
+                quantizedBytes += layerQuantizedBytes
+
+        self.save(modelPath, netParams=newNetParams )
+        if not quiet:   print('Total New Parameters Size (bytes): {:,}'.format(quantizedBytes))
+        return quantizedBytes
+
     # ******************************************************************************************************************
     @classmethod
     def pruneModel(cls, inputModelPath, outputModelPath, mseUb, **kwargs):
@@ -1547,7 +1625,8 @@ class Model:
                     #       (x0, x1,...)
                     # where xi is the concatenation of [t0xi, t1xi, ...]
                     tupLen = len(towerInferPreds[0])
-                    self.tfInferPrediction = tuple( tf.concat(axis=0, values=[x[i] for x in towerInferPreds]) for i in range(tupLen) )
+                    self.tfInferPrediction = tuple( tf.concat(axis=0, values=[x[i] for x in towerInferPreds],
+                                                              name='InferPrediction%d'%(i)) for i in range(tupLen) )
                 else:
                     self.tfInferPrediction = tf.concat(axis=0, values=towerInferPreds, name='InferPrediction')
             
@@ -1555,13 +1634,14 @@ class Model:
                 else:
                     # evalResults is only used for the multi-dimensional regression cases. It contains Sum Squared Error
                     # and Sum Absolute Error for each sample.
-                    self.evalResults = tuple( tf.concat(axis=0, values=[x[i] for x in towerEvalResults]) for i in range(2) )
+                    self.evalResults = tuple( tf.concat(axis=0, values=[x[i] for x in towerEvalResults],
+                                                        name='Eval%d'%(i)) for i in range(2) )
                 
                 # Apply the gradients and update BatchNorm Moving Averages
                 with tf.control_dependencies( self.updateBnMovingAverages(batchNormMoments) ):
                     self.tfOptimize = self.tfOptimizer.apply_gradients(meanGradsAndVars, global_step=self.tfBatch)
                     self.tfOptimizeNT = None
-                    if (meanGradsAndVarsNT is not None) and (self.trainAllBatch>0):
+                    if meanGradsAndVarsNT is not None:
                         self.tfOptimizeNT = self.tfOptimizer.apply_gradients(meanGradsAndVarsNT, global_step=self.tfBatch)
 
             self.tfSummaries = tf1.summary.merge(self.tfSummaries)
@@ -1602,12 +1682,12 @@ class Model:
             summaryDir = summaryWriter
         elif type(summaryWriter) is bool:   # Create a summaryWriter in <curPath>/Tensorboard
             if summaryWriter:
-                summaryDir = os.path.dirname(sys.modules['__main__'].__file__) + 'TensorBoard'
+                summaryDir = './TensorBoard'
         elif summaryWriter is not None:
             self.summaryWriter = summaryWriter
 
         if summaryDir is not None:
-            self.summaryWriter = tf.summary.FileWriter(summaryDir, self.session.graph)
+            self.summaryWriter = tf1.summary.FileWriter(summaryDir, self.session.graph)
         
     # ******************************************************************************************************************
     def train(self, logBatchInfo=False):
@@ -1770,6 +1850,40 @@ class Model:
         self.updateTrainingTable('End')
 
     # ******************************************************************************************************************
+    def getInferenceTime(self, dataSet=None, maxSamples=None):
+        r"""
+        This function runs the model in inference mode and calculates the average inference time for processing one sample.
+        
+        Parameters
+        ----------
+        dataSet : dataset object (Derived from "BaseDSet" class)
+            The dataset object that is used for the evaluation. If this is None, the function uses the "testDs" specified when the model was created. If a test dataset was not specified, then a "ValueError" exception is thrown.
+            
+        maxSamples : int
+            The max number of samples from the "dataSet" to be processed for calculation of inference time. A larger value results in a more acurate estimate, but it also takes longer to complete. If this is None, then all of the samples in the specified dataset are used for the calculation.
+
+        Returns
+        -------
+        The average inference time to process one sample.
+        """
+        if dataSet is None:     dataSet = self.testDs
+        if dataSet is None:     raise ValueError("A dataset must be specified!")
+                    
+        maxSamples = dataSet.numSamples if maxSamples is None else min( maxSamples, dataSet.numSamples)
+        if maxSamples<50:
+            raise ValueError("Need at least 50 samples to calculate the inference time!")
+            
+        myPrint('Processing %d samples ... '%(maxSamples), False)
+        for idx in range(maxSamples):
+            if idx==2: t0 = time.time()   # Skip the first 2 samples which can take longer
+            sample,_ = dataSet.getBatch( [idx] )
+            inferResults = self.inferBatch( sample, returnProbs=False )
+        totalTime = time.time()-t0
+        timePerSample = totalTime/(maxSamples-2)
+        myPrint('Done. (%.2f Sec., %.2f mSec. per Sample)'%(totalTime, timePerSample*1000.0))
+        return timePerSample
+
+    # ******************************************************************************************************************
     def evaluateDSet(self, dataSet, batchSize=None, quiet=False, returnMetric=False, **kwargs):
         r"""
         This function evaluates this model using the specified dataset.
@@ -1878,9 +1992,10 @@ class Model:
 
         if remainingSamples>0:
             rSamples = tuple(x[-remainingSamples:] for x in batchSamples) if type(batchSamples)==tuple else batchSamples[-remainingSamples:]
+            rLabels = tuple(x[-remainingSamples:] for x in batchLabels) if type(batchLabels)==tuple else batchLabels[-remainingSamples:]
             feedDic = self.layers.input.feed(rSamples)  # Use last tower for the remaining samples
             assert feedDic is not None
-            feedDic.update( self.layers.output.feed(batchLabels) )
+            feedDic.update( self.layers.output.feed(rLabels) )
             remainingResults = self.session.run(self.towers[-1].evalResults, feed_dict=feedDic)
             if results is None:
                 results = remainingResults
@@ -2338,6 +2453,19 @@ class Model:
                 assert numFreezed == tower.freezeLayerParams(layers), "Different towers froze different parameters!"
         Model.printMsg("Total number of parameters frozen: %d"%(numFreezed))
             
+            
+    # ******************************************************************************************************************
+    def getFlops(self):
+        r"""
+        Returns the model complexity in number of floating point operations (flops) for inference of one input sample.
+        
+        Returns
+        -------
+        int
+            An integer value giving the approximate number of floating point operations (flops) for inference of one input sample.
+        """
+        return self.layers.profile()
+        
     # ******************************************************************************************************************
     def closeSession(self):
         r"""
@@ -2419,33 +2547,20 @@ class Model:
             * "Batch":        A tuple (epoch, batch) containing the epoch number and batch number.
             * "AddRow":       A tuple (epoch, batch, learningRate, loss, validMetric, testMetric) containing the epoch number, batch number, learning rate, loss, validation metric, and test metric for the epoch.
             * "End":          Optional text value. The text will be printed on the line immediately following the table.
-            * Anything else:  If not None, a new-line character is also print.
+            * Anything else:  If not None, a new-line character is also printed.
         """
         if self.quiet:  return
 
         if code.lower() == 'start':
             self.tableHeaderCounter = -1
             self.tableMaxBatch = 0
+            self.prevBatchTime = None
             return
 
         #        123456   1234567   1234567890123   123456789   12345678901234567
         sep = '+--------+---------+---------------+-----------+-------------------+'
         if code.lower()=='separator':
             print(sep)
-            return
-
-        if code.lower()=='batch':
-            epoch, batch = data
-            if batch>self.tableMaxBatch:
-                self.tableMaxBatch=batch
-                self.printMsg('  Epoch %d, Batch %d     \r'%(epoch, batch), False)
-            else:
-                batchStr = '  Epoch %d, Batch %d/%d '%(epoch, batch, self.tableMaxBatch)
-                remainingLen = len(sep)-len(batchStr)
-                numProgressChars = batch*remainingLen//self.tableMaxBatch
-                batchStr += '█'*numProgressChars
-                batchStr += '.'*(len(sep)-len(batchStr)) + '\r'
-                Model.printMsg(batchStr, False)
             return
 
         if code.lower()=='addrow':
@@ -2480,8 +2595,32 @@ class Model:
             print('Total Training Time: %.2f Seconds'%(self.trainTime))
             return
 
+        if code.lower()=='batch':
+            if self.prevBatchTime is not None:
+                if time.time()-self.prevBatchTime<0.1:
+                    return
+            self.prevBatchTime = time.time()
+            epoch, batch = data
+            if batch>self.tableMaxBatch:
+                self.tableMaxBatch=batch
+                self.printMsg('  Epoch %d, Batch %d     \r'%(epoch, batch), False)
+            else:
+                batchStr = '  Epoch %d, Batch %d/%d '%(epoch, batch, self.tableMaxBatch)
+                remainingLen = len(sep)-len(batchStr)
+                numProgressChars = batch*remainingLen//self.tableMaxBatch
+                batchStr += '█'*numProgressChars
+                batchStr += '.'*(len(sep)-len(batchStr)) + '\r'
+                Model.printMsg(batchStr, False)
+            return
+
         # Otherwise print the message in the "data"
         eol = (data is not None)    # Default: no new line)
+        if not eol:
+            if self.prevBatchTime is not None:
+                if time.time()-self.prevBatchTime<0.1:
+                    return
+            self.prevBatchTime = time.time()
+
         msgStr = code + " "*(len(sep)-len(code)) + ("" if eol else "\r")
         Model.printMsg(msgStr, eol)
 

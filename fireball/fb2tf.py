@@ -13,6 +13,7 @@ containing the parameters of the network.
 # 11/29/2020    Shahab                  Created the TfBuilder class and moved all the functionality into
 #                                       this class.
 # 05/12/2022    Shahab                  A Minor fix to support TF2.
+# 06/21/2022    Shahab                  "addedLoss" is used instead of "l2Loss".
 # **********************************************************************************************************************
 import numpy as np
 import tensorflow as tf
@@ -77,7 +78,7 @@ class TfBuilder:
                                    "    def __init__(self, paramsFilePath=None, **kwargs):",
                                    "        tf1.reset_default_graph()",
                                    "        train = kwargs.get('train', False)",
-                                   "        self.l2Loss = 0",
+                                   "        self.addedLoss = 0",
                                    ""),
                                   (modelFileName, nowStr, self.fbModel.name) ) )
         

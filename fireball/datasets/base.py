@@ -15,6 +15,8 @@ This file contains the implementation of the base dataset class for all other da
 #                                                 arguments to control the behavior of the evaluation
 #                                                 functions.
 # 10/11/2021              Shahab Hamidi-Rad       Added support for downloading datasets.
+# 06/21/2022              Shahab Hamidi-Rad       Minor fixes in "evaluateModel" function to improve timing accuracy
+#                                                 for the case of batchSize=1
 # **********************************************************************************************************************
 import numpy as np
 import os
@@ -571,20 +573,15 @@ class BaseDSet:
         predictions, actuals = [], []
         inferResults = []
         
-        totalTime = 0 # If batchSize is 1, we want to calculate the average inference time per sample.
         for b, (batchSamples, batchLabels) in enumerate(self.batches(batchSize, sampleIndexes=specifiedSamples)):
             if totalSamples>=maxSamples: break
             if returnMetric and (not quiet):
                 model.updateTrainingTable('  Running Inference for %s sample %d ... '%(self.dsName.lower(), totalSamples))
             if not processQuiet:
-                if batchSize==1:
-                    myPrint('\r  Processing sample %d ... '%(b+1), False)
-                else:
-                    myPrint('\r  Processing batch %d - (Total Samples so far: %d) ... '%(b+1, totalSamples), False)
+                myPrint('\r  Processing batch %d - (Total Samples so far: %d) ... '%(b+1, totalSamples), False)
             
             if type(batchSamples) == tuple:     totalSamples += len(batchSamples[0])
             else:                               totalSamples += len(batchSamples)
-            if batchSize == 1: t0 = time.time()
             
             if type(batchLabels) == tuple:
                 inferResults = model.inferBatch( batchSamples, returnProbs=False )
@@ -603,13 +600,16 @@ class BaseDSet:
                     
             # Normal cases (batchLabels is not a tuple)
             elif topK>0:
-                predictions += np.argsort( model.inferBatch( batchSamples ) )[:,-topK:].tolist() # Keep topK indexes
+                inferResults = model.inferBatch( batchSamples )
+                # Keep topK indexes
+                if self.labelShape==(): predictions += np.argsort( inferResults )[:,-topK:].tolist()
+                else:                   predictions += np.argsort( inferResults, -1 )[:,:,-topK:].tolist()
                 actuals += batchLabels.tolist()
 
             else:
-                predictions += model.inferBatch( batchSamples, returnProbs=False).tolist()
+                inferResults = model.inferBatch( batchSamples, returnProbs=False)
+                predictions += inferResults.tolist()
                 actuals += batchLabels.tolist()
-            if b>0: totalTime +=(time.time()-t0)    # Do not count the first sample
 
         if type(actuals) != tuple:
             # If actuals and predictions are tuples, it is responsibility of the derived "getMetricVal" and
@@ -621,10 +621,7 @@ class BaseDSet:
             return self.getMetricVal(predictions, actuals)
 
         if not processQuiet:
-            if batchSize==1:
-                myPrint('\r  Processed %d Sample. (Time Per Sample: %.2f ms)%30s\n'%(totalSamples, (1000.0*totalTime)/(maxSamples-1),' '))
-            else:
-                myPrint('\r  Processed %d Sample. (Time: %.2f Sec.)%30s\n'%(totalSamples, time.time()-t0,' '))
+            myPrint('\r  Processed %d Sample. (Time: %.2f Sec.)%30s\n'%(totalSamples, time.time()-t0,' '))
 
         evalResults = self.evaluate(predictions, actuals, topK, confMat=kwargs.get('confMat', False),
                                     expAcc=expAcc, quiet=processQuiet)
@@ -653,29 +650,27 @@ class BaseDSet:
         processQuiet = quiet or returnMetric
         totalSamples = 0
 
-        sumSquaredErrors, sumAbsoluteErrors = [], []
+        sumSquaredErrors, sumAbsoluteErrors, sumGtPowers = [], [], []
         labelSize = None
-        totalTime = 0 # If batchSize is 1, we want to calculate the average inference time per sample.
         for b, (batchSamples, batchLabels) in enumerate(self.batches(batchSize)):
             if labelSize is None: labelSize = np.prod(batchLabels.shape[1:])
             if totalSamples>=maxSamples: break
             if returnMetric and (not quiet):
                 model.updateTrainingTable('  Running Evaluation for %s sample %d ... '%(self.dsName.lower(), totalSamples))
             if not processQuiet:
-                if batchSize==1:
-                    myPrint('\r  Processing sample %d ... '%(b+1), False)
-                else:
-                    myPrint('\r  Processing batch %d - (Total Samples so far: %d) ... '%(b+1, totalSamples), False)
+                myPrint('\r  Processing batch %d - (Total Samples so far: %d) ... '%(b+1, totalSamples), False)
             
             if type(batchSamples) == tuple:     totalSamples += len(batchSamples[0])
             else:                               totalSamples += len(batchSamples)
-            if batchSize == 1: t0 = time.time()
             
             batchSSE, batchSAE = model.evalBatch(batchSamples, batchLabels)
             sumSquaredErrors += batchSSE.tolist()
             sumAbsoluteErrors += batchSAE.tolist()
-
-            if b>0: totalTime +=(time.time()-t0)    # Do not count the first sample
+            
+            # Calculating Sum of ground Truth powers: || Yi - mean(Yi) ||² for each label vector Yi
+            dimBatchLabels = len(batchLabels.shape)
+            sampleDims = tuple(range(1,dimBatchLabels))
+            sumGtPowers += np.square(batchLabels-batchLabels.mean(sampleDims,keepdims=True)).sum(sampleDims).tolist()
 
         # Calculating average of MSE, RMSE, MAE, PSNR
         # Calculate MSE, RMSE, MAE, PSNR for each sample and then return the average over all samples.
@@ -683,10 +678,12 @@ class BaseDSet:
         rmses = np.sqrt(mses)
         rmsesClipped = np.clip(rmses, 0.000001, None)
         maes = np.float32(sumAbsoluteErrors)/labelSize
+        nmses = np.float32(sumSquaredErrors)/sumGtPowers
         
         aMse = mses.mean()
         aRmse = rmses.mean()
         aMae = maes.mean()
+        aNmse = nmses.mean()
         aPsnr = None if self.psnrMax is None else (20.*np.log10(self.psnrMax/rmsesClipped)).mean()
 
         # Calculating global MSE, RMSE, MAE, PSNR
@@ -701,6 +698,7 @@ class BaseDSet:
             'mse':          aMse,
             'rmse':         aRmse,
             'mae':          aMae,
+            'nmse':         aNmse,
             'gMse':         gMse,
             'gRmse':        gRmse,
             'gMae':         gMae,
@@ -723,12 +721,10 @@ class BaseDSet:
             return results[self.evalMetricName.lower()]
 
         if not processQuiet:
-            if batchSize==1:
-                myPrint('\r  Processed %d Sample. (Time Per Sample: %.2f ms)%30s\n'%(totalSamples, (1000.0*totalTime)/(maxSamples-1),' '))
-            else:
-                myPrint('\r  Processed %d Sample. (Time: %.2f Sec.)%30s\n'%(totalSamples, time.time()-t0,' '))
+            myPrint('\r  Processed %d Sample. (Time: %.2f Sec.)%30s\n'%(totalSamples, time.time()-t0,' '))
 
         if not quiet:
+            print('NMSE: %f'%(aNmse))
             print('MSE:  %f'%(aMse))
             print('RMSE: %f'%(aRmse))
             print('MAE:  %f'%(aMae))
@@ -771,7 +767,12 @@ class BaseDSet:
         else:
             # Classification:
             if self.evalMetricName == 'Error':
-                errorRate = np.sum(actual != predicted)*100.0/float(self.numSamples)
+                if self.labelShape==():
+                    errorRate = np.sum(actual != predicted)*100.0/float(self.numSamples)
+                else:
+                    # This is the sequence case. In this case we return the average of the errors for
+                    # elements of sequence.
+                    errorRate = (np.sum(actual != predicted, 0)*100.0/self.numSamples).mean()
                 return errorRate
         
         raise ValueError("Unsupported metric name '%s'!"%(self.evalMetricName))
@@ -949,20 +950,26 @@ class BaseDSet:
             ====  =============
         """
         CONFUSION_MATRIX_MIN_CLASS = 10
-        if expAcc is None:  expAcc = (self.numClasses<=CONFUSION_MATRIX_MIN_CLASS)
+        numSamples = len(actual)
+        seqLen = 1 if self.labelShape==() else self.labelShape[0]    # seqLen>1 means we have a sequence of classifications
 
+        if expAcc is None:  expAcc = (self.numClasses<=CONFUSION_MATRIX_MIN_CLASS)
         if self.numClasses>CONFUSION_MATRIX_MIN_CLASS:  confMat = False
-        if confMat: expAcc = True   # expected accuracy is needed for confusion matrix
-        
+        if seqLen>1:                                    confMat = expAcc = False
+        if confMat:                                     expAcc = True   # expected accuracy is needed for confusion matrix
+
         if topK>0:
             if type(predicted)==list:       predicted=np.array(predicted)
             if type(actual)==list:          actual=np.array(actual)
 
             assert (self.numClasses>topK), "Cannot calculate Top-%d accuracy! (Number of classes: %d)"%(topK, self.numClasses)
-            topKAccuracy = np.sum(np.prod(actual.reshape((-1,1))-predicted,-1)==0)/float(actual.shape[0])
-            predicted = predicted[:,-1]
+            if seqLen>1: # The sequence case:
+                topKAccuracy = np.sum(np.prod(actual.reshape((-1,self.labelShape[0],1))-predicted,-1)==0,0)/numSamples
+                predicted = predicted[:,:,-1]
+            else:
+                topKAccuracy = np.sum(np.prod(actual.reshape((-1,1))-predicted,-1)==0)/numSamples
+                predicted = predicted[:,-1]
 
-        numSamples = len(actual)
         sumActuals = [0]*self.numClasses
         sumPreds = [0]*self.numClasses
         
@@ -1001,7 +1008,7 @@ class BaseDSet:
 
             expAccuracy = float(sum([sumActuals[i]*sumPreds[i] for i in range(self.numClasses)]))/float(numSamples*numSamples)
 
-        accuracy = 1.0 - np.sum(np.int32(actual) != np.int32(predicted))/float(numSamples)
+        accuracy = 1.0 - np.sum(np.int32(actual) != np.int32(predicted), 0)/float(numSamples)
         if (expAccuracy is not None) and (expAccuracy!=1.0):
             kappa = (accuracy-expAccuracy)/(1.0-expAccuracy)
 
@@ -1056,9 +1063,9 @@ class BaseDSet:
                 for c in range(self.numClasses):   row += ('  %-6.2f|' % (fMeasures[c]))
                 print(row + '\n+------------' + sepLine)
 
-            print('Observed Accuracy: %f'%(accuracy))
+            print('Observed Accuracy: ', accuracy)
             if expAccuracy is not None: print('Expected Accuracy: %f'%(expAccuracy))
-            if topK>0:                  print('Top-%d Accuracy:   %f'%(topK, topKAccuracy))
+            if topK>0:                  print('Top-%d Accuracy:    '%(topK), topKAccuracy)
             if kappa is not None:
                 kappaStrs = ['Poor', 'Fair', 'Moderate', 'Good', 'Excellent']
                 print('Kappa: %f (%s)'%(kappa, kappaStrs[ max(int((kappa-.01)/.2),0) ]))

@@ -7,6 +7,7 @@ CoreML model.
 Useful Links:
 CoreML Tools Documentation: https://apple.github.io/coremltools/index.html
 ML Model Spec: https://apple.github.io/coremltools/coremlspecification/index.html
+neural_network.builder: https://apple.github.io/coremltools/source/coremltools.models.neural_network.html
 """
 # **********************************************************************************************************************
 # Revision History:

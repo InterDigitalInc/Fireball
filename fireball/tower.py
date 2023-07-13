@@ -9,6 +9,8 @@ models for utilizing multiple GPU's while training.
 # ------------  --------------------    -----------------------------------------------------------------------------
 # 05/10/2019    Shahab Hamidi-Rad       Created the file.
 # 08/10/2020    Shahab                  Moved some of the input/output functionality to the new input/output layers.
+# 06/21/2021    Shahab                  "addedLoss" is now used instead of "l2Loss". Also fixed a problem in calculation
+#                                       of L2 Loss.
 # **********************************************************************************************************************
 import numpy as np
 
@@ -62,7 +64,7 @@ class Tower:
             if not netParam.trainable:  continue
             self.allTrainable += [ netParam.tfVariable ]
             if netParam.initialized:    continue
-            self.nonTransferred += [ netParam.tfVariable ]
+            self.nonTransferred += [ netParam.tfVariable ]  # These are not initialized using given numpy parameters
     
     # ******************************************************************************************************************
     def freezeLayerParams(self, layers):
@@ -127,19 +129,15 @@ class Tower:
     # ******************************************************************************************************************
     def makeTrainGraph(self):
         self.tfLoss = self.getNetOutput(training=True)
-        
-        # L2 Regularization on specified layers
-        tfL2Reg = None
-        if self.owner.regFactor > 0:
-            with tf.name_scope('L2Reg'):
-                for layer in self.owner.layers:
-                    if layer.l2Loss is None: continue
-                    if tfL2Reg is None:     tfL2Reg = layer.l2Loss
-                    else:                   tfL2Reg += layer.l2Loss
-                if tfL2Reg is not None:
-                    tfL2Reg = self.owner.regFactor * tfL2Reg
 
-        if tfL2Reg is not None: self.tfLoss += tfL2Reg
+        addedLoss = None
+        with tf.name_scope('addedLoss'):
+            for layer in self.owner.layers:
+                if layer.addedLoss is None: continue
+                if addedLoss is None:   addedLoss = layer.addedLoss
+                else:                   addedLoss += layer.addedLoss
+
+        if addedLoss is not None: self.tfLoss += addedLoss
 
         with tf.name_scope('AbsGrads'):
             grads = tf.gradients(self.tfLoss, self.allTrainable)
@@ -168,11 +166,12 @@ class Tower:
                     self.makeTrainGraph()
                     with tf.name_scope('OptGrads'):
                         myGrads = optimizer.compute_gradients(self.tfLoss, self.allTrainable)
-                        myGradsNT = None if len(self.nonTransferred)==0 else \
-                                            optimizer.compute_gradients(self.tfLoss, self.nonTransferred)
+                        myGradsNT = None
+                        if (len(self.nonTransferred)>0 and                      # We have some vars not initialized from file
+                            len(self.nonTransferred)<len(self.allTrainable) and # ..., but not all of them
+                            self.owner.trainAllBatch>0):                        # and we want to train them first before training all
+                            myGradsNT = optimizer.compute_gradients(self.tfLoss, self.nonTransferred)
 
-#        myGrads = [ (tf.zeros_like(self.allTrainable[i]), g[1]) if g[0] is None else g for i,g in enumerate(myGrads) ]
-#        myGradsNT = [ (tf.zeros_like(self.nonTransferred[i]), g[1]) if g[0] is None else g for i,g in enumerate(myGradsNT) ]
         return (myGrads, myGradsNT)
 
     # ******************************************************************************************************************

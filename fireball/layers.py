@@ -22,6 +22,13 @@ function "Layers::__init__" below.
 #                                       Added the "getNumBytes" and "Prune" methods to the layer classes.
 # 05/24/2022    Shahab                  Added support for ELU.
 #                                       Added support for exporting Elu, SeLU, Leaky ReLU to ONNX/CoreML
+# 06/21/2022    Shahab                  Added support for calculating the inference flops. See the "profile" functions.
+#                                       Each layer now has a new param called "addedLoss". If not None, it will be added
+#                                       to the loss function. This is now used instead of "l2Loss" which was removed.
+#                                       Fixed a problem in the "Layer::prune" function.
+#                                       Added the "quantize" function for all layers.
+# 10/12/2022    Shahab                  ONNX export now supports transformer pools.
+#                                       Fixed ONNX export problems with combination BERT/Conv. layers.
 # **********************************************************************************************************************
 import numpy as np
 
@@ -37,10 +44,9 @@ from .fb2tf import *
 from .netparam import NetParam
 
 # **********************************************************************************************************************
-# Using this forces the same random numbers across different tensorflow sessions
 SEED = 36478                    # Set to None for random seed.
 DEFAULT_ACTIVATION = 'none'
-DO_CHECK_NUMERICS = True
+DO_CHECK_NUMERICS = False       # Set to True to check for NAN and inf values in the tensors.
 
 # **********************************************************************************************************************
 def checkNumeric(tensors, text):
@@ -471,6 +477,12 @@ class Layers:
             outShape = layer.getOutShape(inShape)
 
     # ******************************************************************************************************************
+    def profile(self):
+        flops = 0
+        for layer in self.layers:   flops += layer.profile()
+        return int(flops)
+        
+    # ******************************************************************************************************************
     def getNameNetParams(self):
         """
         Returns a list of tuples (name, netParam) for all parameters of the network.
@@ -602,7 +614,7 @@ class Layer(object):
         self.supportsEval = False   # Currently only "REG" layer supports this
         
         self.layerOuts = {'training':[], 'inference':[]}
-        self.l2Loss = None
+        self.addedLoss = None
         
         self.cachedSvd = None   # Used to prevent running SVD again and again when using Low-Rank Decomposition
 
@@ -651,6 +663,10 @@ class Layer(object):
     # ******************************************************************************************************************
     def getAllParamStrs(self, includeSizeInfo=False):
         return []
+
+    # ******************************************************************************************************************
+    def profile(self):
+        return 0
 
     # ******************************************************************************************************************
     def makeL2Loss(self, factor):
@@ -911,6 +927,19 @@ class Layer(object):
         raise NotImplementedError("'buildTf' function is not implemented for '%s' layer '%s'!"%(self.name, self.scope))
 
     # ******************************************************************************************************************
+    def profileActivation(self):
+        # Note: Tensorflow profiler does not count any activation function other than softmax (5n) and gelu (3n)!!!
+        if self.activation == "relu":   return np.prod(self.outShape)       # max(x, 0)
+        if self.activation == "lrelu":  return np.prod(self.outShape)       # 𝜶x                   (for x<0)
+        if self.activation == "elu":    return 3*np.prod(self.outShape)     # 𝜶.(exp(x) - 1)       (for x<0)
+        if self.activation == "selu":   return 4*np.prod(self.outShape)     # 𝝀.𝜶.(exp(x) - 1)     (for x<0)
+        if self.activation == "tanh":   return 7*np.prod(self.outShape)     # (exp(2x)-1)/(exp(2x)+1)
+        if self.activation == "sig":    return 4*np.prod(self.outShape)     # 1/(1+exp(-x))
+        if self.activation == "soft":   return 5*np.prod(self.outShape)     # exp(x)/𝜮 exp(x)
+        if self.activation == "gelu":   return 13*np.prod(self.outShape)    # 0.5 x ( 1 + tanh( sqrt(2/𝝅)(x + 0.044715*x^3) ) )
+        return 0
+        
+    # ******************************************************************************************************************
     def buildActivation(self, outputs, isTraining):
         tfName = None
         activationFunction = Layer.activationInfo[self.activation][0]
@@ -1055,7 +1084,6 @@ class Layer(object):
                 raise NotImplementedError("%s: Average Pooling not implemented yet!"%(self.scope))
 
             elif pa.name=='UP':
-                scaleX, scaleY = pa.scale
                 outputs += [ tf1.image.resize_nearest_neighbor(outputs[-1], (pa.outY, pa.outX), name='UpSampling') ]
 
             elif pa.name=='DO':
@@ -1146,6 +1174,39 @@ class Layer(object):
                     if type(layerOut)==int: layerOut = self.layers.netmarks[ layerOut ].layerOuts[outKey][-1]
                     layerOutputs += [ layerOut ]
                 outputs += [ tuple([outputs[-1]] + layerOutputs) ]
+            
+            elif pa.name=='RND':
+                if isTraining:  outputs += [ tf.round(tf.stop_gradient(outputs[-1]), name="Round") ]
+                else:           outputs += [ tf.round(outputs[-1], name="Round") ]
+
+            elif pa.name=='BBN':
+                if isTraining:
+                    if self.activation != 'sig':
+                        raise ValueError("%s: '%s' is supported only with 'Sigmoid' Activation function!"%(layer.scope, paName.upper()))
+                    if len(self.postActivations)!=1:
+                        raise ValueError("%s: '%s' must be the only post activation!"%(layer.scope, paName.upper()))
+                        
+                    if pa.stopGrad>0:
+                        outBefore = outputs[-1]
+                        outAfter = tf.round(tf.stop_gradient(outputs[-1]), name="Round")
+                        outputs += [ tf.cond(self.model.tfBatch < pa.stopGrad, lambda: outBefore, lambda: outAfter) ]
+                    elif pa.trainRound==1:
+                        outputs += [ tf.round(outputs[-1], name="Round") ]
+                    elif pa.trainRound==2:
+                        # Assuming the inputs are in the range of 0 and 1 we can make a differetiable round function:
+                        diffRnd = tf.maximum(outputs[-1]-0.499999,0)
+                        diffRnd = diffRnd * 1e12
+                        diffRnd = tf.minimum(diffRnd, 1.0)
+                        outputs += [ diffRnd ]
+                        
+                    if pa.factor>0:
+                        self.addedLoss = pa.factor*tf.reduce_mean(0.25-tf.square(outputs[-1]-0.5))
+                else:
+                    outputs += [ tf.round(outputs[-1], name="Round") ]
+                    if pa.truncate>0:
+                        # Used on inference to truncate some of the bottleneck bits
+                        mask = tf.concat( [tf.ones([self.outSize-pa.truncate], tf.float32), tf.zeros([pa.truncate], tf.float32)], 0)
+                        outputs += [ outputs[-1]*mask ]
 
     # ******************************************************************************************************************
     def buildOnnxPostActivation(self, onnxBuilder, inputName):
@@ -1153,7 +1214,17 @@ class Layer(object):
         for p, pa in enumerate(self.postActivations):
             s = self.deepScope(pa.name)
             if pa.name == 'RS':
-                outputName = onnxBuilder.addReshape(inputName, [-1] + pa.shape)
+                outputName = s[:-1]
+                if self.nextLayer.name in ['CONV',"RES1", "RES2"]: # TODO: We should handle all blocks here. This is temporary hack!
+                    # Reshaping for input to Conv. => Reshape then Transpose
+                    onnxBuilder.addReshape(inputName, [-1] + pa.shape, s+'Reshape')
+                    onnxBuilder.addNode('Transpose', [s+'Reshape'], [outputName], s+'/Transpose', perm=[0,3,1,2])
+                elif self.name == 'CONV':
+                    # Reshaping for input to Conv. => Transpose Then Reshape
+                    onnxBuilder.addNode('Transpose', [inputName], [s+'Transpose'], s+'/Transpose', perm=[0,2,3,1])
+                    onnxBuilder.addReshape(s+'Transpose', [-1] + pa.shape, outputName)
+                else:
+                    onnxBuilder.addReshape(inputName, [-1] + pa.shape, outputName)
                 inputName = outputName
                 
             elif pa.name in ['MP','AP']:
@@ -1211,8 +1282,19 @@ class Layer(object):
                 pa.inputName = inputName
 
             elif pa.name=='TP':
-                raise NotImplementedError("Transformers Pooling not implemented yet!")
-                
+                outputName = s[:-1]
+                onnxBuilder.addParam(s+'SliceStarts', 'int64', [2], [0,0])
+                onnxBuilder.addParam(s+'SliceEnds', 'int64', [2], [pa.numVectors,1000000])
+                onnxBuilder.addNode('Slice', [inputName, s+'SliceStarts', s+'SliceEnds'], [s+'Sliced'], s+'Slice')
+                outputName = onnxBuilder.addReshape(s+'Sliced', [-1, pa.numVectors*self.outSize], outputName)
+                inputName = outputName
+
+            elif pa.name in ['RND','BBN']:
+                # NOTE: Exporting Truncation to ONNX is not supported for BBN
+                outputName = s[:-1]
+                onnxBuilder.addNode('Round', [inputName], [outputName], s+'Round')
+                inputName = outputName
+
         return outputName
 
     # ******************************************************************************************************************
@@ -1287,6 +1369,13 @@ class Layer(object):
             elif pa.name=='FM':
                 pa.inputName = inputName
 
+            elif pa.name in ['RND', 'BBN']:
+                # NOTE: Exporting Truncation to CoreML is not supported for BBN
+                outputName = s[:-1]
+                cmlBuilder.add_round(name =         outputName,
+                                     input_name =   inputName,
+                                     output_name =  outputName)
+                inputName = outputName
         return inputName
 
     # ******************************************************************************************************************
@@ -1347,6 +1436,15 @@ class Layer(object):
                 tfBuilder.addToGraph("out = tf.reshape(out[:,0:%d,:], [-1, %d])",
                                      (pa.numVectors, pa.numVectors*self.outSize))
 
+            elif pa.name in ['RND','BBN']:
+                # NOTE: Exporting Truncation to CoreML is not supported for BBN
+                tfBuilder.addToGraph(("if isTraining:",
+                                      "    self.addedLoss += %f*tf.reduce_mean(0.25-tf.square(out-0.5))"%(pa.factor),
+                                      "else:",
+                                      "    out = tf.round(out, name='Round')"))
+                if pa.truncate:
+                    tfBuilder.addToGraph(("    mask = tf.concat( [tf.ones([%d], tf.float32), tf.zeros([%d], tf.float32)], 0)"%(self.outSize-pa.truncate, pa.truncate),
+                                          "    out *= mask"))
 
     # ******************************************************************************************************************
     def decomposeMatrix(self, w, rankInfo):
@@ -1454,10 +1552,46 @@ class Layer(object):
             changeStr = 'Reduction: %.1f%%'%((orgBytes-prunedBytes)*100.0/orgBytes)
             infoStr = '%s => nzmav=%f, MSE=%f, Bytes: %d->%d (%s)'%(self.scope, nzmav, mse, orgBytes, prunedBytes, changeStr)
         else:
-            changeStr = 'Reduction: %.1f%%'%((orgBytes-prunedBytes)*100.0/orgNumParams)
+            changeStr = 'Reduction: %.1f%%'%((orgBytes-prunedBytes)*100.0/orgBytes)
             infoStr = '%s => Multiple Params, Bytes: %d->%d (%s)'%(self.scope, orgBytes, prunedBytes, changeStr)
 
         return prunedNetParams, prunedBytes, infoStr
+
+    # ******************************************************************************************************************
+    def quantize(self, **kwargs):
+        quantizedNetParams = []
+        infoStrs = ''
+        orgBytes = self.getNumBytes()
+        quantizedBytes = 0
+        numQuantizedNetParams = 0
+        cbSize = 0
+        weightsOnly = kwargs.get('weightsOnly', True)
+
+        netParams = self.getNpParams()
+        for netParam in netParams:
+            if weightsOnly and (netParam.dim==1):   quantizedNetParam = None
+            elif netParam.codebook is not None:     quantizedNetParam = None
+            else:                                   quantizedNetParam, mse = netParam.quantize(**kwargs)
+            
+            if quantizedNetParam is None:
+                quantizedNetParams += [ netParam ]
+                quantizedBytes += netParam.numBytes
+            else:
+                numQuantizedNetParams += 1
+                quantizedNetParams += [ quantizedNetParam ]
+                quantizedBytes += quantizedNetParam.numBytesDisk
+                cbSize = len(quantizedNetParam.codebook)
+
+        if orgBytes == quantizedBytes:
+            infoStr = '%s => Cannot quantize!'%(self.scope)
+        elif numQuantizedNetParams == 1:
+            changeStr = 'Reduction: %.1f%%'%((orgBytes-quantizedBytes)*100.0/orgBytes)
+            infoStr = '%s => MSE=%f, Codebook Size: %d, Bytes: %d->%d (%s)'%(self.scope, mse, cbSize, orgBytes, quantizedBytes, changeStr)
+        else:
+            changeStr = 'Reduction: %.1f%%'%((orgBytes-quantizedBytes)*100.0/orgBytes)
+            infoStr = '%s => Multiple Params, Bytes: %d->%d (%s)'%(self.scope, orgBytes, quantizedBytes, changeStr)
+
+        return quantizedNetParams, quantizedBytes, infoStr
 
     # ******************************************************************************************************************
     def decompose(self, session, decInfo, decomposeDWCN=True):
@@ -1809,7 +1943,7 @@ class ImageInLayer(Layer):
     # ******************************************************************************************************************
     def getInputStr(self):
         return '%s images of size %dx%d'%("Monochrome" if self.depth==1 else "Color", self.imgSize[0], self.imgSize[1])
-
+        
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
         # input is a tuple (of placeholders) with one tensor.
@@ -1911,9 +2045,23 @@ class TensorInLayer(Layer):
         else:
             inputName = 'InputTensor'
             doc = "A tensor of shape " + 'x'.join(str(x) for x in self.shape) + "."
-            
+
         onnxBuilder.addParam(inputName, 'float', [-1]+self.shape, paramType='input', docStr=doc)
-        return inputName
+        
+        outputName = inputName
+        if self.nextLayer.name == 'CONV':
+            hasReshape = False
+            for pa in self.postActivations:
+                if pa.name=='RS':
+                    hasReshape = True
+            if not hasReshape:
+                assert len(self.shape)==3, "Input to CONV layer must have a 3D shape!"
+                onnxBuilder.addNode('Transpose', [inputName], [inputName+'/Ch1st'], inputName+'/Transpose', perm=[0,3,1,2])
+                outputName = inputName+'/Ch1st'
+
+        outputName = self.buildOnnxPostActivation(onnxBuilder, outputName)
+
+        return outputName
 
     # ******************************************************************************************************************
     def buildCml(self, cmlBuilder, inputName):
@@ -2077,6 +2225,11 @@ class EmbeddingInLayer(Layer):
         return self.model.session.run(self.embeddings, feed_dict={self.placeholders[0]: sigFata})
     
     # ******************************************************************************************************************
+    def profile(self):
+        # TODO: complete the implementation for the profile function
+        raise NotImplementedError("%s: The profile function must be implemented for the \"%s\" layers!"%(self.name, self.scope))
+
+    # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
         with tf.name_scope(self.scope):
             tokenIds, tokenTypes = input
@@ -2146,10 +2299,11 @@ class EmbeddingInLayer(Layer):
                "batch has the same length. This must always be the same length as 'TokIds' input.")
         onnxBuilder.addParam('TokTypes', 'int32', [-1,-1], paramType='input', docStr=doc)
 
-        onnxBuilder.addParam(rs+'OtherParams', 'int64', [4], [self.vocabSize,self.outSize,1,-1])
+        onnxBuilder.addParam(rs+'OtherParams', 'int64', [4], [self.outSize,self.vocabSize,1,-1])
         onnxBuilder.addNode('Shape', ['TokIds'], [rs+'inShape'], rs+'Shape')
         onnxBuilder.addNode('Concat', [rs+'inShape', rs+'OtherParams'], ['Dimensions'], rs+'Concat', axis=0)
-       
+        onnxBuilder.hasDimensionsNode = True
+
         onnxBuilder.makeShape(rs+'OutShape', 'batchSize,seqLen,outSize')
 
         # Now build the attention mask: (barchSize x seqLen x seqLen)
@@ -2398,6 +2552,85 @@ class EmbeddingInLayer(Layer):
 
 # **********************************************************************************************************************
 # MARK: ------------------------ Hidden Layers ------------------------
+class IdLayer(Layer):
+    argsDic = {}
+    orderedKeys = ''
+    name = 'ID'
+
+    # ******************************************************************************************************************
+    def __init__(self, layers, layerIndex, scope, argsInfo, actStr, parent):
+        super().__init__(layers, layerIndex, scope, argsInfo, actStr, parent)
+
+    # ******************************************************************************************************************
+    def getOutShape(self, inShape):
+        self.inShape = [x for x in inShape]
+        self.outShape = [x for x in inShape]
+        
+        for pa in self.postActivations:
+            self.outShape = pa.getOutShape( self.outShape )
+        
+        return self.outShape
+
+    # ******************************************************************************************************************
+    def getShortDesc(self):
+        return 'Identity'
+
+    # ******************************************************************************************************************
+    def getAllParamStrs(self, includeSizeInfo=False):
+        return []
+
+    # ******************************************************************************************************************
+    def makeVars(self, initValues):
+        self.netParams = []
+        return self.netParams
+
+    # ******************************************************************************************************************
+    def profile(self):
+        flops = self.profileActivation()
+        for pa in self.postActivations: flops += pa.flops
+        return flops
+
+    # ******************************************************************************************************************
+    def buildGraph(self, input, isTraining, labels=None):
+        outputs = [input]
+        with tf.name_scope(self.scope):
+            self.buildActivation(outputs, isTraining)
+            self.buildPostActivation(outputs, isTraining)
+
+        outKey = 'training' if isTraining else 'inference'
+        self.layerOuts[outKey] = outputs
+        return outputs[-1], None
+
+    # ******************************************************************************************************************
+    def buildOnnx(self, onnxBuilder, inputName):
+        outputName = self.buildOnnxActivation(onnxBuilder, inputName)
+        outputName = self.buildOnnxPostActivation(onnxBuilder, outputName)
+        return outputName
+        
+    # ******************************************************************************************************************
+    def buildCml(self, cmlBuilder, inputName):
+        outputName = self.buildCmlActivation(cmlBuilder, inputName)
+        return self.buildCmlPostActivation(cmlBuilder, outputName)
+
+    # ******************************************************************************************************************
+    def buildTf(self, tfBuilder):
+                                
+        if not self.prevLayer.isInput:      layerIn = 'out'
+        elif self.prevLayer.name == 'EMB':  layerIn = 'out'
+        else:                               layerIn = 'self.modelInput'
+
+        tfBuilder.addToGraph( tfBuilder.getScopeStr(self.scope) )
+        tfBuilder.graphIndent += 1
+        
+        tfBuilder.addToGraph("out = %s"%(layerIn))
+
+        self.buildTfActivation(tfBuilder)
+        self.buildTfPostActivation(tfBuilder)
+        
+        tfBuilder.addToGraph("")
+        tfBuilder.graphIndent -= 1
+
+# **********************************************************************************************************************
 class FcLayer(Layer):
     argsDic = {
                 'o': ('outSize', 'u', None),
@@ -2462,7 +2695,7 @@ class FcLayer(Layer):
     # ******************************************************************************************************************
     def makeL2Loss(self, factor):
         listOfL2Losses = [ netParam.tfL2Loss() for netParam in self.netParams ]
-        self.l2Loss = factor * tf.add_n(listOfL2Losses)
+        self.addedLoss = factor * tf.add_n(listOfL2Losses)
     
     # ******************************************************************************************************************
     def inferRank(self, initValues):
@@ -2526,6 +2759,19 @@ class FcLayer(Layer):
                 self.biases = self.makeNetParam('Biases', initB)
         
         return self.netParams
+
+    # ******************************************************************************************************************
+    def profile(self):
+        if self.rank==0:                flops = (2*self.flatInputSize-1) * self.outSize
+        elif self.decType == 'lr':      flops = (2*self.flatInputSize-1) * self.rank + (2*self.rank-1) * self.outSize
+        elif self.decType == 'ldr':
+            raise NotImplementedError("%s: Cannot calculate the flops for LDR layers!!"%(self.scope))
+
+        if self.hasBias:                flops += self.outSize
+        
+        flops += self.profileActivation()
+        for pa in self.postActivations: flops += pa.flops
+        return flops
 
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
@@ -2672,7 +2918,7 @@ class FcLayer(Layer):
                                  "    if l2LossFactor>0:",
                                  "        layerVars = ([w] if len(shape)==2 else [g,h]) + ([b] if hasBias else [])",
                                  "        listOfL2Losses = [ tf.nn.l2_loss(v) for v in layerVars ]",
-                                 "        self.l2Loss += l2LossFactor * tf.add_n(listOfL2Losses)",
+                                 "        self.addedLoss += l2LossFactor * tf.add_n(listOfL2Losses)",
                                  "",
                                  "    return out",
                                  ""))
@@ -2784,7 +3030,7 @@ class ConvLayer(Layer):
     # ******************************************************************************************************************
     def makeL2Loss(self, factor):
         listOfL2Losses = [ netParam.tfL2Loss() for netParam in self.netParams ]
-        self.l2Loss = factor * tf.add_n(listOfL2Losses)
+        self.addedLoss = factor * tf.add_n(listOfL2Losses)
 
     # ******************************************************************************************************************
     def inferRank(self, initValues):
@@ -2841,6 +3087,28 @@ class ConvLayer(Layer):
                 
         return self.netParams
     
+    # ******************************************************************************************************************
+    def profile(self):
+        outH, outW, _ = applyPadding(self.inShape, self.kernel, self.stride, self.padding, self.dilation)
+        kernelX, kernelY = self.kernel
+        inChannels = self.inShape[2]
+    
+        # For one element of the output:
+        #    Multiplications:   kernelX x kernelY x inChannels
+        #    Additions:         (kernelX x kernelY - 1) x inChannels + inChannels - 1 = kernelX x kernelY x inChannels - 1
+        #    Total:             2 x kernelX x kernelY x inChannels - 1
+        # Total elements on the output: outH x outW x outDept
+        # Total Flops:          [2 x kernelX x kernelY x inChannels - 1] x outH x outW x outDept
+        flopsPerOutChannel = (2 * kernelX * kernelY * inChannels - 1) * outH * outW
+        if self.rank==0:    flops = flopsPerOutChannel * self.outDept
+        else:               flops = flopsPerOutChannel * self.rank + (2*self.rank - 1) * outH * outW * self.outDept
+
+        if self.hasBias:    flops += outH * outW * self.outDept
+        
+        flops += self.profileActivation()
+        for pa in self.postActivations: flops += pa.flops
+        return flops
+
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
         kernelX, kernelY = self.kernel
@@ -3004,7 +3272,7 @@ class ConvLayer(Layer):
                                  "    if l2LossFactor>0:",
                                  "        layerVars = ([w] if len(shape)==4 else [g,h]) + ([b] if hasBias else [])",
                                  "        listOfL2Losses = [ tf.nn.l2_loss(v) for v in layerVars ]",
-                                 "        self.l2Loss += l2LossFactor * tf.add_n(listOfL2Losses)",
+                                 "        self.addedLoss += l2LossFactor * tf.add_n(listOfL2Losses)",
                                  "",
                                  "    return out",
                                  ""))
@@ -3116,7 +3384,7 @@ class DwConvLayer(Layer):     # Depth-wise Convolutional
     # ******************************************************************************************************************
     def makeL2Loss(self, factor):
         listOfL2Losses = [ netParam.tfL2Loss() for netParam in self.netParams ]
-        self.l2Loss = factor * tf.add_n(listOfL2Losses)
+        self.addedLoss = factor * tf.add_n(listOfL2Losses)
 
     # ******************************************************************************************************************
     def inferRank(self, initValues):
@@ -3177,6 +3445,28 @@ class DwConvLayer(Layer):     # Depth-wise Convolutional
                 self.biases = self.makeNetParam('Biases', initB)
                 
         return self.netParams
+
+    # ******************************************************************************************************************
+    def profile(self):
+        outH, outW, _ = applyPadding(self.inShape, self.kernel, self.stride, self.padding)
+        kernelX, kernelY = self.kernel
+        inDept = self.inShape[2]
+    
+        # For one element of the output:
+        #    Multiplications:   kernelX x kernelY x inDept
+        #    Additions:         (kernelX x kernelY - 1) x inDept
+        #    Total:             (2 x kernelX x kernelY - 1) x inDept
+        # Total elements on the output: outH x outW
+        # Total Flops:          (2 x kernelX x kernelY - 1) x inDept x outH x outW
+
+        # Note that for the low-rank case, the G.H multiplication is assumed to be calculated only once.
+        flops = (2 * kernelX * kernelY - 1) * inDept * outH * outW
+
+        if self.hasBias:    flops += inDept * outH * outW
+        
+        flops += self.profileActivation()
+        for pa in self.postActivations: flops += pa.flops
+        return flops
 
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
@@ -3290,7 +3580,7 @@ class DwConvLayer(Layer):     # Depth-wise Convolutional
                                  "    if l2LossFactor>0:",
                                  "        layerVars = ([w] if len(shape)==3 else [g,h]) + ([b] if hasBias else [])",
                                  "        listOfL2Losses = [ tf.nn.l2_loss(v) for v in layerVars ]",
-                                 "        self.l2Loss += l2LossFactor * tf.add_n(listOfL2Losses)",
+                                 "        self.addedLoss += l2LossFactor * tf.add_n(listOfL2Losses)",
                                  "",
                                  "    return out",
                                  ""))
@@ -3381,6 +3671,25 @@ class BnLayer(Layer):
             self.movingVar = self.makeNetParam('MovingVar', initV, trainable=False)
             
         return self.netParams
+
+    # ******************************************************************************************************************
+    def profile(self):
+        inDept = self.inShape[-1]
+        # y = beta + gamma * (x-mean)/sqrt(var + epsilon)
+        # y = [beta - mean/sqrt(var + epsilon)] + [gamma/sqrt(var + epsilon)] * x
+        # Note:
+        # Tensorflow underestimates this because it does not count additions.
+        # Ignoring additions we will have:
+        #   4*inDept + inDept + 1*np.prod(inShape)
+        # which is what TF calculates. (and is wrong)
+        
+        flops = 5 * inDept                  # 1st Part: 2 for sqrt and one for add, div, and subtract
+        flops += inDept                     # 2nd Part: (reuse denominator)
+        flops += 2*np.prod(self.inShape)    # Mul in 2nd part and add 1st and 2nd parts (all element-wise)
+        
+        flops += self.profileActivation()
+        for pa in self.postActivations: flops += pa.flops
+        return flops
 
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
@@ -3522,6 +3831,28 @@ class LnLayer(Layer):
             self.gamma = self.makeNetParam('Gamma', initG)
             
         return self.netParams
+
+    # ******************************************************************************************************************
+    def profile(self):
+        inDept = self.inShape[-1]
+        totalElements = np.prod(self.inShape)
+        meanVarElements = np.prod(self.inShape[:-1])
+
+        # For mean and var: n for mean, 3n+1 for var        -> 4n+1
+        flops = 4*totalElements + 1
+        
+        # y = beta + gamma * (x-mean)/sqrt(var + epsilon)
+        flops += 3 * meanVarElements    # 2 for sqrt and one for add
+        flops += 4 * totalElements      # For subtract, mul, div, add
+
+        # Note:
+        # Tensorflow does not count adds but it is calculating based on:
+        #    y = beta + (gamma * x - gamma * mean)/sqrt(var + epsilon)
+        # Which is: 4*totalElements + 2*meanVarElements   (ignoring additions)
+
+        flops += self.profileActivation()
+        for pa in self.postActivations: flops += pa.flops
+        return flops
 
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
@@ -3696,7 +4027,7 @@ class BertLayer(Layer):
     # ******************************************************************************************************************
     def makeL2Loss(self, factor):
         listOfL2Losses = [ netParam.tfL2Loss() for netParam in self.netParams ]
-        self.l2Loss = factor * tf.add_n(listOfL2Losses)
+        self.addedLoss = factor * tf.add_n(listOfL2Losses)
 
     # ******************************************************************************************************************
     def makeVars(self, initValues):
@@ -3721,6 +4052,40 @@ class BertLayer(Layer):
                     self.netParams += layerVars
 
         return self.netParams
+
+    # ******************************************************************************************************************
+    def profile(self):
+        if len(self.inShape)==3:    seqLen = self.inShape[0] * self.inShape[1]
+        elif self.inShape[0] == -1: seqLen = seqself.layers.input.maxLen
+        else:                       seqLen = self.inShape[0]
+        headSize = self.outSize//self.numHeads
+
+        # Assuming no flops for reshape/transpose
+        flops = self.queryFc.profile()
+        flops += self.keyFc.profile()
+        flops += self.valueFc.profile()
+        
+        # flops for the attention:
+        flops += self.numHeads * seqLen * (2*headSize-1) * seqLen   # the matmul for the attention
+        flops += (self.numHeads * seqLen * seqLen) + 1              # Scaling the attention + one for sqrt(dk)
+        if self.layers.attentionMasks is not None:
+            flops += self.numHeads * seqLen * seqLen                # Elementwise addition of masks
+        
+        flops += self.numHeads * seqLen * (5*seqLen - 1)            # softmax(attention, axis=-1)
+        flops += self.numHeads *  seqLen * (2*seqLen-1) * headSize  # matmul(attentionProbs, value)
+
+        flops += self.selfFc.profile()
+        flops += seqLen * self.outSize              # elementwise addition at the input of selfLn layer: selfOut+input
+        flops += self.selfLn.profile()
+        flops += self.intermediateFc.profile()
+        flops += self.profileActivation()
+
+        flops += self.outFc.profile()
+        flops += seqLen * self.outSize              # elementwise addition at the input of selfLn layer: selfOut+input
+        flops += self.outLn.profile()
+
+        for pa in self.postActivations: flops += pa.flops
+        return flops
 
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
@@ -3793,6 +4158,14 @@ class BertLayer(Layer):
     def buildOnnx(self, onnxBuilder, inputName):
         headSize = self.outSize//self.numHeads
 
+        if onnxBuilder.hasDimensionsNode==False:
+            # Need to make the "Dimensions" param since it is used below for "makeShape" calls
+            dimRoot = "DIMS/"
+            onnxBuilder.addParam(dimRoot+'OtherParams', 'int64', [3], [0,1,-1])
+            onnxBuilder.addNode('Shape', [inputName], [dimRoot+'inShape'], dimRoot+'Shape') # > [batchSize, seqLen, outSize]
+            onnxBuilder.addNode('Concat', [dimRoot+'inShape', dimRoot+'OtherParams'], ['Dimensions'], dimRoot+'Concat', axis=0)
+            onnxBuilder.hasDimensionsNode = True
+
         s = self.scope + '/'
         onnxBuilder.makeShape(s+'inShape', '-1,outSize')
         onnxBuilder.addNode('Reshape', [inputName, s+'inShape'], [s+'flatIn'], s+'Reshape1')
@@ -3821,9 +4194,12 @@ class BertLayer(Layer):
         onnxBuilder.addParam(s+'dk', 'float', [], [np.sqrt(headSize)])
         onnxBuilder.addNode('Div', [s+'AttnRaw', s+'dk'], [s+'AttnScaled'], s+'Div')
 
-        onnxBuilder.addNode('Add', [s+'AttnScaled', 'AttMask'], [s+'AttnMasked'], s+'Add1')
-        onnxBuilder.addNode('Softmax', [s+'AttnMasked'], [s+'AttnProbs'], s+'Softmax', axis=-1)
-        
+        if self.layers.attentionMasks is not None:
+            onnxBuilder.addNode('Add', [s+'AttnScaled', 'AttMask'], [s+'AttnMasked'], s+'Add1')
+            onnxBuilder.addNode('Softmax', [s+'AttnMasked'], [s+'AttnProbs'], s+'Softmax', axis=-1)
+        else:
+            onnxBuilder.addNode('Softmax', [s+'AttnScaled'], [s+'AttnProbs'], s+'Softmax', axis=-1)
+      
         onnxBuilder.addNode('MatMul', [s+'AttnProbs', valueName], [s+'Context4D'], s+'MatMul2')
         
         # batchSize,numHeads,seqLen,headSize  =>  batchSize,seqLen,numHeads,headSize  =>  batchSize*seqLen,outSize
@@ -4063,6 +4439,29 @@ class BertLayer(Layer):
         return prunedNetParams, prunedBytes, infoStrs
 
     # ******************************************************************************************************************
+    def quantize(self, **kwargs):
+        quantizedNetParams = []
+        infoStrs = ''
+        orgBytes = self.getNumBytes()
+        quantizedBytes = 0
+
+        for layer in [self.queryFc, self.keyFc, self.valueFc, self.selfFc, self.selfLn, self.intermediateFc, self.outFc, self.outLn]:
+            if layer.name != 'FC':
+                quantizedNetParams += layer.getNpParams()
+                quantizedBytes += layer.getNumBytes()
+                continue
+            
+            newNetParams, layerQuantizedBytes, infoStr = layer.quantize(**kwargs)
+
+            infoStrs += '    ' + infoStr + '\n'
+            quantizedNetParams += newNetParams
+            quantizedBytes += layerQuantizedBytes
+
+        if orgBytes == quantizedBytes:  infoStr = '%s => Cannot quantize!'%(self.scope)
+        else:                           infoStrs = self.scope + '\n' + infoStrs[:-1]
+        return quantizedNetParams, quantizedBytes, infoStrs
+
+    # ******************************************************************************************************************
     def decompose(self, session, decInfo, decomposeDWCN=True):
         newBertParams = []
         numNewParams = 0
@@ -4140,7 +4539,7 @@ class AggregateFeatureMaps(Layer):
     # ******************************************************************************************************************
     def makeL2Loss(self, factor):
         listOfL2Losses = [ netParam.tfL2Loss() for netParam in self.netParams ]
-        self.l2Loss = factor * tf.add_n(listOfL2Losses)
+        self.addedLoss = factor * tf.add_n(listOfL2Losses)
 
     # ******************************************************************************************************************
     def makeVars(self, initValues):
@@ -4404,6 +4803,38 @@ class AggregateFeatureMaps(Layer):
         return prunedNetParams, prunedBytes, infoStrs
 
     # ******************************************************************************************************************
+    def quantize(self, **kwargs):
+        quantizedNetParams = []
+        infoStrs = ''
+        orgBytes = self.getNumBytes()
+        quantizedBytes = 0
+
+        for f, (pa, fm) in enumerate(self.layers.paFms):
+            if self.classLayers[f].name in ['FC', 'CONV', 'DWCN']:
+                newNetParams, layerQuantizedBytes, infoStr = self.classLayers[f].quantize(**kwargs)
+                
+                quantizedNetParams += newNetParams
+                quantizedBytes += layerQuantizedBytes
+                infoStrs += '    ' + infoStr + '\n'
+            else:
+                quantizedNetParams += self.classLayers[f].getNpParams()
+                quantizedBytes += self.classLayers[f].getNumBytes()
+
+            if self.boxLayers[f].name in ['FC', 'CONV', 'DWCN']:
+                newNetParams, layerQuantizedBytes, infoStr = self.boxLayers[f].quantize(**kwargs)
+                
+                quantizedNetParams += newNetParams
+                quantizedBytes += layerQuantizedBytes
+                infoStrs += '    ' + infoStr + '\n'
+            else:
+                quantizedNetParams += self.boxLayers[f].getNpParams()
+                quantizedBytes += self.boxLayers[f].getNumBytes()
+
+        if orgBytes == quantizedBytes:  infoStr = '%s => Cannot quantize!'%(self.scope)
+        else:                           infoStrs = self.scope + '\n' + infoStrs[:-1]
+        return quantizedNetParams, quantizedBytes, infoStrs
+
+    # ******************************************************************************************************************
     def decompose(self, session, decInfo, decomposeDWCN=True):
         newAfmParams = []
         numNewParams = 0
@@ -4441,8 +4872,9 @@ class AggregateFeatureMaps(Layer):
 class ClassOutLayer(Layer):
     argsDic = {
                 'c': ('numClasses', 'u', None),
+                's': ('seqLen', 'u', 1)
               }
-    orderedKeys = 'c'
+    orderedKeys = 'cs'
     name = 'CLASS'
     def __init__(self, layers, layerIndex, scope, argsInfo, actStr, parent):
         super().__init__(layers, layerIndex, scope, argsInfo, actStr, parent)
@@ -4450,42 +4882,62 @@ class ClassOutLayer(Layer):
 
     # ******************************************************************************************************************
     def makePlaceholders(self):
-        self.placeholders = (tf1.placeholder( tf.int32, shape=[None], name='LabelIndexes'), ) # Shape: [BatchSize]
+        labelsShape = [None] if self.seqLen==1 else [None, self.seqLen]
+        self.placeholders = (tf1.placeholder( tf.int32, shape=labelsShape, name='LabelIndexes'), ) # Shape: [BatchSize]
         return self.placeholders
 
     # ******************************************************************************************************************
     def postProcessResults(self, rawResults, returnProbs):
         if self.numClasses==2:                                        # Binary Classification
             # rawResults is a 2D matrix (batchSize x 1) with probability of being in class 1
-            if returnProbs:                 return rawResults.reshape(-1)   # Shape: [batchSize] (probabilities/float32)
-            return np.int32(np.round(rawResults.reshape(-1)))       # Shape: [batchSize] (classIndexes (0/1), int32)
+            if returnProbs:
+                if self.seqLen==1: return rawResults.reshape(-1)     # Shape: [batchSize] (probabilities/float32)
+                return rawResults.reshape(-1,self.seqLen)            # Shape:  [batchSize, seqLen] (sequences of probabilities/float32)
+
+            if self.seqLen==1: return np.int32(np.round(rawResults.reshape(-1)))    # Shape: [batchSize] (classIndexes (0/1), int32)
+            return np.int32(np.round(rawResults.reshape(-1,seqLen)))                # Shape: [batchSize, seqLen] (sequences of classIndexes (0/1), int32)
         
-        if returnProbs:                     return rawResults   # Shape: [batchSize, numClasses] (probabilities/float32)
-        return np.argmax(rawResults, 1)                         # Shape: [batchSize] (classIndexes, int32)
+        if returnProbs:
+            return rawResults               # Shape: [batchSize, numClasses] (probabilities/float32) or [batchSize, seqLen, numClasses]
+        return np.argmax(rawResults, -1)    # Shape: [batchSize] (classIndexes, int32) or [batchSize, seqLen] (sequences of classIndexes)
 
     # ******************************************************************************************************************
     def getOutShape(self, inShape):
         self.inShape = inShape
-        self.outShape = [self.numClasses]
+        self.outShape = [self.numClasses] if self.seqLen==1 else [self.seqLen, self.numClasses]
         return self.outShape
 
     # ******************************************************************************************************************
     def getShortDesc(self):
-        return '%d classes'%(self.numClasses)
+        return '%d classes'%(self.numClasses) + ("" if self.seqLen==1 else " x%d"%(self.seqLen))
 
     # ******************************************************************************************************************
     def getOutputStr(self):
+        if self.seqLen == 1:
+            if self.numClasses == 2:    return 'Probabilities of samples being in class "1".'
+            return 'Probability distributions for %d classes.'%(self.numClasses)
+        
+        if self.numClasses == 2:    return '%d sets of probabilities of samples being in class "1".'%(self.seqLen)
+        return '%d sets of probability distributions for %d classes.'%(self.seqLen, self.numClasses)
+
+    # ******************************************************************************************************************
+    def profile(self):
         if self.numClasses == 2:
-            return 'Probabilities of samples being in class "1".'
-            
-        return 'Probability distributions for %d classes.'%(self.numClasses)
+            flops = 4*self.seqLen       # Sigmoid flops
+        else:
+            # Softmax (Assuming the denominator is calculated only once)
+            # denominator: n exponents plus n - 1 additions: 2n-1
+            # For each class we have an exponent plus one division: 2n
+            flops = (5 * self.numClasses - 1)*self.seqLen
+
+        return flops
 
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
         with tf.name_scope(self.scope):
             if isTraining:
                 if self.numClasses == 2:
-                    tfLabels = tf.cast( tf.reshape(labels[0],[-1,1]), tf.float32 )
+                    tfLabels = tf.cast( tf.reshape(labels[0],[-1,self.seqLen]), tf.float32 )
                     if self.model.lossFunction is not None:
                         tfLoss = self.model.lossFunction(self.layers, (input,), (tfLabels,))
                     else:
@@ -4496,8 +4948,8 @@ class ClassOutLayer(Layer):
                     tfLoss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=input, labels=labels[0]))
                 outputs = [ tfLoss ]
             else:
-                if self.numClasses == 2:    probs = tf.nn.sigmoid(input)            # Shape: [batchSize]
-                else:                       probs = tf.nn.softmax(input, axis=-1)   # Shape: [batchSize, numClasses]
+                if self.numClasses == 2:    probs = tf.nn.sigmoid(input)            # Shape: [batchSize] or [batchSize, seqLen]
+                else:                       probs = tf.nn.softmax(input, axis=-1)   # Shape: [batchSize, numClasses] or [batchSize, seqLen, numClasses]
                 outputs = [ probs ]
 
         outKey = 'training' if isTraining else 'inference'
@@ -4508,10 +4960,10 @@ class ClassOutLayer(Layer):
     def buildOnnx(self, onnxBuilder, inputName):
         s = self.deepScope()
         if self.numClasses == 2:
-            doc = ("For each input sample, this is the probability of the prediction being in class \"1\". For the " +
-                   "binary classification model the probability of class \"0\" is one minus this value.")
-            onnxBuilder.addParam('ClassProbs', 'float', [-1,1], paramType='output', docStr=doc)
-            onnxBuilder.addNode(s+'Sigmoid', [inputName], ['ClassProbs'], s+'Sigmoid')
+            doc = ("For each input sample, this is the probability \"p\" of the prediction being in class \"1\". For the " +
+                   "binary classification model the probability of class \"0\" is \"1-p\".")
+            onnxBuilder.addParam('ClassProbs', 'float', [-1,self.seqLen], paramType='output', docStr=doc)
+            onnxBuilder.addNode('Sigmoid', [inputName], ['ClassProbs'], s+'Sigmoid')
             
             onnxBuilder.addNode('Round', ['ClassProbs'], [s+'predictedFloat'], s+'Round')
             onnxBuilder.addNode('Cast', [s+'predictedFloat'], ['PredictedClass'], s+'Cast', to=7) # int64
@@ -4520,14 +4972,16 @@ class ClassOutLayer(Layer):
         else:
             doc = ("For each input sample, this is an array of %d probability values, one for each one of " +
                    "the classes.")%(self.numClasses)
-            onnxBuilder.addParam('ClassProbs', 'float', [-1]+[self.numClasses], paramType='output', docStr=doc)
+            outShape = [-1, self.numClasses] if self.seqLen==1 else [-1, self.seqLen, self.numClasses]
+            onnxBuilder.addParam('ClassProbs', 'float', outShape, paramType='output', docStr=doc)
             onnxBuilder.addNode('Softmax', [inputName], ['ClassProbs'], s+'Softmax', axis=-1)
         
             onnxBuilder.addNode('ArgMax', ['ClassProbs'], ['PredictedClass'], s+'ArgMax', axis=-1, keepdims=0)
 
             doc = ("A list of integer values specifying the predicted class (0 to %d) for each input " +
                    "sample.")%(self.numClasses-1)
-        onnxBuilder.addParam('PredictedClass', 'int64', [-1], paramType='output', docStr=doc)
+        predClassShape = [-1] if self.seqLen==1 else [-1,self.seqLen]
+        onnxBuilder.addParam('PredictedClass', 'int64', predClassShape, paramType='output', docStr=doc)
 
         if onnxBuilder.classNames is not None:
             assert len(onnxBuilder.classNames) == self.numClasses
@@ -4540,18 +4994,19 @@ class ClassOutLayer(Layer):
         
     # ******************************************************************************************************************
     def buildCml(self, cmlBuilder, inputName):
-        del cmlBuilder.spec.description.output[-1]   # Delete the dummy input
+        del cmlBuilder.spec.description.output[-1]   # Delete the dummy output
         
         s = self.deepScope()
         if self.numClasses==2:
             cmlBuilder.add_activation(s+'SIGMOID', 'SIGMOID', inputName, '1Prob')
             cmlBuilder.add_scale(s+'scale', -1, 1, True, '1Prob', '0Prob', [1], [1])
-            cmlBuilder.add_concat_nd(s+'concat', ['0Prob','1Prob'], 'ClassProbs', 0)
+            cmlBuilder.add_concat_nd(s+'concat', ['0Prob','1Prob'], 'ClassProbs', 0 if self.seqLen==1 else 1)
         else:
-            cmlBuilder.add_softmax(s+'softmax', inputName, 'ClassProbs')
-        
+            cmlBuilder.add_softmax_nd(s+'softmax', inputName, 'ClassProbs', -1)
+
         desc = 'A dictionary containing the probability values for each one of %s classes.'%(self.numClasses)
-        cmlBuilder.addOutput('ClassProbs', (self.numClasses,), 'float', desc)
+        if self.seqLen==1:  cmlBuilder.addOutput('ClassProbs', (self.numClasses,), 'float', desc)
+        else:               cmlBuilder.addOutput('ClassProbs', (self.seqLen, self.numClasses), 'float', desc)
 
         if cmlBuilder.classNames is None:   classNames = [str(i) for i in range(self.numClasses)]
         else:                               classNames = cmlBuilder.classNames
@@ -4562,6 +5017,8 @@ class ClassOutLayer(Layer):
 
     # ******************************************************************************************************************
     def buildTf(self, tfBuilder):
+        shapeStr = "[None]" if self.seqLen==1 else ("[None,%d]"%(self.seqLen))
+        tfBuilder.addToInit("self.labels = tf1.placeholder( tf.int32, shape=%s, name='LabelIndexes')"%(shapeStr))
         tfBuilder.addToInit("self.labels = tf1.placeholder( tf.int32, shape=[None], name='LabelIndexes')")
         tfBuilder.addToInfer(("return self.session.run(self.inferOut, feedDic)",
                               ""))
@@ -4573,10 +5030,10 @@ class ClassOutLayer(Layer):
             tfBuilder.addToGraph((tfBuilder.getScopeStr(self.scope),
                                   "    if isTraining:",
                                   "        self.logits = out",
-                                  "        tfLabels = tf.cast( tf.reshape(self.labels, [-1,1]), tf.float32)",
+                                  "        tfLabels = tf.cast( tf.reshape(self.labels, [-1,%d]), tf.float32)"%(self.seqLen),
                                   "        self.loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits("
                                                                                         "logits=out, labels=tfLabels))",
-                                  "        self.loss += self.l2Loss",
+                                  "        self.loss += self.addedLoss",
                                   "    else:",
                                   "        self.inferOut = tf.nn.sigmoid(out)",
                                   ""))
@@ -4587,7 +5044,7 @@ class ClassOutLayer(Layer):
                                   "        self.logits = out",
                                   "        self.loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits("
                                                                                     "logits=out, labels=self.labels))",
-                                  "        self.loss += self.l2Loss",
+                                  "        self.loss += self.addedLoss",
                                   "    else:",
                                   "        self.inferOut = tf.nn.softmax(out, axis=-1)",
                                   ""))
@@ -4832,7 +5289,7 @@ class AnswerOutLayer(Layer):
                               "        endLosses = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=endPosLabels, "
                                                                                                  "logits=endLogits)",
                               "        self.loss = (tf.reduce_mean(startLosses) + tf.reduce_mean(endLosses))/2.0",
-                              "        self.loss += self.l2Loss",
+                              "        self.loss += self.addedLoss",
                               "    else:",
                               "        startProbs = tf.nn.softmax(startLogits, axis=-1)",
                               "        endProbs = tf.nn.softmax(endLogits, axis=-1)",
@@ -4913,6 +5370,11 @@ class ObjectOutLayer(Layer):
     def getOutputStr(self):
         return 'A tuple of class labels, boxes, class probabilities, and number of detections.'
         
+    # ******************************************************************************************************************
+    def profile(self):
+        # TODO: complete the implementation for the profile function
+        raise NotImplementedError("%s: The profile function must be implemented for the \"%s\" layers!"%(self.name, self.scope))
+
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
         classes = []
@@ -5292,6 +5754,7 @@ Layer.layerClasses = {
     'ln': (LnLayer, 34),
     'afm': (AggregateFeatureMaps, 41),
     'bert': (BertLayer, 42),
+    'id': (IdLayer, 43),
 
     # Output Layers:
     'class': (ClassOutLayer, 201),
@@ -5312,6 +5775,7 @@ class PostActivation(object):
         argVals = {argName: argDefault for argName,_,argDefault in self.argsDic.values() }
         self.updateArgVals(argVals, argsInfo)
         self.__dict__.update( argVals )
+        self.flops = 0
 
     # ******************************************************************************************************************
     def __repr__(self):
@@ -5362,7 +5826,7 @@ class PostActivation(object):
     # ******************************************************************************************************************
     def getOutShape(self, inShape ):
         return inShape
-
+        
     # ******************************************************************************************************************
     def getLayerStr(self):
         paStrs = [self.name]
@@ -5423,7 +5887,10 @@ class PaMaxPool(PostActivation):
 
     # ******************************************************************************************************************
     def getOutShape(self, inShape ):
-        return applyPadding(inShape, self.kernel, self.stride, self.padding)
+        outH, outW, outDepth = applyPadding(inShape, self.kernel, self.stride, self.padding)
+        # Assuming (kernelX * kernelY) flops for finding max
+        self.flops = np.prod(self.kernel) * outH * outW * outDepth
+        return [outH, outW, outDepth]
 
     # ******************************************************************************************************************
     def getShortDesc(self):
@@ -5448,7 +5915,10 @@ class PaAvgPool(PostActivation):
 
     # ******************************************************************************************************************
     def getOutShape(self, inShape ):
-        return applyPadding(inShape, self.kernel, self.stride, self.padding)
+        outH, outW, outDepth = applyPadding(inShape, self.kernel, self.stride, self.padding)
+        # Assuming (kernelX * kernelY) flops for calculating mean
+        self.flops = np.prod(self.kernel) * outH * outW * outDepth
+        return [outH, outW, outDepth]
 
     # ******************************************************************************************************************
     def getShortDesc(self):
@@ -5469,6 +5939,8 @@ class PaGlobalAveragePool(PostActivation):
 
     # ******************************************************************************************************************
     def getOutShape(self, inShape ):
+        # Assuming inShape[0] x inShape[1] flops for mean of each feature map and we have inShape[2] feature maps
+        self.flops = np.prod(inShape)
         return [1,1,inShape[2]]
 
     # ******************************************************************************************************************
@@ -5515,10 +5987,66 @@ class PaClip(PostActivation):
             raise ValueError("%s: The Norm Value must be a positive number for 'CLP'!"%(layer.scope))
 
     # ******************************************************************************************************************
+    def getOutShape(self, inShape ):
+        # Assuming n for calculating norm and 2n for cliping
+        self.flops = (3 if pa.normVal != np.inf else 2)*np.prod(inShape)
+        return inShape
+        
+    # ******************************************************************************************************************
     def getShortDesc(self):
         if self.hiVal == np.inf:  return 'x>' + str(self.loVal)
         if self.loVal == -np.inf: return 'x<' + str(self.hiVal)
         return str(self.loVal) + '<x<' + str(self.hiVal)
+
+# **********************************************************************************************************************
+class PaRound(PostActivation):
+    argsDic = {}
+    orderedKeys = ''
+    name = 'RND'
+
+    # ******************************************************************************************************************
+    def __init__(self, layer, argsInfo):
+        super().__init__(layer, argsInfo)
+
+    # ******************************************************************************************************************
+    def getOutShape(self, inShape ):
+        # Assuming 1 flop per element
+        self.flops = np.prod(inShape)
+        return inShape
+
+    # ******************************************************************************************************************
+    def getShortDesc(self):
+        return "RND"
+
+# **********************************************************************************************************************
+class PaBinBottleNeck(PostActivation):
+    argsDic = {
+                'f': ('factor', 'f', 0.0),
+                'r': ('trainRound', 'u', 0),
+                's': ('stopGrad', 'u', 0),
+                't': ('truncate', 'u', 0),     # This is used on decoding side - 0 means do not truncate
+              }
+    orderedKeys = 'frsc'
+    name = 'BBN'
+
+    # ******************************************************************************************************************
+    def __init__(self, layer, argsInfo):
+        super().__init__(layer, argsInfo)
+
+    # ******************************************************************************************************************
+    def getOutShape(self, inShape ):
+        # Assuming 1 flop per element
+        self.flops = np.prod(inShape)
+        return inShape
+
+    # ******************************************************************************************************************
+    def getShortDesc(self):
+        desc = "BBN"
+        if self.factor>0:       desc += "-f:%s"%(str(self.factor))
+        if self.trainRound>0:   desc += "-R%d"%(self.trainRound)
+        if self.stopGrad>0:     desc += "-S%d"%(self.stopGrad)
+        if self.truncate>0:     desc += "-T%d"%(self.truncate)
+        return desc
 
 # **********************************************************************************************************************
 class PaUpSampling(PostActivation):
@@ -5539,6 +6067,8 @@ class PaUpSampling(PostActivation):
         scaleX, scaleY = self.scale
         self.outX = np.int32(inShape[1]*scaleX)
         self.outY = 1 if inShape[0] == 1 else np.int32(inShape[0]*scaleY)
+        # Assuming one flop per output element
+        self.flops = self.outY * self.outX * inShape[2]
         return [ self.outY, self.outX, inShape[2] ]
 
     # ******************************************************************************************************************
@@ -5626,6 +6156,7 @@ class PaAdd(PostActivation):
                 if self.layer.layers.netmarks[ netmark ].outShape != inShape:
                     raise ValueError("%s: All specified netmarks should have the same shape for \"ADD\"!"%(self.layer.scope))
 
+        self.flops = len(self.netmarks)*np.prod(inShape) # Elementwise addition
         return inShape
 
     # ******************************************************************************************************************
@@ -5703,7 +6234,10 @@ class PaWeightedSum(PostActivation):
             raise ValueError("%s: Softmax activation function required for 'WSUM'!"%(self.layer.scope))
     
         # The output of all the layers should have the same shape
-        return self.layer.layers.netmarks[ self.netmarks[0] ].outShape
+        outShape = self.layer.layers.netmarks[ self.netmarks[0] ].outShape
+        self.flops = (2*len(self.netmarks)-1)*np.prod(outShape)         # Elementwise additions
+        self.flops += 5*len(self.netmarks) + 1                          # The softmax for making the weights
+        return outShape
 
     # ******************************************************************************************************************
     def getShortDesc(self):
@@ -5747,7 +6281,9 @@ PostActivation.paClasses = {
     'sel':  (PaSelect, 11),
     'wsum':  (PaWeightedSum, 12),
     'tup':  (PaTupple, 13),
-    'rs': (PaReshape, 14)
+    'rs': (PaReshape, 14),
+    'rnd': (PaRound,15),
+    'bbn': (PaBinBottleNeck, 16),
 }
 
 # **********************************************************************************************************************
@@ -5866,6 +6402,23 @@ class BlockInstance(Layer):
                         self.netParams += layerVars
 
         return self.netParams
+
+    # ******************************************************************************************************************
+    def profile(self):
+        flops = 0
+        for pathLayers in self.pathsLayers:
+            for layer in pathLayers:
+                if layer is not None:
+                    flops += layer.profile()
+                    
+        if self.mergeType == 'add':
+            # Elementwise addition of all paths
+            flops += (len(self.pathsLayers)-1) * np.prod(self.outShape)
+
+        flops += self.profileActivation()
+        for pa in self.postActivations: flops += pa.flops
+        
+        return flops
 
     # ******************************************************************************************************************
     def buildGraph(self, input, isTraining, labels=None):
@@ -6013,6 +6566,33 @@ class BlockInstance(Layer):
         if orgBytes == prunedBytes: infoStr = '%s => Cannot prune!'%(self.scope)
         else:                       infoStrs = self.scope + '\n' + infoStrs[:-1]
         return prunedNetParams, prunedBytes, infoStrs
+
+    # ******************************************************************************************************************
+    def quantize(self, **kwargs):
+        quantizedNetParams = []
+        infoStrs = ''
+        orgBytes = self.getNumBytes()
+        quantizedBytes = 0
+
+        for pathLayers in self.pathsLayers:
+            for layer in pathLayers:
+                if layer is None: continue
+                
+                if layer.name in ['FC', 'CONV', 'DWCN']:
+                    newNetParams, layerQuantizedBytes, infoStr = layer.quantize(**kwargs)
+                    
+                    quantizedNetParams += newNetParams
+                    quantizedBytes += layerQuantizedBytes
+                    infoStrs += '    ' + infoStr + '\n'
+                    continue
+                        
+                quantizedNetParams += layer.getNpParams()
+                quantizedBytes += layer.getNumBytes()
+
+
+        if orgBytes == quantizedBytes:  infoStr = '%s => Cannot quantize!'%(self.scope)
+        else:                           infoStrs = self.scope + '\n' + infoStrs[:-1]
+        return quantizedNetParams, quantizedBytes, infoStrs
 
     # ******************************************************************************************************************
     def decompose(self, session, decInfo, decomposeDWCN=True):
