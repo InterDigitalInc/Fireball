@@ -5989,7 +5989,7 @@ class PaClip(PostActivation):
     # ******************************************************************************************************************
     def getOutShape(self, inShape ):
         # Assuming n for calculating norm and 2n for cliping
-        self.flops = (3 if pa.normVal != np.inf else 2)*np.prod(inShape)
+        self.flops = (3 if self.normVal != np.inf else 2)*np.prod(inShape)
         return inShape
         
     # ******************************************************************************************************************
