@@ -40,6 +40,7 @@ else:
                           'coremltools==5.2.0',
                           'onnx==1.11.0',
                           "onnxruntime==1.11.1",
+                          "protobuf==3.20.0",
                           'matplotlib',
                           'pillow==9.1.0',
                           'notebook',
