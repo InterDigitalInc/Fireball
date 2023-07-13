@@ -23,7 +23,6 @@ if m1Installation:
     installedPackages = [ "tensorflow-macos==2.8.0",
                           'numpy==1.23.5',
                           "tensorflow-metal==0.4.0",
-                          "protobuf==3.20.3",
                           'pyyaml==6.0',
                           'opencv-python==4.5.5.64',
                           'coremltools==5.2.0',
@@ -36,7 +35,6 @@ if m1Installation:
 else:
     installedPackages = [ "tensorflow==2.8.0",
                           'numpy==1.23.5',
-                          "protobuf==3.20.3",
                           'pyyaml==6.0',
                           'opencv-python==4.5.5.64',
                           'coremltools==5.2.0',
