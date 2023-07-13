@@ -13,7 +13,7 @@ For apple M1 machines, you need to use conda environment management system. Firs
     conda activate FB2
     pip install -U pip setuptools wheel
     conda install cmake -y
-    conda install -c conda-forge protobuf==3.19.1 numpy -y
+    conda install -c conda-forge protobuf==3.19.6 -y
     conda install -c apple tensorflow-deps -y
     
 Now install fireball:

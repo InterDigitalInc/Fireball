@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Playgrounds &mdash; Fireball 2.0.0 Documentation</title>
+  <title>Playgrounds &mdash; Fireball 2.1.0 Documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -27,11 +28,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> Fireball 2.0.0
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Fireball 2.1.0
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -74,15 +79,15 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">Fireball 2.0.0</a>
+          <a href="../index.html">Fireball 2.1.0</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Playgrounds</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Playgrounds</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/source/playgrounds.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -93,17 +98,17 @@
            <div itemprop="articleBody">
              
   <section id="playgrounds">
-<h1>Playgrounds<a class="headerlink" href="#playgrounds" title="Permalink to this headline"></a></h1>
+<h1>Playgrounds<a class="headerlink" href="#playgrounds" title="Permalink to this heading"></a></h1>
 <p>The Playgrounds folder contains a set of tutorials explaining how to use Fireball for some common deep learning models such as object detection and NLP tasks.</p>
 <section id="using-the-playgrounds">
-<h2>Using the playgrounds<a class="headerlink" href="#using-the-playgrounds" title="Permalink to this headline"></a></h2>
+<h2>Using the playgrounds<a class="headerlink" href="#using-the-playgrounds" title="Permalink to this heading"></a></h2>
 <p>Playgrounds are a set of <strong>jupyter notebook</strong> files organized in different directories. Most of these notebook files <strong>need GPU</strong> devices and therefore your notebook server needs to run on a GPU machine with at least 4 Nvidia GPU cards. Here is how you can start the server on a GPU machine and access and execute the notebooks remotely:</p>
 <section id="initializing-fireball-environment">
-<h3>Initializing Fireball environment<a class="headerlink" href="#initializing-fireball-environment" title="Permalink to this headline"></a></h3>
+<h3>Initializing Fireball environment<a class="headerlink" href="#initializing-fireball-environment" title="Permalink to this heading"></a></h3>
 <p>On your GPU machine create and initialize a virtual environment. If you already have created a virtual environment for fireball, activate it and skip to the next step. Otherwise use the procedure explained in the “Installation” to create and initialize a virtual environment.</p>
 </section>
 <section id="setting-up-datasets">
-<h3>Setting up datasets<a class="headerlink" href="#setting-up-datasets" title="Permalink to this headline"></a></h3>
+<h3>Setting up datasets<a class="headerlink" href="#setting-up-datasets" title="Permalink to this heading"></a></h3>
 <p>Fireball playgrounds use the following datasets:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="http://yann.lecun.com/exdb/mnist/">MNIST</a></p></li>
@@ -114,14 +119,14 @@
 <p>Some of the above datasets require some pre-processing before they can be used by Fireball. Please refer to the corresponding python files in the <code class="docutils literal notranslate"><span class="pre">fireball/datasets</span></code> folder for more information on how to prepare these datasets.</p>
 </section>
 <section id="start-the-notebook-server">
-<h3>Start the notebook server<a class="headerlink" href="#start-the-notebook-server" title="Permalink to this headline"></a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter notebook --ip &lt;IP_ADDRESS&gt;
+<h3>Start the notebook server<a class="headerlink" href="#start-the-notebook-server" title="Permalink to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter<span class="w"> </span>notebook<span class="w"> </span>--ip<span class="w"> </span>&lt;IP_ADDRESS&gt;
 </pre></div>
 </div>
 <p>Replace the <em>&lt;IP_ADDRESS&gt;</em> with the IP address of your GPU machine. Then copy the address printed by the Jupyter Notebook in the terminal, open a browser window, and paste the address in the address bar. Now open <code class="docutils literal notranslate"><span class="pre">Contents.ipynb</span></code> to start navigating through Fireball Playgrounds.</p>
 </section>
 <section id="notes">
-<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this headline"></a></h3>
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h3>
 <ul class="simple">
 <li><p>Some of the tasks in the playgrounds can take a long time to complete. If you don’t want to lose you notebook server if the connection to the server is lost for any reason, you can run the notebook server in a <code class="docutils literal notranslate"><span class="pre">tmux</span></code> session which keeps it running when your ssh connection closes.</p></li>
 <li><p>In the first cell of each notebook file, there is a “gpus” variable that specifies which GPUs to use. If you want to use a different set of GPU cards, please modify this line accordingly before starting the process.</p></li>

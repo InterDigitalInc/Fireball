@@ -133,6 +133,7 @@ Currently the following post-activations are supported by Fireball:
     * :ref:`SEL: Select netmark <SEL>`
     * :ref:`WSUM: Weighted Sum Netmarks <WSUM>`
     * :ref:`TUP: Tuple netmarks <TUP>`
+    * :ref:`RND: Round <RND>`
 
 Each post-activation can have zero or more attributes. Each post-activation attribute is specified by a letter indicating the attribute (For example 'R' for "Drop-Rate") followed by the value for the attribute which can be one or more numbers or letters.
 
@@ -762,6 +763,14 @@ Attributes
     netmarks : N
         The netmark IDs that are included in tuple. At least one netmark is required for this post-activation to work.
 
+
+.. _RND:
+
+RND: Round
+----------
+This post-activations rounds the output of this layer to the nearest integer value.
+
+This post-activation does not have any attributes.
 
 .. _NETMARK:
 

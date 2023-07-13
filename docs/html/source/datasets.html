@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Datasets &mdash; Fireball 2.0.0 Documentation</title>
+  <title>Datasets &mdash; Fireball 2.1.0 Documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -27,11 +28,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> Fireball 2.0.0
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Fireball 2.1.0
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -57,14 +62,144 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Datasets</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#basedset">BaseDSet</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.mnist">MNIST</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.cifar">CIFAR</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.imagenet">ImageNet</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.coco">COCO</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.squad">SQuAD</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.glue">GLUE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.radioml">RadioML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basedset">BaseDSet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.datasets.base.BaseDSet"><code class="docutils literal notranslate"><span class="pre">BaseDSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.__init__"><code class="docutils literal notranslate"><span class="pre">BaseDSet.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.evalMetricBiggerIsBetter"><code class="docutils literal notranslate"><span class="pre">BaseDSet.evalMetricBiggerIsBetter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.isTraining"><code class="docutils literal notranslate"><span class="pre">BaseDSet.isTraining</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.getLabelAt"><code class="docutils literal notranslate"><span class="pre">BaseDSet.getLabelAt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.loadSamples"><code class="docutils literal notranslate"><span class="pre">BaseDSet.loadSamples()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.makeDatasets"><code class="docutils literal notranslate"><span class="pre">BaseDSet.makeDatasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.postMakeDatasets"><code class="docutils literal notranslate"><span class="pre">BaseDSet.postMakeDatasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.split"><code class="docutils literal notranslate"><span class="pre">BaseDSet.split()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.getSplitIndexes"><code class="docutils literal notranslate"><span class="pre">BaseDSet.getSplitIndexes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.mergeWith"><code class="docutils literal notranslate"><span class="pre">BaseDSet.mergeWith()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.printDsInfo"><code class="docutils literal notranslate"><span class="pre">BaseDSet.printDsInfo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.printStats"><code class="docutils literal notranslate"><span class="pre">BaseDSet.printStats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.boostClass"><code class="docutils literal notranslate"><span class="pre">BaseDSet.boostClass()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.getBatch"><code class="docutils literal notranslate"><span class="pre">BaseDSet.getBatch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.batches"><code class="docutils literal notranslate"><span class="pre">BaseDSet.batches()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.evaluateModel"><code class="docutils literal notranslate"><span class="pre">BaseDSet.evaluateModel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.evalMultiDimRegression"><code class="docutils literal notranslate"><span class="pre">BaseDSet.evalMultiDimRegression()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.getMetricVal"><code class="docutils literal notranslate"><span class="pre">BaseDSet.getMetricVal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.evaluate"><code class="docutils literal notranslate"><span class="pre">BaseDSet.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.evaluateRegression"><code class="docutils literal notranslate"><span class="pre">BaseDSet.evaluateRegression()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.evaluateClassification"><code class="docutils literal notranslate"><span class="pre">BaseDSet.evaluateClassification()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.base.BaseDSet.download"><code class="docutils literal notranslate"><span class="pre">BaseDSet.download()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.mnist">MNIST</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.datasets.mnist.MnistDSet"><code class="docutils literal notranslate"><span class="pre">MnistDSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.mnist.MnistDSet.__init__"><code class="docutils literal notranslate"><span class="pre">MnistDSet.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.mnist.MnistDSet.download"><code class="docutils literal notranslate"><span class="pre">MnistDSet.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.mnist.MnistDSet.split"><code class="docutils literal notranslate"><span class="pre">MnistDSet.split()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.mnist.MnistDSet.createFineTuneDataset"><code class="docutils literal notranslate"><span class="pre">MnistDSet.createFineTuneDataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.mnist.MnistDSet.makeDatasets"><code class="docutils literal notranslate"><span class="pre">MnistDSet.makeDatasets()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.cifar">CIFAR</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.datasets.cifar.CifarDSet"><code class="docutils literal notranslate"><span class="pre">CifarDSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.cifar.CifarDSet.numClasses"><code class="docutils literal notranslate"><span class="pre">CifarDSet.numClasses</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.cifar.CifarDSet.__init__"><code class="docutils literal notranslate"><span class="pre">CifarDSet.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.cifar.CifarDSet.download"><code class="docutils literal notranslate"><span class="pre">CifarDSet.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.cifar.CifarDSet.split"><code class="docutils literal notranslate"><span class="pre">CifarDSet.split()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.cifar.CifarDSet.createFineTuneDataset"><code class="docutils literal notranslate"><span class="pre">CifarDSet.createFineTuneDataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.cifar.CifarDSet.makeDatasets"><code class="docutils literal notranslate"><span class="pre">CifarDSet.makeDatasets()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.imagenet">ImageNet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet.__init__"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet.download"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet.getImage"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet.getImage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet.preProcessImages"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet.preProcessImages()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet.resizedImg"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet.resizedImg()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet.getPreprocessedImage"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet.getPreprocessedImage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet.split"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet.split()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet.createFineTuneDataset"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet.createFineTuneDataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet.makeDatasets"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet.makeDatasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet.getBatch"><code class="docutils literal notranslate"><span class="pre">ImageNetDSet.getBatch()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.coco">COCO</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet"><code class="docutils literal notranslate"><span class="pre">CocoDSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.numClasses"><code class="docutils literal notranslate"><span class="pre">CocoDSet.numClasses</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.__init__"><code class="docutils literal notranslate"><span class="pre">CocoDSet.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.download"><code class="docutils literal notranslate"><span class="pre">CocoDSet.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.makeDatasets"><code class="docutils literal notranslate"><span class="pre">CocoDSet.makeDatasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.getStats"><code class="docutils literal notranslate"><span class="pre">CocoDSet.getStats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.printStats"><code class="docutils literal notranslate"><span class="pre">CocoDSet.printStats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.getImage"><code class="docutils literal notranslate"><span class="pre">CocoDSet.getImage()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.p1P2ToP1Size"><code class="docutils literal notranslate"><span class="pre">CocoDSet.p1P2ToP1Size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.p1SizeToP1P2"><code class="docutils literal notranslate"><span class="pre">CocoDSet.p1SizeToP1P2()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.p1P2ToCenterSize"><code class="docutils literal notranslate"><span class="pre">CocoDSet.p1P2ToCenterSize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.centerSizeToP1P2"><code class="docutils literal notranslate"><span class="pre">CocoDSet.centerSizeToP1P2()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.p1SizeToCenterSize"><code class="docutils literal notranslate"><span class="pre">CocoDSet.p1SizeToCenterSize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.centerSizeToP1Size"><code class="docutils literal notranslate"><span class="pre">CocoDSet.centerSizeToP1Size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.scaleImageAndBoxes"><code class="docutils literal notranslate"><span class="pre">CocoDSet.scaleImageAndBoxes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.flipImageHorizontally"><code class="docutils literal notranslate"><span class="pre">CocoDSet.flipImageHorizontally()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.zoomOutAndMove"><code class="docutils literal notranslate"><span class="pre">CocoDSet.zoomOutAndMove()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.setAcnchorBoxes"><code class="docutils literal notranslate"><span class="pre">CocoDSet.setAcnchorBoxes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.getGroundTruth"><code class="docutils literal notranslate"><span class="pre">CocoDSet.getGroundTruth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.showImageAndBoxes"><code class="docutils literal notranslate"><span class="pre">CocoDSet.showImageAndBoxes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.showSample"><code class="docutils literal notranslate"><span class="pre">CocoDSet.showSample()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.showInferResults"><code class="docutils literal notranslate"><span class="pre">CocoDSet.showInferResults()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.randomMutate"><code class="docutils literal notranslate"><span class="pre">CocoDSet.randomMutate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.getBatch"><code class="docutils literal notranslate"><span class="pre">CocoDSet.getBatch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.evaluate"><code class="docutils literal notranslate"><span class="pre">CocoDSet.evaluate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.coco.CocoDSet.evaluateModel"><code class="docutils literal notranslate"><span class="pre">CocoDSet.evaluateModel()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.squad">SQuAD</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.datasets.squad.SquadDSet"><code class="docutils literal notranslate"><span class="pre">SquadDSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.squad.SquadDSet.__init__"><code class="docutils literal notranslate"><span class="pre">SquadDSet.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.squad.SquadDSet.download"><code class="docutils literal notranslate"><span class="pre">SquadDSet.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.squad.SquadDSet.makeDatasets"><code class="docutils literal notranslate"><span class="pre">SquadDSet.makeDatasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.squad.SquadDSet.printDsInfo"><code class="docutils literal notranslate"><span class="pre">SquadDSet.printDsInfo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.squad.SquadDSet.printStats"><code class="docutils literal notranslate"><span class="pre">SquadDSet.printStats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.squad.SquadDSet.getBatch"><code class="docutils literal notranslate"><span class="pre">SquadDSet.getBatch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.squad.SquadDSet.evaluateModel"><code class="docutils literal notranslate"><span class="pre">SquadDSet.evaluateModel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.squad.SquadDSet.evaluate"><code class="docutils literal notranslate"><span class="pre">SquadDSet.evaluate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.glue">GLUE</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.datasets.glue.GlueDSet"><code class="docutils literal notranslate"><span class="pre">GlueDSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.glue.GlueDSet.__init__"><code class="docutils literal notranslate"><span class="pre">GlueDSet.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.glue.GlueDSet.download"><code class="docutils literal notranslate"><span class="pre">GlueDSet.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.glue.GlueDSet.makeDatasets"><code class="docutils literal notranslate"><span class="pre">GlueDSet.makeDatasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.glue.GlueDSet.printDsInfo"><code class="docutils literal notranslate"><span class="pre">GlueDSet.printDsInfo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.glue.GlueDSet.printStats"><code class="docutils literal notranslate"><span class="pre">GlueDSet.printStats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.glue.GlueDSet.getBatch"><code class="docutils literal notranslate"><span class="pre">GlueDSet.getBatch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.glue.GlueDSet.evaluate"><code class="docutils literal notranslate"><span class="pre">GlueDSet.evaluate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-fireball.datasets.radioml">RadioML</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet"><code class="docutils literal notranslate"><span class="pre">RadioMlDSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet.__init__"><code class="docutils literal notranslate"><span class="pre">RadioMlDSet.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet.download"><code class="docutils literal notranslate"><span class="pre">RadioMlDSet.download()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet.configure"><code class="docutils literal notranslate"><span class="pre">RadioMlDSet.configure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet.makeDatasets"><code class="docutils literal notranslate"><span class="pre">RadioMlDSet.makeDatasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet.printDsInfo"><code class="docutils literal notranslate"><span class="pre">RadioMlDSet.printDsInfo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet.getBatch"><code class="docutils literal notranslate"><span class="pre">RadioMlDSet.getBatch()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet.createNpzFiles"><code class="docutils literal notranslate"><span class="pre">RadioMlDSet.createNpzFiles()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -75,15 +210,15 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">Fireball 2.0.0</a>
+          <a href="../index.html">Fireball 2.1.0</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Datasets</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Datasets</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/source/datasets.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -94,9 +229,9 @@
            <div itemprop="articleBody">
              
   <section id="datasets">
-<h1>Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline"></a></h1>
+<h1>Datasets<a class="headerlink" href="#datasets" title="Permalink to this heading"></a></h1>
 <section id="basedset">
-<h2>BaseDSet<a class="headerlink" href="#basedset" title="Permalink to this headline"></a></h2>
+<h2>BaseDSet<a class="headerlink" href="#basedset" title="Permalink to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="fireball.datasets.base.BaseDSet">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">fireball.datasets.base.</span></span><span class="sig-name descname"><span class="pre">BaseDSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet" title="Permalink to this definition"></a></dt>
@@ -107,7 +242,7 @@
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs a BaseDSet class. Never called directly. It is always called from constructor of a derived class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsName</strong> (<em>str</em>) – The name of the dataset. Common names include “Train”, “Test”, and “Valid”. Some derived classes may include additional application-specific names.</p></li>
 <li><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p></li>
@@ -141,13 +276,13 @@
 <span class="sig-name descname"><span class="pre">getLabelAt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.getLabelAt" title="Permalink to this definition"></a></dt>
 <dd><p>A method to return the label for the sample specified by the <cite>idx</cite>. This function should be implemented by the derived classes if they have a special way of accessing labels. For an example see the implementation of this method in the <cite>ImageNetDSet</cite> class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>idx</strong> (<em>int</em>) – The index specifying the sample in the dataset.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The label for the specified sample. For classification problems this is usually an integer specifying the class the sample belongs to. For regression problem this may be a single floating point value or a numpy array.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int, float, or numpy array</p>
 </dd>
 </dl>
@@ -190,16 +325,16 @@
 <span class="sig-name descname"><span class="pre">getSplitIndexes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeatable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.getSplitIndexes" title="Permalink to this definition"></a></dt>
 <dd><p>This function returns a list of sample indexes that can be used to split this dataset. This is a utility function usually used by the <cite>split</cite> function implemented by the derived classes. As an example, refer the implementation of the <cite>split</cite> function in the <cite>MnistDSet</cite> class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ratio</strong> (<em>float</em><em>, </em><em>optional</em>) – The ratio of the number of split indexes to the total number of samples in this dataset. Default is 10 percent of the sample.</p></li>
 <li><p><strong>repeatable</strong> (<em>Boolean</em><em>, </em><em>optional</em>) – If True, the sampling from the original dataset is deterministic and therefore the experiments are repeatable. Otherwise, the sampling is done randomly.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of indexes of the samples included in the split.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -210,7 +345,7 @@
 <span class="sig-name descname"><span class="pre">mergeWith</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">otherDSet</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.mergeWith" title="Permalink to this definition"></a></dt>
 <dd><p>This function merges the contents of this dataset with the contents of another dataset specified by <cite>otherDSet</cite>. The datasets must have similar properties. The dataset <cite>otherDSet</cite> remains unchanged.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>otherDSet</strong> (any object derived from <cite>BaseDSet</cite>) – The contents of this dataset is merged with “self”.</p>
 </dd>
 </dl>
@@ -221,7 +356,7 @@
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">printDsInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.printDsInfo" title="Permalink to this definition"></a></dt>
 <dd><p>This class method prints information about given set of datasets in a single table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>trainDs</strong> (any object derived from <cite>BaseDSet</cite>, optional) – The training dataset.</p></li>
 <li><p><strong>testDs</strong> (any object derived from <cite>BaseDSet</cite>, optional) – The test dataset.</p></li>
@@ -236,7 +371,7 @@
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">printStats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.printStats" title="Permalink to this definition"></a></dt>
 <dd><p>This class method prints statistics of classes for the given set of datasets in a single table. This is used only for the classification datasets.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>trainDs</strong> (any object derived from <cite>BaseDSet</cite>, optional) – The training dataset.</p></li>
 <li><p><strong>testDs</strong> (any object derived from <cite>BaseDSet</cite>, optional) – The test dataset.</p></li>
@@ -252,7 +387,7 @@
 <dd><p>This method increases the number of samples for the specified class by the specified ratio. For example if the ratio is 2, the dataset will have twice the original number of sample for the specified class.</p>
 <p>This can be used to add bias for a specific class for training. It is recommended to call this function just before calling the train function of the model.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>classIndex</strong> (<em>int</em>) – A index of class. Must be in “range(self.numClasses)”</p></li>
 <li><p><strong>ratio</strong> (<em>float</em>) – The ratio of the new number of samples for the specified class to the original number of samples for that class.</p></li>
@@ -266,10 +401,10 @@
 <span class="sig-name descname"><span class="pre">getBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchIndexes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.getBatch" title="Permalink to this definition"></a></dt>
 <dd><p>This method returns a batch of samples and labels from the dataset as specified by the list of indexes in the <cite>batchIndexes</cite> parameter. This is a generic implementation that works for most cases. A derived class may implement a customized version of this method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list of int</em>) – A list of indexes used to pick samples and labels from the dataset.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list</em><em> of </em><em>int</em>) – A list of indexes used to pick samples and labels from the dataset.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>samples</strong> (<em>list or numpy array</em>) – The batch samples specified by the <cite>batchIndexes</cite>.</p></li>
 <li><p><strong>labels</strong> (<em>list or numpy array</em>) – The batch labels specified by the <cite>batchIndexes</cite>.</p></li>
@@ -285,14 +420,14 @@
 <dd><p>This generator function is used to loop through all the samples. This is used by the <cite>train</cite> method of a <cite>Model</cite> object during the training. This can also be used when evaluating a model using validation or test datasets.</p>
 <p>If current dataset is a training or fine-tuning dataset, the samples are shuffled before the start of the loop.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>iterBatchSize</strong> (<em>int</em><em>, </em><em>optional</em>) – If not specified the default batch size specified in the <cite>__init__</cite> is used. Otherwise this value overrides the predefine batchSize.</p></li>
 <li><p><strong>numWorkers</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – If not specified (=None, default) the dataset’s numWorkers is used. If numWorkers is more than zero, “numWorkers” worker threads are created to process and prepare future batches in parallel.</p></li>
-<li><p><strong>sampleIndexes</strong> (<em>list of int</em><em>, </em><em>optional</em>) – if specified the batches are taken only from the samples specified by “sampleIndexes”. Otherwise (default), all available samples are considered for the batches.</p></li>
+<li><p><strong>sampleIndexes</strong> (<em>list</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – if specified the batches are taken only from the samples specified by “sampleIndexes”. Otherwise (default), all available samples are considered for the batches.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Yields</dt>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>samples</strong> (<em>numpy array</em>) – The next batch of samples.</p></li>
 <li><p><strong>labels</strong> (<em>list of 2-tuples or a 3-tuple of numpy arrays</em>) – The next batch of labels.</p></li>
@@ -313,7 +448,7 @@
 <span class="sig-name descname"><span class="pre">evaluateModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnMetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.evaluateModel" title="Permalink to this definition"></a></dt>
 <dd><p>This function evaluates the specified model using this dataset.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>Fireball Model object</em>) – The model being evaluated.</p></li>
 <li><p><strong>batchSize</strong> (<em>int</em>) – The batchSize used for the evaluation process. This function processes one batch of the samples at a time. If this is None, the batch size specified for this dataset object in the __init__ function is used instead.</p></li>
@@ -345,7 +480,7 @@ a list of what can be included in this dictionary.</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>If returnMetric is True, the actual value of dataset’s main metric is returned.</em></p></li>
 <li><p><em>Otherwise, this function returns a dictionary containing the results of the evaluation process.</em></p></li>
@@ -367,16 +502,16 @@ a list of what can be included in this dictionary.</p>
 <span class="sig-name descname"><span class="pre">getMetricVal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actual</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.getMetricVal" title="Permalink to this definition"></a></dt>
 <dd><p>This function calculates and returns the evaluation metric specified by “evalMetricName” property of this dataset class. It is called by the <a class="reference internal" href="#fireball.datasets.base.BaseDSet.evaluateModel" title="fireball.datasets.base.BaseDSet.evaluateModel"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluateModel()</span></code></a> function when the “returnMetric” argument is set to True.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>predicted</strong> (<em>array</em>) – The predicted values of the output for the evaluation samples. This is a 1-D arrays of labels for Classification problems or an array of output tensors for Regression problems.</p></li>
 <li><p><strong>actual</strong> (<em>array</em>) – The actual values of the output for the evaluation samples.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The calculated value of the metric value for this dataset.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -387,7 +522,7 @@ a list of what can be included in this dictionary.</p>
 <span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actual</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topK</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confMat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expAcc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.evaluate" title="Permalink to this definition"></a></dt>
 <dd><p>Returns information about evaluation results based on the “predicted” and “actual” values. It calls the “evaluateClassification” function for classification problems and “evaluateRegression” function for regression problems.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>predicted</strong> (<em>array</em>) – The predicted values of the output for the evaluation samples. For classification cases, if topK is not zero, this is a list of arrays each containing the K class indexes with highest probabilities in ascending order (The last one is the best) If topK is zero, then this is a 1-D arrays of predicted labels. For regression cases, this is a list of predicted tensors.</p></li>
 <li><p><strong>actual</strong> (<em>array</em>) – The actual values of the output for the evaluation samples.</p></li>
@@ -404,10 +539,10 @@ a list of what can be included in this dictionary.</p>
 <li><p><strong>quiet</strong> (<em>Boolean</em>) – If False, it prints the test results. The printed information includes the Confusion matrix and accuracy information for Classification problems and MSE, RMS, MAE, and PSNR for Regression problems.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A dictionary of the results information. See “evaluateClassification” and “evaluateRegression” functions for more information.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -423,14 +558,14 @@ a list of what can be included in this dictionary.</p>
 <p>This function is not usually called directly. You should use the “evaluate” function which calls this function internally if this is a regression dataset.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>predicted</strong> (<em>array</em>) – The predicted values of the output as an arrays of output tensors.</p></li>
 <li><p><strong>actual</strong> (<em>array</em>) – The actual values of the output for the test samples.</p></li>
 <li><p><strong>quiet</strong> (<em>Boolean</em>) – If False, it prints the test results. The printed information includes MSE, RMS, MAE, and PSNR.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><p>A dictionary of the results information. Here is a list of items in the results dictionary:</p>
 <ul class="simple">
 <li><p><strong>mse</strong>: Mean Square Error (MSE)</p></li>
@@ -441,7 +576,7 @@ a list of what can be included in this dictionary.</p>
 </ul>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -452,7 +587,7 @@ a list of what can be included in this dictionary.</p>
 <span class="sig-name descname"><span class="pre">evaluateClassification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actual</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topK</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confMat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expAcc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.base.BaseDSet.evaluateClassification" title="Permalink to this definition"></a></dt>
 <dd><p>Returns classification metrics and draws a confusion matrix for the results based on the information in the actual and predicted labels.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>predicted</strong> (<em>array</em>) – The predicted values of the output for the evaluation samples. If topK is not zero, this is a list of arrays each containing the K class indexes with highest probabilities in ascending order (the last one is the best). If topK is zero, then this is a 1-D arrays of predicted labels.</p></li>
 <li><p><strong>actual</strong> (<em>array</em>) – The actual values of the output for the test samples.</p></li>
@@ -470,7 +605,7 @@ and confusion matrix is not calculated.</p></li>
 <li><p><strong>quiet</strong> (<em>Boolean</em>) – If False, it prints the test results. The printed information includes the accuracy information and the Confusion matrix if number of classes is less than 10.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><p>A dictionary of the results information. Here is a list of items in the results dictionary:</p>
 <ul>
 <li><p><strong>accuracy</strong>: The evaluated accuracy. A float number between 0 and 1. AKA “Observed Accuracy”, it is defined as:</p>
@@ -516,10 +651,6 @@ and confusion matrix is not calculated.</p></li>
 </ul>
 <p>In the above equations:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 21%" />
-<col style="width: 79%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>TN</p></td>
 <td><p>True Negatives</p></td>
@@ -537,7 +668,7 @@ and confusion matrix is not calculated.</p></li>
 </table>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -550,11 +681,11 @@ and confusion matrix is not calculated.</p></li>
 Fireball online repository. This method is usually called internally by one of the
 derived classes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>folderName</strong> (<em>str</em>) – A string containing the name of the dataset folder. This is used both for Fireball
 repository and the destination folder name on local machine.</p></li>
-<li><p><strong>files</strong> (<em>list of str</em>) – <p>A list of strings. Each item in the list can be a file name or a URL.</p>
+<li><p><strong>files</strong> (<em>list</em><em> of </em><em>str</em>) – <p>A list of strings. Each item in the list can be a file name or a URL.</p>
 <blockquote>
 <div><ul>
 <li><p>URL: In this case the URL is tried first (which is usually the original location of the dataset files). If for any reason the file cannot be downloaded then the file name is extracted from the URL and it is downloaded from the Fireball repository.</p></li>
@@ -575,16 +706,11 @@ dataset folders and files are created there.</p></li>
 
 </section>
 <section id="module-fireball.datasets.mnist">
-<span id="mnist"></span><h2>MNIST<a class="headerlink" href="#module-fireball.datasets.mnist" title="Permalink to this headline"></a></h2>
+<span id="mnist"></span><h2>MNIST<a class="headerlink" href="#module-fireball.datasets.mnist" title="Permalink to this heading"></a></h2>
 <p>This module contains the implementation of <a class="reference external" href="http://yann.lecun.com/exdb/mnist/">MNIST</a> dataset for handwritten digit Classification.
 Use the <code class="docutils literal notranslate"><span class="pre">MnistDSetUnitTest.py</span></code> file in the <code class="docutils literal notranslate"><span class="pre">UnitTest/Datasets</span></code> directory to run the Unit Test of this implementation.</p>
 <dl>
 <dt><strong>Dataset Stats</strong></dt><dd><table class="docutils align-default">
-<colgroup>
-<col style="width: 23%" />
-<col style="width: 33%" />
-<col style="width: 44%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Dataset</p></th>
 <th class="head"><p>Total Samples</p></th>
@@ -613,7 +739,7 @@ Use the <code class="docutils literal notranslate"><span class="pre">MnistDSetUn
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.mnist.MnistDSet.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs an <cite>MnistDSet</cite> instance. This can be called directly or via <cite>makeDatasets</cite> class method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsName</strong> (<em>str</em>) – The name of the dataset. It can be one of “Train”, “Test”, or “Tune”. Note that “Valid” cannot be used here.</p></li>
 <li><p><strong>dataPath</strong> (<em>str</em>) – <p>The path to the directory where the dataset files are located. This implementation expects the following files in the “dataPath” directory:</p>
@@ -637,7 +763,7 @@ Use the <code class="docutils literal notranslate"><span class="pre">MnistDSetUn
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.mnist.MnistDSet.download" title="Permalink to this definition"></a></dt>
 <dd><p>This class method can be called to download the MNIST dataset files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
 dataset folders and files are created there. In other words, the default data folder
@@ -652,7 +778,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>This function splits the current dataset and returns a portion of data as a new <cite>MnistDSet</cite> object. The current object is then updated to keep the remaining samples.</p>
 <p>This method keeps the same ratio between the number of samples for each class. This means if the original dataset was not balanced, the split datasets also are not balanced and they have the same ratio of number of samples per class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsName</strong> (<em>str</em>) – The name of the new dataset that is created.</p></li>
 <li><p><strong>ratio</strong> (<em>float</em>) – The ratio between the number of samples that are removed from this dataset to the total number of the samples in this dataset before the split. The default value of 0.1 results in creating a new dataset with %10 of the samples. The remaining %90 of the samples stay in the current instance.</p></li>
@@ -660,10 +786,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <li><p><strong>repeatable</strong> (<em>Boolean</em>) – If True, the sampling from the original dataset is deterministic and therefore the experiments are repeatable. Otherwise, the sampling is done randomly.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new dataset containing a portion (specified by <cite>ratio</cite>) of samples from this object.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#fireball.datasets.mnist.MnistDSet" title="fireball.datasets.mnist.MnistDSet">MnistDSet</a></p>
 </dd>
 </dl>
@@ -674,7 +800,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createFineTuneDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.mnist.MnistDSet.createFineTuneDataset" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates a fine-tuning dataset and saves the information permanently on file system so that it can be loaded later.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p></li>
 <li><p><strong>ratio</strong> (<em>float</em>) – The ratio between the number of samples in the fine-tuning dataset and total training samples. The default value of 0.1 results in creating a new dataset with %10 of the training samples.</p></li>
@@ -692,7 +818,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">makeDatasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train,Test,Valid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.mnist.MnistDSet.makeDatasets" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates several datasets as specified by <cite>dsNames</cite> parameter in one-shot.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsNames</strong> (<em>str</em>) – <p>A combination of the following:</p>
 <ul>
@@ -715,10 +841,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <li><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Depending on the number of items specified in the <cite>dsNames</cite>, it returns between one and three <cite>MnistDSet</cite> objects. The returned values have the same order as they appear in the <cite>dsNames</cite> parameter.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Up to 3 <cite>MnistDSet</cite> objects</p>
 </dd>
 </dl>
@@ -745,7 +871,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 
 </section>
 <section id="module-fireball.datasets.cifar">
-<span id="cifar"></span><h2>CIFAR<a class="headerlink" href="#module-fireball.datasets.cifar" title="Permalink to this headline"></a></h2>
+<span id="cifar"></span><h2>CIFAR<a class="headerlink" href="#module-fireball.datasets.cifar" title="Permalink to this heading"></a></h2>
 <p>This module contains the implementation of “CifarDSet” dataset class for image Classification (<a class="reference external" href="https://www.cs.toronto.edu/~kriz/cifar.html">CIFAR-100</a>). Use the <code class="docutils literal notranslate"><span class="pre">CifarDSetUnitTest.py</span></code> file in the <code class="docutils literal notranslate"><span class="pre">UnitTest/Datasets</span></code> folder to run the Unit Test of this implementation.</p>
 <p>This implementation assumes that the following files exist in the ‘dataPath’ directory:</p>
 <ul class="simple">
@@ -756,11 +882,6 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dl>
 <dt><strong>Dataset Stats</strong></dt><dd><p>The 100 classes in the CIFAR-100 dataset are grouped into 20 superclasses. In the following table and in the API, “Fine” is used for the case where the 100-class version is used and “Coarse” is use where the 20 superclasses are used.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 18%" />
-<col style="width: 27%" />
-<col style="width: 55%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Dataset</p></th>
 <th class="head"><p>Total Samples</p></th>
@@ -794,7 +915,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarseLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.cifar.CifarDSet.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs a CifarDSet instance. This can be called directly or via <cite>makeDatasets</cite> class method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsName</strong> (<em>str</em>) – The name of the dataset. It can be one of “Train”, “Test”, or “Tune”. Note that “Valid” cannot be used here.</p></li>
 <li><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p></li>
@@ -813,7 +934,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>This class method can be called to download the CIFAR-100 dataset files from a Fireball
 online repository.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
 dataset folders and files are created there. In other words, the default data folder
@@ -828,7 +949,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>This function splits the current dataset and returns a portion of data as a new <cite>CifarDSet</cite> object. The current object is then updated to keep the remaining samples.</p>
 <p>This method keeps the same ratio between the number of samples for each class. This means if the original dataset was not balanced, the split datasets also are not balanced and they have the same ratio of number of samples per class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsName</strong> (<em>str</em>) – The name of the new dataset that is created.</p></li>
 <li><p><strong>ratio</strong> (<em>float</em>) – The ratio between the number of samples that are removed from this dataset to the total number of the samples in this dataset before the split. The default value of 0.1 results in creating a new dataset with %10 of the samples. The remaining %90 of the samples stay in the current instance.</p></li>
@@ -836,10 +957,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <li><p><strong>repeatable</strong> (<em>Boolean</em>) – If True, the sampling from the original dataset is deterministic and therefore the experiments are repeatable. Otherwise, the sampling is done randomly.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new dataset containing a portion (specified by <cite>ratio</cite>) of samples from this object.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#fireball.datasets.cifar.CifarDSet" title="fireball.datasets.cifar.CifarDSet">CifarDSet</a></p>
 </dd>
 </dl>
@@ -850,7 +971,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createFineTuneDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarseLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.cifar.CifarDSet.createFineTuneDataset" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates a fine-tuning dataset and saves the information permanently on file system so that it can be loaded later.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p></li>
 <li><p><strong>ratio</strong> (<em>float</em>) – The ratio between the number of samples in the fine-tuning dataset and total training samples. The default value of 0.1 results in creating a new dataset with %10 of the training samples.</p></li>
@@ -869,7 +990,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">makeDatasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train,Test,Valid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coarseLabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.cifar.CifarDSet.makeDatasets" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates several datasets as specified by <cite>dsNames</cite> parameter in one-shot.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsNames</strong> (<em>str</em>) – <p>A combination of the following:</p>
 <ul>
@@ -893,10 +1014,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <li><p><strong>coarseLabels</strong> (<em>Boolean</em>) – If True, the coarse datasets are loaded which have only 20 classes of images.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Depending on the number of items specified in the <cite>dsNames</cite>, it returns between one and three <cite>CifarDSet</cite> objects. The returned values have the same order as they appear in the <cite>dsNames</cite> parameter.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Up to 3 <cite>CifarDSet</cite> objects</p>
 </dd>
 </dl>
@@ -923,7 +1044,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 
 </section>
 <section id="module-fireball.datasets.imagenet">
-<span id="imagenet"></span><h2>ImageNet<a class="headerlink" href="#module-fireball.datasets.imagenet" title="Permalink to this headline"></a></h2>
+<span id="imagenet"></span><h2>ImageNet<a class="headerlink" href="#module-fireball.datasets.imagenet" title="Permalink to this heading"></a></h2>
 <p>This module contains the implementation of <a class="reference external" href="http://image-net.org/index">ImageNet</a> dataset for Image Recognition. This implementation assumes that the following files exist in the ‘dataPath’ directory:</p>
 <blockquote>
 <div><ul class="simple">
@@ -948,11 +1069,6 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <p>For more info see <a class="reference external" href="https://github.com/keras-team/keras-applications/blob/master/keras_applications/imagenet_utils.py">Keras image utilities</a> and <a class="reference external" href="https://github.com/tensorflow/tensorflow/blob/r1.8/tensorflow/python/keras/_impl/keras/preprocessing/image.py">preprocessing</a> code.</p>
 <dl>
 <dt><strong>Dataset Stats</strong></dt><dd><table class="docutils align-default">
-<colgroup>
-<col style="width: 18%" />
-<col style="width: 27%" />
-<col style="width: 55%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Dataset</p></th>
 <th class="head"><p>Total Samples</p></th>
@@ -981,7 +1097,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preProcessing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Crop256Cafe'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.imagenet.ImageNetDSet.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs an ImageNetDSet instance. This can be called directly or via <cite>makeDatasets</cite> class method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsName</strong> (<em>str</em>) – The name of the dataset. It can be one of “Train”, “Test”, or “Tune”. Note that “Valid” cannot be used here.</p></li>
 <li><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p></li>
@@ -1003,7 +1119,7 @@ online repository. Please note that this does not include the training dataset. 
 Tuning and Test datasets are downloaded. All image files have already been resized to
 224x224.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
 dataset folders and files are created there. In other words, the default data folder
@@ -1017,13 +1133,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">getImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.imagenet.ImageNetDSet.getImage" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a numpy array containing the image information for the image file specified by the <cite>fileName</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fileName</strong> (<em>str</em>) – The name of the image file.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The image information as a numpy array. If the <cite>preProcessing</cite> is one of ‘Crop256Cafe’ or ‘ForceCafe’, the returned value is in BGR format; otherwise it is in RGB format.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy array</p>
 </dd>
 </dl>
@@ -1034,13 +1150,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">preProcessImages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">images</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.imagenet.ImageNetDSet.preProcessImages" title="Permalink to this definition"></a></dt>
 <dd><p>Preprocesses the specified <cite>image</cite> based on the method specified by <cite>preProcessing</cite>. Please refer to the “Pre-Processing” section above in this module’s documentation for an explanation for each one of the pre-processing methods.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>images</strong> (<em>numpy array</em>) – The image(s) to be pre-processed as a numpy array.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The processed image(s) as a numpy array.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy array</p>
 </dd>
 </dl>
@@ -1051,13 +1167,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">resizedImg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.imagenet.ImageNetDSet.resizedImg" title="Permalink to this definition"></a></dt>
 <dd><p>Resizes the specified image using the method specified by <cite>preProcessing</cite>. The resized image is always a 224x224x3 numpy array of type float32.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>img</strong> (<em>numpy array</em>) – The image to be resized.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The resized image as a numpy array of shape (224,224,3)</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy array</p>
 </dd>
 </dl>
@@ -1068,13 +1184,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">getPreprocessedImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imageFileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.imagenet.ImageNetDSet.getPreprocessedImage" title="Permalink to this definition"></a></dt>
 <dd><p>A utility function that loads an image, resizes and preprocesses it, and returns it as a numpy array of type float32.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>imageFileName</strong> (<em>str</em>) – The path to the image file.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The resized and preprocessed image as a numpy array of shape (224,224,3)</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy array</p>
 </dd>
 </dl>
@@ -1086,17 +1202,17 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>This function splits the current dataset and returns a portion of data as a new <cite>ImageNetDSet</cite> object. This object is then updated to keep the remaining samples.</p>
 <p>This method keeps the same ratio between the number of samples for each class. This means that if the original dataset was not balanced, the split datasets also are not balanced and they have the same ratio of number of samples per class.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsName</strong> (<em>str</em>) – The name of the new dataset that is created.</p></li>
 <li><p><strong>ratio</strong> (<em>float</em>) – The ratio between the number of samples that are removed from this dataset to the total number of the samples in this dataset before the split. The default value of .1 results in creating a new dataset with %10 of the samples. %90 of the samples stay in this object.</p></li>
 <li><p><strong>batchSize</strong> (<em>int</em><em> or </em><em>None</em>) – The batchSize used for the new <cite>ImageNetDSet</cite> object created. If not specified the new object inherits the batchSize from this object.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new dataset containing a portion (specified by <cite>ratio</cite>) of samples from this object.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#fireball.datasets.imagenet.ImageNetDSet" title="fireball.datasets.imagenet.ImageNetDSet">ImageNetDSet</a></p>
 </dd>
 </dl>
@@ -1122,7 +1238,7 @@ All samples in class 999
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createFineTuneDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copyImages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.imagenet.ImageNetDSet.createFineTuneDataset" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates a fine-tuning dataset and saves the information permanently on file system so that it can be loaded later.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p></li>
 <li><p><strong>ratio</strong> (<em>float</em>) – The ratio between the number of samples in the fine-tuning dataset and total training samples.
@@ -1142,7 +1258,7 @@ The default value of .1 results in creating a new dataset with %10 of the traini
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">makeDatasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train,Test,Valid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preProcessing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Crop256Cafe'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.imagenet.ImageNetDSet.makeDatasets" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates several datasets as specified by <cite>dsNames</cite> parameter in one-shot.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsNames</strong> (<em>str</em>) – <p>A combination of the following:</p>
 <ul>
@@ -1167,10 +1283,10 @@ The default value of .1 results in creating a new dataset with %10 of the traini
 <li><p><strong>numWorkers</strong> (<em>int</em>) – The number of worker threads used to load the images.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Depending on the number of items specified in the <cite>dsNames</cite>, it returns between one and three <cite>ImageNetDSet</cite> objects. The returned values have the same order as they appear in the <cite>dsNames</cite> parameter.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Up to 3 ImageNetDSet objects</p>
 </dd>
 </dl>
@@ -1195,10 +1311,10 @@ The default value of .1 results in creating a new dataset with %10 of the traini
 <span class="sig-name descname"><span class="pre">getBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchIndexes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.imagenet.ImageNetDSet.getBatch" title="Permalink to this definition"></a></dt>
 <dd><p>This method returns a batch of samples and labels from the dataset as specified by the list of indexes in the <cite>batchIndexes</cite> parameter.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list of int</em>) – A list of indexes used to pick samples and labels from the dataset.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list</em><em> of </em><em>int</em>) – A list of indexes used to pick samples and labels from the dataset.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>samples</strong> (<em>numpy array</em>) – The batch samples specified by the <cite>batchIndexes</cite>. Each sample is a resize, pre-processed image as a numpy array of shape (224, 224, 3)</p></li>
 <li><p><strong>labels</strong> (<em>numpy array</em>) – The batch labels specified by the <cite>batchIndexes</cite>. A numpy array of integer values.</p></li>
@@ -1212,7 +1328,7 @@ The default value of .1 results in creating a new dataset with %10 of the traini
 
 </section>
 <section id="module-fireball.datasets.coco">
-<span id="coco"></span><h2>COCO<a class="headerlink" href="#module-fireball.datasets.coco" title="Permalink to this headline"></a></h2>
+<span id="coco"></span><h2>COCO<a class="headerlink" href="#module-fireball.datasets.coco" title="Permalink to this heading"></a></h2>
 <p>This module contains the implementation of <a class="reference external" href="https://cocodataset.org">COCO</a> dataset class for object detection. Use the <code class="docutils literal notranslate"><span class="pre">CocoDSetUnitTest.py</span></code> file in the <code class="docutils literal notranslate"><span class="pre">UnitTest/Datasets</span></code> folder to run the Unit Test of this implementation.</p>
 <p>A sample when it is provided in <cite>getBatch</cite> is tuple of the form: (image, classes, boxes). Internally it is kept as a tuple of the form (imageId, classes, boxes, areas, crowdFlags).</p>
 <blockquote>
@@ -1237,15 +1353,6 @@ The default value of .1 results in creating a new dataset with %10 of the traini
 </div></blockquote>
 <dl>
 <dt><strong>Dataset Stats</strong></dt><dd><table class="docutils align-default">
-<colgroup>
-<col style="width: 14%" />
-<col style="width: 13%" />
-<col style="width: 14%" />
-<col style="width: 14%" />
-<col style="width: 11%" />
-<col style="width: 18%" />
-<col style="width: 18%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head" rowspan="2"><p>Dataset</p></th>
 <th class="head" rowspan="2"><p>Total</p>
@@ -1309,7 +1416,7 @@ The default value of .1 results in creating a new dataset with %10 of the traini
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepAr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs an CocoDSet instance. This can be called directly or via <cite>makeDatasets</cite> class method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsName</strong> (<em>str</em>) – The name of the dataset. It can be one of “Train”, “Test”, “Valid”.</p></li>
 <li><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p></li>
@@ -1327,7 +1434,7 @@ The default value of .1 results in creating a new dataset with %10 of the traini
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.download" title="Permalink to this definition"></a></dt>
 <dd><p>This class method can be called to download the COCO dataset files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
 dataset folders and files are created there. In other words, the default data folder
@@ -1341,7 +1448,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">makeDatasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train,Test,Valid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepAr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.makeDatasets" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates several datasets as specified by <cite>dsNames</cite> parameter in one-shot.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsNames</strong> (<em>str</em>) – <p>A combination of the following:</p>
 <ul>
@@ -1357,10 +1464,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <li><p><strong>numWorkers</strong> (<em>int</em>) – The number of worker threads used to load the images.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Depending on the number of items specified in the <cite>dsNames</cite>, it returns between one and three CocoDSet objects. The returned values have the same order as they appear in the <cite>dsNames</cite> parameter.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Up to 3 CocoDSet objects</p>
 </dd>
 </dl>
@@ -1384,7 +1491,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">getStats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.getStats" title="Permalink to this definition"></a></dt>
 <dd><p>Returns some statistics about this instance of CocoDSet.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><ul class="simple">
 <li><p><strong>sampleCounts</strong> (<em>numpy array</em>) – This is 2d numpy array. <code class="docutils literal notranslate"><span class="pre">sampleCounts[c][1]</span></code> is the number of images in the whole dataset that contains an instance of class ‘c’. <code class="docutils literal notranslate"><span class="pre">sampleCounts[c][0]</span></code> is the total number of times instances of class ‘c’ appear in all images in the dataset.</p></li>
 <li><p><strong>numCrowd</strong> (<em>list</em>) – This is a list containing 2 integer numbers. <code class="docutils literal notranslate"><span class="pre">numCrowd[0]</span></code> is the total number of times a “Crowd” object appears in the whole dataset. <code class="docutils literal notranslate"><span class="pre">numCrowd[1]</span></code> is the number of images in the dataset that contain at least one “Crowd” object.</p></li>
@@ -1401,7 +1508,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">printStats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.printStats" title="Permalink to this definition"></a></dt>
 <dd><p>This class method prints statistics of classes for the given set of datasets in a single table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>trainDs</strong> (<a class="reference internal" href="#fireball.datasets.coco.CocoDSet" title="fireball.datasets.coco.CocoDSet"><em>CocoDSet</em></a><em>, </em><em>optional</em>) – The training dataset.</p></li>
 <li><p><strong>testDs</strong> (<a class="reference internal" href="#fireball.datasets.coco.CocoDSet" title="fireball.datasets.coco.CocoDSet"><em>CocoDSet</em></a><em>, </em><em>optional</em>) – The test dataset.</p></li>
@@ -1416,7 +1523,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">getImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.getImage" title="Permalink to this definition"></a></dt>
 <dd><p>This returns an image in BGR format as a numpy array of type float32 and shape (h,w,3).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>img</strong> (<em>numpy array</em><em>, </em><em>int/np.int32</em><em>, or </em><em>str</em>) – <ul class="simple">
 <li><p>If this is a numpy array, it is assumed that the image has already been loaded and it is just returned without any modifications.</p></li>
 <li><p>If this is an int/np.int32, it is assumed to be the id of the image and it is used to get the image file name and then load the image from the file.</p></li>
@@ -1424,10 +1531,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 </ul>
 </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The loaded image is returned in BGR format as a numpy array of type float32 and shape (h,w,3). Where ‘w’ and ‘h’ are equal to the ‘resolution’ argument in the ‘__init__’ or ‘makeDatasets’ functions.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy array</p>
 </dd>
 </dl>
@@ -1439,13 +1546,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>Convert from [x1, y1, x2, y2] to [x1, y1, w, h]</p>
 <p>This class method changes all the boxes in the “boxes” array from “P1P2” format to “P1Size” format.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array of ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “P1P2” format. In “P1P2” format each box is represented with array of 4 numbers [x1, y1, x2, y2] where (x1,y1) and (x2,y2) represent the top-left and bottom-right corners of the box correspondingly.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array</em><em> of </em><em>ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “P1P2” format. In “P1P2” format each box is represented with array of 4 numbers [x1, y1, x2, y2] where (x1,y1) and (x2,y2) represent the top-left and bottom-right corners of the box correspondingly.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The box(s) in the “P1Size” format. In “P1Size” format each box is represented with array of 4 numbers [x1, y1, w, h] where (x1,y1) and (w,h) represent the top-left corner of the box and size of the box correspondingly.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>same shape and type of the input</p>
 </dd>
 </dl>
@@ -1457,13 +1564,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>Convert from [x1, y1, w, h] to [x1, y1, x2,y 2]</p>
 <p>This class method changes all the boxes in the “boxes” array from “P1Size” format to “P1P2” format.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array of ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “P1Size” format. In “P1Size” format each box is represented with array of 4 numbers [x1, y1, w, h] where (x1,y1) and (w,h) represent the top-left corner of the box and size of the box correspondingly.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array</em><em> of </em><em>ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “P1Size” format. In “P1Size” format each box is represented with array of 4 numbers [x1, y1, w, h] where (x1,y1) and (w,h) represent the top-left corner of the box and size of the box correspondingly.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The box(s) in the “P1P2” format. In “P1P2” format each box is represented with array of 4 numbers [x1, y1, x2, y2] where (x1,y1) and (x2,y2) represent the top-left and bottom-right corners of the box correspondingly.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>same shape and type of the input</p>
 </dd>
 </dl>
@@ -1475,13 +1582,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>Convert from [x1, y1, x2, y2] to [cx, cy, w, h]</p>
 <p>This class method changes all the boxes in the “boxes” array from “P1P2” format to “CenterSize” format.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array of ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “P1P2” format. In “P1P2” format each box is represented with array of 4 numbers [x1, y1, x2, y2] where (x1,y1) and (x2,y2) represent the top-left and bottom-right corners of the box correspondingly.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array</em><em> of </em><em>ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “P1P2” format. In “P1P2” format each box is represented with array of 4 numbers [x1, y1, x2, y2] where (x1,y1) and (x2,y2) represent the top-left and bottom-right corners of the box correspondingly.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The box(s) in the “CenterSize” format. In “CenterSize” format each box is represented with array of 4 numbers [cx, cy, w, h] where (cx,cy) and (w,h) represent the center point and size of the box correspondingly.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>same shape and type of the input</p>
 </dd>
 </dl>
@@ -1493,13 +1600,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>Convert from [cx, cy, w, h] to [x1, y1, x2, y2]</p>
 <p>This class method changes all the boxes in the “boxes” array from “CenterSize” format to “P1P2” format.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array of ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “CenterSize” format. In “CenterSize” format each box is represented with array of 4 numbers [cx, cy, w, h] where (cx,cy) and (w,h) represent the center point and size of the box correspondingly.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array</em><em> of </em><em>ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “CenterSize” format. In “CenterSize” format each box is represented with array of 4 numbers [cx, cy, w, h] where (cx,cy) and (w,h) represent the center point and size of the box correspondingly.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The box(s) in the “P1P2” format. In “P1P2” format each box is represented with array of 4 numbers [x1, y1, x2, y2] where (x1,y1) and (x2,y2) represent the top-left and bottom-right corners of the box correspondingly.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>same shape and type of the input</p>
 </dd>
 </dl>
@@ -1511,13 +1618,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>Convert from [x1, y1, w, h] to [cx, cy, w, h]</p>
 <p>This class method changes all the boxes in the “boxes” array from “P1Size” format to “CenterSize” format.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array of ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “P1Size” format. In “P1Size” format each box is represented with array of 4 numbers [x1, y1, w, h] where (x1,y1) and (w,h) represent the top-left corner and size of the box correspondingly.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array</em><em> of </em><em>ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “P1Size” format. In “P1Size” format each box is represented with array of 4 numbers [x1, y1, w, h] where (x1,y1) and (w,h) represent the top-left corner and size of the box correspondingly.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The box(s) in the “CenterSize” format. In “CenterSize” format each box is represented with array of 4 numbers [cx, cy, w, h] where (cx,cy) and (w,h) represent the center point and size of the box correspondingly.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>same shape and type of the input</p>
 </dd>
 </dl>
@@ -1529,13 +1636,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>Convert from [cx, cy, w, h] to [x1, y1, w, h]</p>
 <p>This class method changes all the boxes in the “boxes” array from “CenterSize” format to “P1Size” format.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array of ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “CenterSize” format. In “CenterSize” format each box is represented with array of 4 numbers [cx, cy, w, h] where (cx,cy) and (w,h) represent the center point and size of the box correspondingly.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>boxes</strong> (<em>1-D</em><em> or </em><em>2D list</em><em> or </em><em>numpy array</em><em> of </em><em>ints</em><em> or </em><em>floats</em>) – This contains one or more boxes in “CenterSize” format. In “CenterSize” format each box is represented with array of 4 numbers [cx, cy, w, h] where (cx,cy) and (w,h) represent the center point and size of the box correspondingly.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The box(s) in the “P1P2” format. In “P1Size” format each box is represented with array of 4 numbers [x1, y1, w, h] where (x1,y1) and (w,h) represent the top-left corner of the box and size of the box correspondingly.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>same shape and type of the input</p>
 </dd>
 </dl>
@@ -1546,7 +1653,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scaleImageAndBoxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boxes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepAr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boxFormat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'P1Size'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.scaleImageAndBoxes" title="Permalink to this definition"></a></dt>
 <dd><p>This class method scales the specified image to a square <cite>res x res</cite> image. If keepAr is true, the aspect ratio is kept by padding the smaller dimension with zeros (black). It then scales all boxes specified in the <cite>boxes</cite> using the same ratio used to scale the image.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>numpy array</em>) – The image as a numpy array of shape (h,w,3)</p></li>
 <li><p><strong>boxes</strong> (<em>numpy array</em><em> or </em><em>None</em>) – A set of bounding boxes for the objects present in the image. The boxes are stored using the format specified by <cite>boxFormat</cite>. It can be <cite>None</cite> or empty which indicates there are no boxes to be scaled.</p></li>
@@ -1555,7 +1662,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <li><p><strong>boxFormat</strong> (<em>str</em>) – This specifies the format of the <cite>boxes</cite>. See the box formats in the Notes section below.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>resizedImg</strong> (<em>numpy array</em>) – The scaled image as a numpy array of shape (res,res,3)</p></li>
 <li><p><strong>modifiedBoxes</strong> (<em>numpy array or None</em>) – The scaled boxes as a numpy array (Same shape and type as <cite>boxes</cite>) or <cite>None</cite> if <cite>boxes</cite> is None.</p></li>
@@ -1580,14 +1687,14 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flipImageHorizontally</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boxFormat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'P1Size'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.flipImageHorizontally" title="Permalink to this definition"></a></dt>
 <dd><p>This class method flips an image horizontally. It then moves all the boxes specified in the <cite>boxes</cite> so that they bound the original objects in the flipped images.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>numpy array</em>) – The image as a numpy array of shape (h,w,3)</p></li>
 <li><p><strong>boxes</strong> (<em>numpy array</em><em> or </em><em>None</em>) – A set of bounding boxes for the objects present in the image. The boxes are stored using the format specified by <cite>boxFormat</cite>. It can be <cite>None</cite> or empty which indicates there are no boxes to be flipped.</p></li>
 <li><p><strong>boxFormat</strong> (<em>str</em>) – This specifies the format of the <cite>boxes</cite>. See the box formats in the Notes section below.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>flippedImg</strong> (<em>numpy array</em>) – The flipped image as a numpy array of shape (res,res,3)</p></li>
 <li><p><strong>flippedBoxes</strong> (<em>numpy array or None</em>) – The flipped boxes as a numpy array (Same shape and type as <cite>boxes</cite>) or <cite>None</cite> if <cite>boxes</cite> is None.</p></li>
@@ -1612,7 +1719,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>This class method scales the image down and then move the smaller image by an offset specified by <cite>offset</cite>. The return value is a black <cite>res x res</cite> image that contains a <cite>newRes x newRes</cite> image at a location that is specified by <cite>offset</cite> (from the center of the image).</p>
 <p>It then scales and moves all the boxes specified in the <cite>boxes</cite> so that they bound the original objects in the resized/moved images.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>numpy array</em>) – The image as a numpy array of shape (h,w,3)</p></li>
 <li><p><strong>boxes</strong> (<em>numpy array</em><em> or </em><em>None</em>) – A set of bounding boxes for the objects present in the image. The boxes are stored using the format specified by <cite>boxFormat</cite>. It can be <cite>None</cite> or empty which indicates there are no boxes to be scaled/moved.</p></li>
@@ -1622,7 +1729,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <li><p><strong>boxFormat</strong> (<em>str</em>) – This specifies the format of the <cite>boxes</cite>. See the box formats in the Notes section below.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>movedImg</strong> (<em>numpy array</em>) – The scaled/moved image as a numpy array of shape (res,res,3)</p></li>
 <li><p><strong>movedBoxes</strong> (<em>numpy array or None</em>) – The scaled/moved boxes as a numpy array (Same shape and type as <cite>boxes</cite>) or <cite>None</cite> if <cite>boxes</cite> is None.</p></li>
@@ -1646,7 +1753,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">setAcnchorBoxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">anchorBoxes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.setAcnchorBoxes" title="Permalink to this definition"></a></dt>
 <dd><p>Sets the anchor boxes for this dataset. The anchor boxes are created by an SSD model and passed to this class so that they can be used during training and evaluation of the models.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>anchorBoxes</strong> (<em>numpy array</em>) – An nx4 numpy array, where n is the number of anchor boxes. The boxes are in “CenterSize” format [cx, cy, w, h] with all values normalized to an image size of <cite>1.0 x 1.0</cite>.</p>
 </dd>
 </dl>
@@ -1657,13 +1764,13 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">getGroundTruth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.getGroundTruth" title="Permalink to this definition"></a></dt>
 <dd><p>This function receives lists of objects and their locations on an image and creates the ground-truth information used for training a model. The ground-truth information includes the label and location information for each one of the anchor boxes defined by the model.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>labels</strong> (<em>numpy array</em>) – This 1-D array contains the class of each object in an image.</p></li>
 <li><p><strong>boxes</strong> (<em>numpy array</em>) – This 2-D matrix contains the box information for each object in an image. The boxes are in “P1Size” format. The number of boxes in this array should match the number of labels in the <cite>labels</cite> parameter.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>gtLabels</strong> (<em>numpy array</em>) – The label for each anchor box. The number of items in the array is equal to the number of anchor boxes defined by the model. (See setAcnchorBoxes)</p></li>
 <li><p><strong>gtBoxAdj</strong> (<em>numpy array</em>) – This the adjustment applied to each anchor box to match it to one of the ground-truth boxes in the image. Shape: (numAnchors, 4)</p></li>
@@ -1680,7 +1787,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">showImageAndBoxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boxes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.showImageAndBoxes" title="Permalink to this definition"></a></dt>
 <dd><p>This class method shows the specified image and the bounding boxes in a matplotlib.pyplot diagram.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>image</strong> (<em>numpy array</em>) – The image as a numpy array of shape (height, width, 3) in BGR format.</p></li>
 <li><p><strong>boxes</strong> (<em>numpy array</em><em> or </em><em>list</em>) – Each item in <cite>boxes</cite> represents a single box in “P1Size” format [x,y,w,h].</p></li>
@@ -1701,7 +1808,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>This function shows one of the samples in this dataset as specified by the <cite>sampleIndex</cite>
 or <cite>sampleId</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sampleIndex</strong> (<em>int</em><em> or </em><em>None</em>) – The sample index. This index is used to get the specified sample in the dataset.</p></li>
 <li><p><strong>sampleId</strong> (<em>int</em><em> or </em><em>None</em>) – The sample identifier. This is used to find the sample index. The sample index can then be used get the specified sample in the dataset.</p></li>
@@ -1723,7 +1830,7 @@ or <cite>sampleId</cite>.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">showInferResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boxes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arKept</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.showInferResults" title="Permalink to this definition"></a></dt>
 <dd><p>This function shows the results of inference. First the <cite>image</cite> is sent to the model to detect all the objects in the image. The detected information include bounding boxes, the labels, and scores (or confidence factors) for each detected object. The information is then passed to this function to display the image together with the detected objects.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>image</strong> (<em>numpy array</em>) – The image as a numpy array of shape (height, width, 3) in BGR format.</p></li>
 <li><p><strong>boxes</strong> (<em>numpy array</em><em> or </em><em>list</em>) – The detected boxes in P1Size format with normalized (between 0 and 1) coordinates. The number of labels, scores, and boxes, should match.</p></li>
@@ -1753,13 +1860,13 @@ or <cite>sampleId</cite>.</p>
 </div></blockquote>
 <p>Also %50 of the time the original image is returned without any modifications. Please refer to <cite>flipImageHorizontally</cite> and <cite>zoomOutAndMove</cite> functions for more detail about these mutations.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>img</strong> (<em>numpy array</em>) – The image as a numpy array of shape (height, width, 3) in BGR format.</p></li>
 <li><p><strong>boxes</strong> (<em>numpy array</em><em> or </em><em>list</em>) – Each item in <cite>boxes</cite> represents a single box in “P1Size” format [x,y,w,h].</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>mutatedImg</strong> (<em>numpy array</em>) – The modified image as a numpy array (same shape and format as the original image)</p></li>
 <li><p><strong>mutatedBoxes</strong> (<em>numpy array</em>) – The modified boxes as a numpy array (Same shape and type as <cite>boxes</cite>).</p></li>
@@ -1777,10 +1884,10 @@ or <cite>sampleId</cite>.</p>
 <p>For the training case, you can enable data augmentation using the <cite>augment</cite> property. By default this is set to False.</p>
 <p>If the anchor boxes are not available, it is assumed we are in inference mode. In this case the pre-processed images are returned together with a list of tuples (imageId, imageSize).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list of int</em>) – A list of indexes used to pick samples from the dataset.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list</em><em> of </em><em>int</em>) – A list of indexes used to pick samples from the dataset.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul>
 <li><p><strong>images</strong> (<em>numpy array</em>) – The batch images specified by the <cite>batchIndexes</cite>. Each image is resized, pre-processed, and possibly mutated and returned as a numpy array.</p></li>
 <li><p><strong>labels</strong> (<em>list of 2-tuples or a 3-tuple of numpy arrays</em>) –</p>
@@ -1808,9 +1915,9 @@ or <cite>sampleId</cite>.</p>
 <span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isTraining</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.evaluate" title="Permalink to this definition"></a></dt>
 <dd><p>This function returns the results of inference and evaluates the results. It then returns the result statistics together with a human readable text string containing details of evaluation results in the form of a table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>results</strong> (<em>list of tuples</em>) – <p>The results is a list of tuples [ (IMG0, DT0), (IMG1, DT1), … ] where:</p>
+<li><p><strong>results</strong> (<em>list</em><em> of </em><em>tuples</em>) – <p>The results is a list of tuples [ (IMG0, DT0), (IMG1, DT1), … ] where:</p>
 <ul>
 <li><p>IMGi : The i’th image id.</p></li>
 <li><p>DTi : The predicted information for the i’th image. It is a 3-tuple containing numpy arrays: ([CLASS0, CLASS1, …], [BOX0, BOX1, …], [SCORE0, SCORE1, …])</p>
@@ -1829,7 +1936,7 @@ or <cite>sampleId</cite>.</p>
 <li><p><strong>quiet</strong> (<em>Boolean</em>) – If true, this function shows the progress during the calculations and prints the details of results in the form of a table. Otherwise, this function does not print anything during the process.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>ap50</strong> (<em>numpy array</em>) – A numpy array containing the average precision for all combinations of area/maxDet calculated with IOU threshold of .50.</p></li>
 <li><p><strong>ap75</strong> (<em>numpy array</em>) – A numpy array containing the average precision for all combinations of area/maxDet calculated with IOU threshold of .75.</p></li>
@@ -1846,7 +1953,7 @@ or <cite>sampleId</cite>.</p>
 <span class="sig-name descname"><span class="pre">evaluateModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnMetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.coco.CocoDSet.evaluateModel" title="Permalink to this definition"></a></dt>
 <dd><p>This function evaluates the specified model using this dataset.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>Fireball Model object</em>) – The model being evaluated.</p></li>
 <li><p><strong>batchSize</strong> (<em>int</em>) – The batchSize used for the evaluation process. This function processes one batch of the samples at a time. If this is None, the batch size specified for this dataset object in the __init__ function is used instead.</p></li>
@@ -1864,7 +1971,7 @@ a list of what can be included in this dictionary.</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>If returnMetric is True, the actual value of dataset’s main metric (mAP) is returned.</em></p></li>
 <li><p><em>Otherwise, this function returns a dictionary containing the results of the evaluation process.</em></p></li>
@@ -1878,7 +1985,7 @@ a list of what can be included in this dictionary.</p>
 
 </section>
 <section id="module-fireball.datasets.squad">
-<span id="squad"></span><h2>SQuAD<a class="headerlink" href="#module-fireball.datasets.squad" title="Permalink to this headline"></a></h2>
+<span id="squad"></span><h2>SQuAD<a class="headerlink" href="#module-fireball.datasets.squad" title="Permalink to this heading"></a></h2>
 <p>This module contains the implementation of <a class="reference external" href="https://rajpurkar.github.io/SQuAD-explorer/">SQuAD</a> dataset class for NLP Question-Answering tasks.
 Use the <code class="docutils literal notranslate"><span class="pre">SquadDSetUnitTest.py</span></code> file in the <code class="docutils literal notranslate"><span class="pre">UnitTest/Datasets</span></code> folder to run the Unit Test of this implementation.</p>
 <p>This implementation assumes that the following files exist in the ‘dataPath’ directory:</p>
@@ -1912,12 +2019,6 @@ Use the <code class="docutils literal notranslate"><span class="pre">SquadDSetUn
 <li><p>Version 1:</p></li>
 </ul>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 12%" />
-<col style="width: 15%" />
-<col style="width: 48%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Training</p></th>
@@ -2005,12 +2106,6 @@ Use the <code class="docutils literal notranslate"><span class="pre">SquadDSetUn
 <li><p>Version 2:</p></li>
 </ul>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 12%" />
-<col style="width: 15%" />
-<col style="width: 48%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Training</p></th>
@@ -2108,7 +2203,7 @@ Use the <code class="docutils literal notranslate"><span class="pre">SquadDSetUn
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.squad.SquadDSet.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs a <cite>SquadDSet</cite> instance. This can be called directly or via <cite>makeDatasets</cite> class method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsName</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the dataset. It can be one of “Train” or “Test”.</p></li>
 <li><p><strong>dataPath</strong> (<em>str</em><em>, </em><em>optional</em>) – The path to the directory where the dataset files are located.</p></li>
@@ -2126,7 +2221,7 @@ Use the <code class="docutils literal notranslate"><span class="pre">SquadDSetUn
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.squad.SquadDSet.download" title="Permalink to this definition"></a></dt>
 <dd><p>This class method can be called to download the SQuAD dataset files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
 dataset folders and files are created there. In other words, the default data folder
@@ -2140,7 +2235,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">makeDatasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train,Test'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.squad.SquadDSet.makeDatasets" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates several datasets in one-shot as specified by <cite>dsNames</cite> parameter.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsNames</strong> (<em>str</em>) – <p>A combination of the following:</p>
 <ul>
@@ -2154,10 +2249,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <li><p><strong>tokenizer</strong> (<em>Tokenizer object</em>) – The tokenizer used by all created datasets. If this is None, and there is a “vocab.txt” file in the “dataPath”, this method tries to create a tokenizer using “vocab.txt” as its vocabulary.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Depending on the number of items specified in the <cite>dsNames</cite>, it returns one or two SquadDSet objects. The returned values have the same order as they appear in the <cite>dsNames</cite> parameter.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Up to 2 SquadDSet objects</p>
 </dd>
 </dl>
@@ -2168,7 +2263,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">printDsInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.squad.SquadDSet.printDsInfo" title="Permalink to this definition"></a></dt>
 <dd><p>This class method prints information about given set of datasets in a single table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>trainDs</strong> (<a class="reference internal" href="#fireball.datasets.squad.SquadDSet" title="fireball.datasets.squad.SquadDSet"><em>SquadDSet</em></a><em>, </em><em>optional</em>) – The training dataset.</p></li>
 <li><p><strong>testDs</strong> (<a class="reference internal" href="#fireball.datasets.squad.SquadDSet" title="fireball.datasets.squad.SquadDSet"><em>SquadDSet</em></a><em>, </em><em>optional</em>) – The test dataset.</p></li>
@@ -2182,7 +2277,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">printStats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.squad.SquadDSet.printStats" title="Permalink to this definition"></a></dt>
 <dd><p>This class method prints dataset statistics for the given set of datasets in a single table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>trainDs</strong> (<a class="reference internal" href="#fireball.datasets.squad.SquadDSet" title="fireball.datasets.squad.SquadDSet"><em>SquadDSet</em></a><em>, </em><em>optional</em>) – The training dataset.</p></li>
 <li><p><strong>testDs</strong> (<a class="reference internal" href="#fireball.datasets.squad.SquadDSet" title="fireball.datasets.squad.SquadDSet"><em>SquadDSet</em></a><em>, </em><em>optional</em>) – The test dataset.</p></li>
@@ -2196,10 +2291,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">getBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchIndexes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.squad.SquadDSet.getBatch" title="Permalink to this definition"></a></dt>
 <dd><p>This method returns a batch of samples and labels from the dataset as specified by the list of indexes in the <cite>batchIndexes</cite> parameter.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list of int</em>) – A list of indexes used to pick samples and labels from the dataset.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list</em><em> of </em><em>int</em>) – A list of indexes used to pick samples and labels from the dataset.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul>
 <li><p><strong>samples</strong> (<em>tuple of 3 items:</em>) –</p>
 <ul class="simple">
@@ -2229,7 +2324,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">evaluateModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnMetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.squad.SquadDSet.evaluateModel" title="Permalink to this definition"></a></dt>
 <dd><p>This function evaluates the specified model using this dataset.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>Fireball Model object</em>) – The model being evaluated.</p></li>
 <li><p><strong>batchSize</strong> (<em>int</em>) – The batchSize used for the evaluation process. This function processes one batch of the samples at a time. If this is None, the batch size specified for this dataset object in the __init__ function is used instead.</p></li>
@@ -2248,7 +2343,7 @@ a list of what can be included in this dictionary.</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>If returnMetric is True, the actual value of dataset’s main metric is returned.</em></p></li>
 <li><p><em>Otherwise, this function returns a dictionary containing the results of the evaluation process.</em></p></li>
@@ -2264,7 +2359,7 @@ a list of what can be included in this dictionary.</p>
 <dd><p>Returns information about evaluation results based on the “predicted” values. This function is usually called by the <code class="docutils literal notranslate"><span class="pre">evaluateModel</span></code> function. But it can also be called when we have a the prediction results as a dictionary.</p>
 <p>If you want to evaluate the prediction results from a JSON file, the name of JSON file can also be passed in prediction.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>predictions</strong> (<em>dict</em><em> or </em><em>str</em>) – <ul>
 <li><p>If <code class="docutils literal notranslate"><span class="pre">predictions</span></code> is a dictionary, it should have the text string for each question Id in this dataset. In other words, the keys are the question IDs in this dataset and the values are the actual answer text string predicted by the model.</p></li>
@@ -2275,7 +2370,7 @@ a list of what can be included in this dictionary.</p>
 <li><p><strong>quiet</strong> (<em>Boolean</em>) – If False, it prints the test results. The printed information includes the Confusion matrix and accuracy information for Classification problems and MSE, RMS, MAE, and PSNR for Regression problems.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><p>A dictionary of the results information. Here is a list of items in the results dictionary:</p>
 <ul class="simple">
 <li><p><strong>exact</strong>: The exact match accuracy. A float number between 0 and 1.</p></li>
@@ -2291,7 +2386,7 @@ a list of what can be included in this dictionary.</p>
 </ul>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -2301,7 +2396,7 @@ a list of what can be included in this dictionary.</p>
 
 </section>
 <section id="module-fireball.datasets.glue">
-<span id="glue"></span><h2>GLUE<a class="headerlink" href="#module-fireball.datasets.glue" title="Permalink to this headline"></a></h2>
+<span id="glue"></span><h2>GLUE<a class="headerlink" href="#module-fireball.datasets.glue" title="Permalink to this heading"></a></h2>
 <p>This module contains the implementation of <a class="reference external" href="https://gluebenchmark.com">GLUE</a> dataset class for different NLP tasks. Use the <code class="docutils literal notranslate"><span class="pre">GlueDSetUnitTest.py</span></code> file in the <code class="docutils literal notranslate"><span class="pre">UnitTest/Datasets</span></code> folder to run the Unit Test of this implementation.</p>
 <p>This implementation assumes that the following folders exist in the ‘dataPath’ directory for each one of supported GLUE tasks. For more information about GLUE tasks please refer to: <a class="reference external" href="https://gluebenchmark.com/tasks">https://gluebenchmark.com/tasks</a></p>
 <blockquote>
@@ -2330,12 +2425,6 @@ a list of what can be included in this dictionary.</p>
 <dl>
 <dt>CoLA</dt><dd><p>The Corpus of Linguistic Acceptability (Metric: Matthew’s Corr)</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Class</p></th>
 <th class="head"><p>Training Samples</p></th>
@@ -2380,12 +2469,6 @@ a list of what can be included in this dictionary.</p>
 </dd>
 <dt>SST-2</dt><dd><p>The Stanford Sentiment Treebank (Metric: Accuracy)</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Class</p></th>
 <th class="head"><p>Training Samples</p></th>
@@ -2430,12 +2513,6 @@ a list of what can be included in this dictionary.</p>
 </dd>
 <dt>MRPC</dt><dd><p>Microsoft Research Paraphrase Corpus (Metric: F1/Accuracy)</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Class</p></th>
 <th class="head"><p>Training Samples</p></th>
@@ -2480,12 +2557,6 @@ a list of what can be included in this dictionary.</p>
 </dd>
 <dt>STS-B</dt><dd><p>Semantic Textual Similarity Benchmark (Metric: Pearson-Spearman Corr)</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
 <th class="head"><p>Training Samples</p></th>
@@ -2517,12 +2588,6 @@ a list of what can be included in this dictionary.</p>
 <dt>QQP</dt><dd><p>Quora Question Pairs (Metric: F1/Accuracy)</p>
 <p><strong>NOTE</strong>: This dataset contains some invalid records in train and dev files which are ignored.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Class</p></th>
 <th class="head"><p>Training Samples</p></th>
@@ -2567,12 +2632,6 @@ a list of what can be included in this dictionary.</p>
 </dd>
 <dt>MNLI-m</dt><dd><p>MultiNLI (Matched) (Metric: Accuracy)</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Class</p></th>
 <th class="head"><p>Training Samples</p></th>
@@ -2622,11 +2681,6 @@ a list of what can be included in this dictionary.</p>
 <dt>MNLI-mm</dt><dd><p>MultiNLI (Mismatched) (Metric: Accuracy)</p>
 <p><strong>NOTE</strong>: This task is only available for ‘dev’ and ‘test’ datasets. It should be used with the model trained for the <code class="docutils literal notranslate"><span class="pre">MNLI-m</span></code> task.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 36%" />
-<col style="width: 32%" />
-<col style="width: 32%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Class</p></th>
 <th class="head"><p>Dev Samples</p></th>
@@ -2666,12 +2720,6 @@ a list of what can be included in this dictionary.</p>
 </dd>
 <dt>QNLI</dt><dd><p>Question NLI (Metric: Accuracy)</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Class</p></th>
 <th class="head"><p>Training Samples</p></th>
@@ -2717,12 +2765,6 @@ a list of what can be included in this dictionary.</p>
 </dd>
 <dt>RTE</dt><dd><p>Recognizing Textual Entailment (Metric: Accuracy)</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Class</p></th>
 <th class="head"><p>Training Samples</p></th>
@@ -2767,12 +2809,6 @@ a list of what can be included in this dictionary.</p>
 </dd>
 <dt>WNLI</dt><dd><p>Winograd NLI (Metric: Accuracy)</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Class</p></th>
 <th class="head"><p>Training Samples</p></th>
@@ -2817,12 +2853,6 @@ a list of what can be included in this dictionary.</p>
 </dd>
 <dt>SNLI</dt><dd><p>Stanford NLI Corpus (Not officially part of GLUE) (Metric: Accuracy)</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-<col style="width: 24%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Class</p></th>
 <th class="head"><p>Training Samples</p></th>
@@ -2889,7 +2919,7 @@ a list of what can be included in this dictionary.</p>
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taskName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dsName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.glue.GlueDSet.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs a <cite>GlueDSet</cite> instance. This can be called directly or via <a class="reference internal" href="#fireball.datasets.glue.GlueDSet.makeDatasets" title="fireball.datasets.glue.GlueDSet.makeDatasets"><code class="xref py py-meth docutils literal notranslate"><span class="pre">makeDatasets()</span></code></a> class method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>taskName</strong> (<em>str</em>) – <dl class="simple">
 <dt>One of the GLUE task names. Currently the following tasks are supported:</dt><dd><ul>
@@ -2924,7 +2954,7 @@ a list of what can be included in this dictionary.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taskName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataFolder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.glue.GlueDSet.download" title="Permalink to this definition"></a></dt>
 <dd><p>This class method can be called to download the GLUE dataset files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>taskName</strong> (<em>str</em>) – The name of task for which the dataset files will be downloaded. If set to <code class="docutils literal notranslate"><span class="pre">&quot;All&quot;</span></code> the dataset
 files for all GLUE tasks will be downloaded. Otherwise it should be one of the following:
@@ -2954,7 +2984,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">makeDatasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taskName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dsNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train,Dev,Test'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tokenizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numWorkers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.glue.GlueDSet.makeDatasets" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates several datasets in one-shot as specified by <cite>dsNames</cite> parameter.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>taskName</strong> (<em>str</em>) – One of the GLUE task names. Please refer to the documentation for the <a class="reference internal" href="#fireball.datasets.glue.GlueDSet.__init__" title="fireball.datasets.glue.GlueDSet.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a> method above for more details about supported tasks.</p></li>
 <li><p><strong>dsNames</strong> (<em>str</em>) – <p>A combination of the following:</p>
@@ -2972,10 +3002,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <li><p><strong>numWorkers</strong> (<em>int</em>) – The number of worker threads used to load the samples.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Depending on the number of items specified in the <cite>dsNames</cite>, it returns one to three GlueDSet objects. The returned values have the same order as they appear in the <cite>dsNames</cite> parameter.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Up to 3 <a class="reference internal" href="#fireball.datasets.glue.GlueDSet" title="fireball.datasets.glue.GlueDSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">GlueDSet</span></code></a> objects</p>
 </dd>
 </dl>
@@ -2986,7 +3016,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">printDsInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">devDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.glue.GlueDSet.printDsInfo" title="Permalink to this definition"></a></dt>
 <dd><p>This class method prints information about given set of datasets in a single table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>trainDs</strong> (any object derived from <cite>BaseDSet</cite>, optional) – The training dataset.</p></li>
 <li><p><strong>devDs</strong> (any object derived from <cite>BaseDSet</cite>, optional) – The dev dataset.</p></li>
@@ -3001,7 +3031,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">printStats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">devDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.glue.GlueDSet.printStats" title="Permalink to this definition"></a></dt>
 <dd><p>This class method prints statistics of the given set of datasets in a single table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>trainDs</strong> (any object derived from <cite>BaseDSet</cite>, optional) – The training dataset.</p></li>
 <li><p><strong>devDs</strong> (any object derived from <cite>BaseDSet</cite>, optional) – The dev dataset.</p></li>
@@ -3016,10 +3046,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">getBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchIndexes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.glue.GlueDSet.getBatch" title="Permalink to this definition"></a></dt>
 <dd><p>This method returns a batch of samples and labels from the dataset as specified by the list of indexes in the <cite>batchIndexes</cite> parameter.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list of int</em>) – A list of indexes used to pick samples and labels from the dataset.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list</em><em> of </em><em>int</em>) – A list of indexes used to pick samples and labels from the dataset.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul>
 <li><p><strong>samples</strong> (<em>tuple</em>) –</p>
 <p>This is a 4-tuple:</p>
@@ -3047,7 +3077,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicted</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actual</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topK</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confMat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expAcc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.glue.GlueDSet.evaluate" title="Permalink to this definition"></a></dt>
 <dd><p>Returns information about evaluation results based on the “predicted” and “actual” values. This is usually called by the <a class="reference internal" href="#fireball.datasets.base.BaseDSet.evaluateModel" title="fireball.datasets.base.BaseDSet.evaluateModel"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluateModel()</span></code></a> method which should be called to evaluate a model with this dataset.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>predicted</strong> (<em>array</em>) – The predicted values of the output for the test samples. This is a 1-D arrays of labels for Classification tasks or an array of output values for Regression tasks (STS-B).</p></li>
 <li><p><strong>actual</strong> (<em>array</em>) – The actual values of the output for the test samples.</p></li>
@@ -3064,10 +3094,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <li><p><strong>quiet</strong> (<em>Boolean</em>) – If False, it prints the test results.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>For ‘test’ datasets, since the labels are unknown, this function returns a list of tuples like (index, predictedLabel) which can be used to make the ‘tsv’ files for submission to GLUE website. Otherwise, a dictionary of evaluation result values is returned.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list of tuples or dict</p>
 </dd>
 </dl>
@@ -3077,7 +3107,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 
 </section>
 <section id="module-fireball.datasets.radioml">
-<span id="radioml"></span><h2>RadioML<a class="headerlink" href="#module-fireball.datasets.radioml" title="Permalink to this headline"></a></h2>
+<span id="radioml"></span><h2>RadioML<a class="headerlink" href="#module-fireball.datasets.radioml" title="Permalink to this heading"></a></h2>
 <p>This module contains the implementation of <a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet" title="fireball.datasets.radioml.RadioMlDSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioMlDSet</span></code></a> class that encapsulates the <a class="reference external" href="https://www.deepsig.ai/datasets">RadioML</a> dataset for Modulation Classification problem.</p>
 <p>The directory structure should be something like this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span>
@@ -3159,14 +3189,14 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snrValues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2016</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelMode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MOD'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.radioml.RadioMlDSet.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs a <a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet" title="fireball.datasets.radioml.RadioMlDSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioMlDSet</span></code></a> instance. This can be called directly or via <a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet.makeDatasets" title="fireball.datasets.radioml.RadioMlDSet.makeDatasets"><code class="xref py py-meth docutils literal notranslate"><span class="pre">makeDatasets()</span></code></a> class method.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsName</strong> (<em>str</em>) – The name of the dataset. It can be one of “Train”, “Test”, or “Tune”. Note that “Valid” cannot be used here.</p></li>
 <li><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p></li>
 <li><p><strong>samples</strong> (<em>numpy array</em><em> or </em><em>None</em>) – If specified, it is used as the samples for the dataset. It is a numpy array of samples. Each sample is numpy array of shape (128,1,2) for the 2016 version or (1024,1,2) for 2018 version.</p></li>
 <li><p><strong>labels</strong> (<em>numpy array</em><em> or </em><em>None</em>) – If specified, it is a numpy array of int32 values. Each label is an int32 number indicating the class for each sample. (see the classNames above)</p></li>
 <li><p><strong>batchSize</strong> (<em>int</em>) – The default batch size used in the “batches” method.</p></li>
-<li><p><strong>snrValues</strong> (<em>int</em><em>, </em><em>list of ints</em><em>, or </em><em>None</em>) – <ul>
+<li><p><strong>snrValues</strong> (<em>int</em><em>, </em><em>list</em><em> of </em><em>ints</em><em>, or </em><em>None</em>) – <ul>
 <li><p>If it is an int, it specifies the single SNR value that must be used. The dataset will contain the data for the specified SNR value only.</p></li>
 <li><p>If it is a list of ints, only the samples for the specified SNR values are included in the dataset.</p></li>
 <li><p>If it is None, all samples for all SNR values are included in the dataset.</p></li>
@@ -3200,7 +3230,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>This class method can be called to download the RadioML dataset files from a Fireball
 online repository.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dataFolder</strong> (<em>str</em>) – The folder where dataset files are saved. If this is not provided, then
 a folder named “data” is created in the home directory of the current user and the
 dataset folders and files are created there. In other words, the default data folder
@@ -3215,7 +3245,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>Configures the <a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet" title="fireball.datasets.radioml.RadioMlDSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioMlDSet</span></code></a> class. If a behavior other than the default is needed, this function can be called to prepare the class before instantiating the dataset instances.</p>
 <p>Since the RadioML dataset doesn’t have a standard split for train, validation, and test samples, you can use this function to define the splits.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>testRatio</strong> (<em>float</em>) – The ratio between the number of test samples to the total samples in the dataset. The default is 0.5 which means 50% of the data is used for training and 50% for test.</p></li>
 <li><p><strong>tuneRatio</strong> (<em>float</em>) – The ratio between the number of tuning samples to the number of training sample. The default is 0.1, which means 10% of the training samples are used for tuning dataset.</p></li>
@@ -3249,7 +3279,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">makeDatasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dsNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Train,Test,Valid'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snrValues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2016</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelMode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MOD'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.radioml.RadioMlDSet.makeDatasets" title="Permalink to this definition"></a></dt>
 <dd><p>This class method creates several datasets as specified by <cite>dsNames</cite> parameter in one-shot.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dsNames</strong> (<em>str</em>) – <p>A combination of the following:</p>
 <ul>
@@ -3261,7 +3291,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 </p></li>
 <li><p><strong>batchSize</strong> (<em>int</em>) – The batchSize used for all the datasets created.</p></li>
 <li><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p></li>
-<li><p><strong>snrValues</strong> (<em>int</em><em>, </em><em>list of ints</em><em>, or </em><em>None</em>) – Indicates which SNR values must be included in the dataset. Refer to the <cite>snrValues</cite> parameter of <a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet.__init__" title="fireball.datasets.radioml.RadioMlDSet.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a> method for more info.</p></li>
+<li><p><strong>snrValues</strong> (<em>int</em><em>, </em><em>list</em><em> of </em><em>ints</em><em>, or </em><em>None</em>) – Indicates which SNR values must be included in the dataset. Refer to the <cite>snrValues</cite> parameter of <a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet.__init__" title="fireball.datasets.radioml.RadioMlDSet.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a> method for more info.</p></li>
 <li><p><strong>version</strong> (<em>int</em>) – <p>The version of the RadioML dataset. It can be either 1016 (the default) or 2018. The actual datasets used are as follows:</p>
 <blockquote>
 <div><ul>
@@ -3281,10 +3311,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Depending on the number of items specified in the <cite>dsNames</cite>, it returns between one and three <a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet" title="fireball.datasets.radioml.RadioMlDSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioMlDSet</span></code></a> objects. The returned values have the same order as they appear in the <cite>dsNames</cite> parameter.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Up to 3 <a class="reference internal" href="#fireball.datasets.radioml.RadioMlDSet" title="fireball.datasets.radioml.RadioMlDSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioMlDSet</span></code></a> objects</p>
 </dd>
 </dl>
@@ -3304,7 +3334,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">printDsInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.radioml.RadioMlDSet.printDsInfo" title="Permalink to this definition"></a></dt>
 <dd><p>This class method prints information about given set of datasets in a single table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>trainDs</strong> (any object derived from <cite>BaseDSet</cite>, optional) – The training dataset.</p></li>
 <li><p><strong>testDs</strong> (any object derived from <cite>BaseDSet</cite>, optional) – The test dataset.</p></li>
@@ -3319,10 +3349,10 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <span class="sig-name descname"><span class="pre">getBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchIndexes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.datasets.radioml.RadioMlDSet.getBatch" title="Permalink to this definition"></a></dt>
 <dd><p>This method returns a batch of samples and labels from the dataset as specified by the list of indexes in the <cite>batchIndexes</cite> parameter.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list of int</em>) – A list of indexes used to pick samples and labels from the dataset.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batchIndexes</strong> (<em>list</em><em> of </em><em>int</em>) – A list of indexes used to pick samples and labels from the dataset.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>samples</strong> (<em>list or numpy array</em>) – The batch samples specified by the <cite>batchIndexes</cite>.</p></li>
 <li><p><strong>labels</strong> (<em>list or numpy array</em>) – The batch labels specified by the <cite>batchIndexes</cite>.</p></li>
@@ -3338,7 +3368,7 @@ is <code class="docutils literal notranslate"><span class="pre">~/data</span></c
 <dd><p>For the 2018 version of RadioML dataset, this function reads the dataset information from the original dataset file <code class="docutils literal notranslate"><span class="pre">GOLD_XYZ_OSC.0001_1024.hdf5</span></code> and creates an “npz” file for each SNR value.</p>
 <p>This only needs to be done once before this dataset can be used.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dataPath</strong> (<em>str</em>) – The path to the directory where the dataset files are located.</p>
 </dd>
 </dl>

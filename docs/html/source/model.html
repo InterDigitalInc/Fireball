@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Model &mdash; Fireball 2.0.0 Documentation</title>
+  <title>Model &mdash; Fireball 2.1.0 Documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -27,11 +28,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> Fireball 2.0.0
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Fireball 2.1.0
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -55,7 +60,52 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Model</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fireball.model.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.__init__"><code class="docutils literal notranslate"><span class="pre">Model.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.downloadFromZoo"><code class="docutils literal notranslate"><span class="pre">Model.downloadFromZoo()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.loadModelFrom"><code class="docutils literal notranslate"><span class="pre">Model.loadModelFrom()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.save"><code class="docutils literal notranslate"><span class="pre">Model.save()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.saveFbm"><code class="docutils literal notranslate"><span class="pre">Model.saveFbm()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.exportToOnnx"><code class="docutils literal notranslate"><span class="pre">Model.exportToOnnx()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.exportToTf"><code class="docutils literal notranslate"><span class="pre">Model.exportToTf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.exportToCoreMl"><code class="docutils literal notranslate"><span class="pre">Model.exportToCoreMl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.exportParamsNpz"><code class="docutils literal notranslate"><span class="pre">Model.exportParamsNpz()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.makeFromFile"><code class="docutils literal notranslate"><span class="pre">Model.makeFromFile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.createLrModel"><code class="docutils literal notranslate"><span class="pre">Model.createLrModel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.createPrunedModel"><code class="docutils literal notranslate"><span class="pre">Model.createPrunedModel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.createQuantizedModel"><code class="docutils literal notranslate"><span class="pre">Model.createQuantizedModel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.pruneModel"><code class="docutils literal notranslate"><span class="pre">Model.pruneModel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.quantizeModel"><code class="docutils literal notranslate"><span class="pre">Model.quantizeModel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.compressModel"><code class="docutils literal notranslate"><span class="pre">Model.compressModel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.resetGraph"><code class="docutils literal notranslate"><span class="pre">Model.resetGraph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.initSession"><code class="docutils literal notranslate"><span class="pre">Model.initSession()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.train"><code class="docutils literal notranslate"><span class="pre">Model.train()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.getInferenceTime"><code class="docutils literal notranslate"><span class="pre">Model.getInferenceTime()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.evaluateDSet"><code class="docutils literal notranslate"><span class="pre">Model.evaluateDSet()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.evaluate"><code class="docutils literal notranslate"><span class="pre">Model.evaluate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.evalBatch"><code class="docutils literal notranslate"><span class="pre">Model.evalBatch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.inferBatch"><code class="docutils literal notranslate"><span class="pre">Model.inferBatch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.inferOne"><code class="docutils literal notranslate"><span class="pre">Model.inferOne()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.getGradsForEpoch"><code class="docutils literal notranslate"><span class="pre">Model.getGradsForEpoch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.printNetConfig"><code class="docutils literal notranslate"><span class="pre">Model.printNetConfig()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.printLayersInfo"><code class="docutils literal notranslate"><span class="pre">Model.printLayersInfo()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.getLayerOutputs"><code class="docutils literal notranslate"><span class="pre">Model.getLayerOutputs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.getLayerByName"><code class="docutils literal notranslate"><span class="pre">Model.getLayerByName()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.getAllNetParamValues"><code class="docutils literal notranslate"><span class="pre">Model.getAllNetParamValues()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.getLayerParams"><code class="docutils literal notranslate"><span class="pre">Model.getLayerParams()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.setLayerParams"><code class="docutils literal notranslate"><span class="pre">Model.setLayerParams()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.freezeLayerParams"><code class="docutils literal notranslate"><span class="pre">Model.freezeLayerParams()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.getFlops"><code class="docutils literal notranslate"><span class="pre">Model.getFlops()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.closeSession"><code class="docutils literal notranslate"><span class="pre">Model.closeSession()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.setCallback"><code class="docutils literal notranslate"><span class="pre">Model.setCallback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.printMsg"><code class="docutils literal notranslate"><span class="pre">Model.printMsg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.updateTrainingTable"><code class="docutils literal notranslate"><span class="pre">Model.updateTrainingTable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fireball.model.Model.registerLayerClass"><code class="docutils literal notranslate"><span class="pre">Model.registerLayerClass()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
 </ul>
 
@@ -65,15 +115,15 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">Fireball 2.0.0</a>
+          <a href="../index.html">Fireball 2.1.0</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Model</li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Model</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/source/model.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -84,7 +134,7 @@
            <div itemprop="articleBody">
              
   <section id="module-fireball.model">
-<span id="model"></span><h1>Model<a class="headerlink" href="#module-fireball.model" title="Permalink to this headline"></a></h1>
+<span id="model"></span><h1>Model<a class="headerlink" href="#module-fireball.model" title="Permalink to this heading"></a></h1>
 <p>The core implementation of the “fireball” library. This file implements the
 “Model” class. A model can be loaded from a file or created from scratch.
 The network structure can be specified using a short-form language that
@@ -101,7 +151,7 @@ layers currently supported by Fireball.</p>
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'FireballModel'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layersInfo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validationDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numEpochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regFactor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropOutKeep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learningRate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lossFunction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelFilePath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveModelFileName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savePeriod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveBest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainingState</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.__init__" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize all the parameters and then build a TensorFlow graph based on the parameters.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – An optional name for the network.</p></li>
 <li><p><strong>layersInfo</strong> (<em>str</em>) – If contains information for each hidden layer. The string should be in the format explained in the “Layers” class.</p></li>
@@ -110,7 +160,7 @@ layers currently supported by Fireball.</p>
 <li><p><strong>validationDs</strong> (<em>dataset object</em><em>, </em><em>Derived from &quot;BaseDSet&quot; class</em>) – Must conform to the dataset object. Used for evaluation and hyper-parameter search.</p></li>
 <li><p><strong>batchSize</strong> (<em>int</em>) – The batch size used in each iteration of training. If not specified, the batch size of “trainDs” is used for training.</p></li>
 <li><p><strong>numEpochs</strong> (<em>int</em>) – Total number of Epochs to train the model.</p></li>
-<li><p><strong>regFactor</strong> (<em>float</em>) – <p>Regularization Factor. If this is zero, then L2 regularization is disabled for all layers. Otherwise, if this is non-zero, then L2 regularization is enabled. In this case:</p>
+<li><p><strong>regFactor</strong> (<em>float</em><em>, </em><em>default = 0.0</em>) – <p>Regularization Factor. If this is zero, then L2 regularization is disabled for all layers. Otherwise, if this is non-zero, then L2 regularization is enabled. In this case:</p>
 <blockquote>
 <div><ul>
 <li><p>If a factor is specified in the L2R post-activation, the specified value is used for that layer.</p></li>
@@ -141,10 +191,6 @@ layers currently supported by Fireball.</p>
 <p>Learning rates for batches:</p>
 <blockquote>
 <div><table class="docutils align-default">
-<colgroup>
-<col style="width: 67%" />
-<col style="width: 33%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Batches</p></th>
 <th class="head"><p>Learning Rate</p></th>
@@ -178,11 +224,6 @@ change the learning rate behavior.</p>
 <p>Schedule of batches:</p>
 <blockquote>
 <div><table class="docutils align-default">
-<colgroup>
-<col style="width: 23%" />
-<col style="width: 32%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Batches</p></th>
 <th class="head"><p>Learning Rate</p></th>
@@ -223,11 +264,6 @@ batches “w” is specified by the next tuple in the list.</p>
 <p>Schedule of batches: (w=100 in this case)</p>
 <blockquote>
 <div><table class="docutils align-default">
-<colgroup>
-<col style="width: 23%" />
-<col style="width: 32%" />
-<col style="width: 45%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Batches</p></th>
 <th class="head"><p>Learning Rate</p></th>
@@ -301,7 +337,7 @@ batches “w” is specified by the next tuple in the list.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">downloadFromZoo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destFolder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelType</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.downloadFromZoo" title="Permalink to this definition"></a></dt>
 <dd><p>A class method used to download a model from an online Fireball model zoo.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>modelName</strong> (<em>str</em>) – A string containing the name of the model. If the “modelType” parameter is not
 provided, then this name must include the file extension to help identify the type
@@ -327,7 +363,7 @@ of the model.</p></li>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loadModelFrom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.loadModelFrom" title="Permalink to this definition"></a></dt>
 <dd><p>This is a class method that is used to read the network information from a file and return the results.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fileName</strong> (<em>str</em>) – <p>The name of the file containing the network information. This can be:</p>
 <blockquote>
 <div><ul class="simple">
@@ -337,7 +373,7 @@ of the model.</p></li>
 </div></blockquote>
 </p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>graphInfo</strong> (<em>dict</em>) – A dictionary containing information about structure, inout, output, etc. of the network.</p></li>
 <li><p><strong>netParams</strong> (<em>list</em>) – The list of NetParam objects for all network parameters (i.e. weights and biases)</p></li>
@@ -354,7 +390,7 @@ of the model.</p></li>
 <span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layersStr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epochInfo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.save" title="Permalink to this definition"></a></dt>
 <dd><p>This function packages all the information in current network and uses the “saveFbm” class method to save it to the file specified by “fileName”.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fileName</strong> (<em>str</em>) – The name of file containing network information. An ‘fbm’ extension is appended to the file name if it is not already included.</p></li>
 <li><p><strong>layersStr</strong> (<em>str</em>) – A string containing the layers information. See the “Layers” class for more information about the format of the layersStr. If this is None, this function calls the “self.layers.getLayersStr” function to get the layers information from the current model.</p></li>
@@ -384,7 +420,7 @@ If this is None, the training state is not saved to the file.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">saveFbm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graphInfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainInfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">netParams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainState</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fbmFileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.saveFbm" title="Permalink to this definition"></a></dt>
 <dd><p>This function saves the given information to an “fbm” file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>graphInfo</strong> (<em>dict</em>) – A dictionary containing information about the network structure.</p></li>
 <li><p><strong>trainInfo</strong> (<em>dict</em>) – A dictionary containing information about training the network (Num. of Epochs, BatchSize, etc)</p></li>
@@ -401,7 +437,7 @@ If this is None, the training state is not saved to the file.</p>
 <span class="sig-name descname"><span class="pre">exportToOnnx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onnxFilePath</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.exportToOnnx" title="Permalink to this definition"></a></dt>
 <dd><p>This function exports current network information into an “ONNX” file. Please refer to the “fb2onnx.py” file for more information.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>onnxFilePath</strong> (<em>str</em>) – The file name used to export the model information.</p></li>
 <li><p><strong>**kwargs</strong> (<em>dict</em>) – <p>A set of additional arguments passed directly to the “export” function of the “OnnxBuilder” class defined in the “fb2onnx” module. Here is a list of the arguments that may be included:</p>
@@ -423,7 +459,7 @@ If this is None, the training state is not saved to the file.</p>
 <span class="sig-name descname"><span class="pre">exportToTf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfPath</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.exportToTf" title="Permalink to this definition"></a></dt>
 <dd><p>This function exports current network information to the specified directory. Please refer to the “fb2tf.py” file for more information.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tfPath</strong> (<em>str</em>) – The path to a folder that will contain the exported tensorflow files.</p></li>
 <li><p><strong>**kwargs</strong> (<em>dict</em>) – <p>A set of additional arguments passed directly to the “export” function
@@ -445,7 +481,7 @@ be included:</p>
 <span class="sig-name descname"><span class="pre">exportToCoreMl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.exportToCoreMl" title="Permalink to this definition"></a></dt>
 <dd><p>This function exports current network information into a “CoreML” file. Please refer to the “fb2coreml.py” file for more information.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fileName</strong> (<em>str</em>) – The file name used to export the model information.</p></li>
 <li><p><strong>**kwargs</strong> (<em>dict</em>) – <p>A set of additional arguments passed directly to the “export” function
@@ -476,7 +512,7 @@ the arguments that may be included:</p>
 <span class="sig-name descname"><span class="pre">exportParamsNpz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orgNamesFile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.exportParamsNpz" title="Permalink to this definition"></a></dt>
 <dd><p>This function exports the network parameter to a numpy NZP file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fileName</strong> (<em>str</em>) – The (NPZ) file name used to save the model information.</p></li>
 <li><p><strong>orgNamesFile</strong> (<em>str</em>) – If specified, it must contain the path to the yaml file that was used to import the model from the original h5 file. In this case the names of parameter tensors are imported from this yaml file and used in the exported NPZ file.</p></li>
@@ -490,17 +526,17 @@ the arguments that may be included:</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">makeFromFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layersInfo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">testDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validationDs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numEpochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regFactor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropOutKeep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">learningRate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lossFunction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveModelFileName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savePeriod</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveBest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initParams</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.makeFromFile" title="Permalink to this definition"></a></dt>
 <dd><p>This class method reads the network information from a file and creates a “Model” instance. This function uses the class method “loadModelFrom” to read the information.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>modelPath</strong> (<em>str</em>) – The name of the file containing the network information. See the “loadModelFrom” function description for more information about the supported file formats.</p></li>
 <li><p><strong>initParams</strong> (<em>Boolean</em>) – If True, the network parameters are initialized by the values in the specified model file. Otherwise, the network parameters are initialized randomly (Training from scratch).</p></li>
-<li><p><strong>Others</strong> (<em>The rest of parameters</em>) – The rest of arguments are used to override the corresponding information read from the file. For a description of each argument please refer to the documentation of the <a class="reference internal" href="#fireball.model.Model.__init__" title="fireball.model.Model.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a> function above.</p></li>
+<li><p><strong>Others</strong> (<em>The rest</em><em> of </em><em>parameters</em>) – The rest of arguments are used to override the corresponding information read from the file. For a description of each argument please refer to the documentation of the <a class="reference internal" href="#fireball.model.Model.__init__" title="fireball.model.Model.__init__"><code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code></a> function above.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An instance of <a class="reference internal" href="#fireball.model.Model" title="fireball.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> class created from the information in the specified file.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#fireball.model.Model" title="fireball.model.Model">Model</a></p>
 </dd>
 </dl>
@@ -518,7 +554,7 @@ the arguments that may be included:</p>
 <span class="sig-name descname"><span class="pre">createLrModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrParams</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.createLrModel" title="Permalink to this definition"></a></dt>
 <dd><p>This function converts the specified parameters of this model to Low-Rank tensors based on the information in <code class="docutils literal notranslate"><span class="pre">lrParams</span></code> and then saves the resulting model to a file specified by <code class="docutils literal notranslate"><span class="pre">modelPath</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>modelPath</strong> (<em>str</em>) – The path to the file that contains the model information for the converted model.</p></li>
 <li><p><strong>lrParams</strong> (<em>list</em>) – <p>This contains a list of tuples. The first element in each tuple is a layer name that specifies the layer to modify.</p>
@@ -532,10 +568,10 @@ the arguments that may be included:</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Total number of parameters in the model after applying low-rank decomposition.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -546,7 +582,7 @@ the arguments that may be included:</p>
 <span class="sig-name descname"><span class="pre">createPrunedModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prnParams</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.createPrunedModel" title="Permalink to this definition"></a></dt>
 <dd><p>This function reduces the number of non-zero parameters by pruning the ones close to zero. The pruning is applied to the layers specified in the <code class="docutils literal notranslate"><span class="pre">prnParams</span></code>. The resulting model is saved to the file specified by <code class="docutils literal notranslate"><span class="pre">modelPath</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>modelPath</strong> (<em>str</em>) – The path to the file that contains the model information for the converted (pruned) model.</p></li>
 <li><p><strong>prnParams</strong> (<em>list</em>) – <p>This contains a list of tuples. The first element in each tuple is a layer name that specifies the layer to modify.</p>
@@ -559,10 +595,43 @@ the arguments that may be included:</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Total size of non-zero parameters in bytes.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fireball.model.Model.createQuantizedModel">
+<span class="sig-name descname"><span class="pre">createQuantizedModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modelPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qParams</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.createQuantizedModel" title="Permalink to this definition"></a></dt>
+<dd><p>This function quantizes the parameters of the model. The quantization is applied to the layers specified in the <code class="docutils literal notranslate"><span class="pre">qParams</span></code>. The resulting model is saved to the file specified by <code class="docutils literal notranslate"><span class="pre">modelPath</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modelPath</strong> (<em>str</em>) – The path to the file that contains the model information for the quantized model.</p></li>
+<li><p><strong>qParams</strong> (<em>list</em>) – <p>This contains a list of tuples. The first element in each tuple is a layer name that specifies the layer to quantize.</p>
+<p>The second parameter is the upper bound of the MSE (<code class="docutils literal notranslate"><span class="pre">mseUb</span></code>) between the original tensor and it’s quantized version.</p>
+</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – <p>A set of additional arguments. Here is a list of arguments that are currently supported:</p>
+<ul>
+<li><p><strong>reuseEmptyClusters (Boolean)</strong>: True (default) means keep reusing/reassigning empty clusters during the K-Means algorithm. In this case, the final number of clusters is a power of 2 (between <code class="docutils literal notranslate"><span class="pre">minBits</span></code> and <code class="docutils literal notranslate"><span class="pre">maxBits</span></code>). False means we remove the empty clusters from the codebook and the final number of clusters may not be a power of 2. (between <code class="docutils literal notranslate"><span class="pre">minSymCount</span></code> and <code class="docutils literal notranslate"><span class="pre">maxSymCount</span></code>)</p></li>
+<li><p><strong>weightsOnly (Boolean)</strong>: True (default) means quantize only weight matrixes. Biases and BatchNorm parameters are not quantized. False means quantize any network parameter if possible.</p></li>
+<li><p><strong>minSymCount (int)</strong>: The minimum number of symbols in the quantized tensors. Fireball does a binary search between <code class="docutils literal notranslate"><span class="pre">minSymCount</span></code> and <code class="docutils literal notranslate"><span class="pre">maxSymCount</span></code> to find the best symbol count that results in a quantization error (MSE) below the specified <code class="docutils literal notranslate"><span class="pre">mseUb</span></code>. The found symbol count is used for the initial size of codebook. The default is 4. Ignored if <code class="docutils literal notranslate"><span class="pre">reuseEmptyClusters</span></code> is True.</p></li>
+<li><p><strong>maxSymCount (int)</strong>: The maximum number of symbols in the quantized tensors. Fireball does a binary search between <code class="docutils literal notranslate"><span class="pre">minSymCount</span></code> and <code class="docutils literal notranslate"><span class="pre">maxSymCount</span></code> to find the best symbol count that results in a quantization error (MSE) below the specified <code class="docutils literal notranslate"><span class="pre">mseUb</span></code>. The found symbol count is used for the initial size of codebook. The default is 4096. Ignored if <code class="docutils literal notranslate"><span class="pre">reuseEmptyClusters</span></code> is True.</p></li>
+<li><p><strong>minBits (int)</strong>: The minimum number of quantization bits for the quantized tensors. Fireball searches for  the lowest quantization bits (<code class="docutils literal notranslate"><span class="pre">qBits</span></code>) between <code class="docutils literal notranslate"><span class="pre">minBits</span></code> and <code class="docutils literal notranslate"><span class="pre">maxBits</span></code> that results in a quantization error (MSE) below the specified <code class="docutils literal notranslate"><span class="pre">mseUb</span></code>. The quantization bits found <code class="docutils literal notranslate"><span class="pre">qBits</span></code> defines the codebook size (codebookSize=symCount=2^qBits). The default is 2. Ignored if <code class="docutils literal notranslate"><span class="pre">reuseEmptyClusters</span></code> is False.</p></li>
+<li><p><strong>maxBits (int)</strong>: The maximum number of quantization bits for the quantized tensors. Fireball searches for  the lowest quantization bits (<code class="docutils literal notranslate"><span class="pre">qBits</span></code>) between <code class="docutils literal notranslate"><span class="pre">minBits</span></code> and <code class="docutils literal notranslate"><span class="pre">maxBits</span></code> that results in a quantization error (MSE) below the specified <code class="docutils literal notranslate"><span class="pre">mseUb</span></code>. The found <code class="docutils literal notranslate"><span class="pre">qBits</span></code> value defines the codebook size (codebookSize=symCount=2^qBits). The default is 12. Ignored if <code class="docutils literal notranslate"><span class="pre">reuseEmptyClusters</span></code> is False.</p></li>
+<li><p><strong>quiet (Boolean)</strong>: True means there are no messages printed during the execution of the function.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total size of quantized parameters in bytes.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>int</p>
 </dd>
 </dl>
@@ -573,7 +642,7 @@ the arguments that may be included:</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pruneModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputModelPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputModelPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mseUb</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.pruneModel" title="Permalink to this definition"></a></dt>
 <dd><p>This class method reads the model information from “inputModelPath”, prunes its parameters based on the <code class="docutils literal notranslate"><span class="pre">mseUb</span></code> and <code class="docutils literal notranslate"><span class="pre">minReductionPercent</span></code> parameters, and saves the new pruned model to “outputModelPath”.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inputModelPath</strong> (<em>str</em>) – The path to the input file that is about to be pruned.</p></li>
 <li><p><strong>outputModelPath</strong> (<em>str</em>) – The path to the resulting quantized file.</p></li>
@@ -588,7 +657,7 @@ the arguments that may be included:</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>totalPruned</strong> (<em>int</em>) – Total number of parameters pruned.</p></li>
 <li><p><strong>sOut</strong> (<em>int</em>) – The size of new pruned model.</p></li>
@@ -607,7 +676,7 @@ the arguments that may be included:</p>
 <p>This method is used for trained quantization. The results is not necessarily optimized for entropy coding.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inputModelPath</strong> (<em>str</em>) – The path to the input file that is about to be quantized.</p></li>
 <li><p><strong>outputModelPath</strong> (<em>str</em>) – The path to the resulting quantized file.</p></li>
@@ -627,7 +696,7 @@ the arguments that may be included:</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>originalBytes</strong> (<em>int</em>) – The original size of parameter data in bytes.</p></li>
 <li><p><strong>quantizedBytes</strong> (<em>int</em>) – The quantized size of parameter data in bytes.</p></li>
@@ -643,7 +712,7 @@ the arguments that may be included:</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compressModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputModelPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputModelPath</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.compressModel" title="Permalink to this definition"></a></dt>
 <dd><p>This class method reads the model information from <code class="docutils literal notranslate"><span class="pre">inputModelPath</span></code>, compresses its parameters using arithmetic coding and saves the new quantized model to <code class="docutils literal notranslate"><span class="pre">outputModelPath</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inputModelPath</strong> (<em>str</em>) – The path to the input file that is about to be compressed.</p></li>
 <li><p><strong>outputModelPath</strong> (<em>str</em>) – The path to the resulting compressed file.</p></li>
@@ -656,7 +725,7 @@ the arguments that may be included:</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>sIn</strong> (<em>int</em>) – The original file size.</p></li>
 <li><p><strong>sOut</strong> (<em>int</em>) – The file size of new compressed model.</p></li>
@@ -677,7 +746,7 @@ the arguments that may be included:</p>
 <span class="sig-name descname"><span class="pre">initSession</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summaryWriter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.initSession" title="Permalink to this definition"></a></dt>
 <dd><p>Creates and initializes a TensorFlow session for this model.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>session</strong> (<em>TensorFlow session object</em>) – If this is None, a new session is created and kept by this class for all TensorFlow operations. Otherwise, the specified session will be used by this class.</p></li>
 <li><p><strong>summaryWriter</strong> (<em>TensorFlow summaryWriter object</em><em>, </em><em>str</em><em>, or </em><em>Boolean</em>) – <ul>
@@ -698,7 +767,7 @@ the arguments that may be included:</p>
 <dd><p>Trains the network using the training data in “trainDs”. The training stops after the specified number of epochs or if the minimum-loss criteria are met. The “maxLoss”, “minLoss” and “minLossCount” parameters can be set before calling this function.</p>
 <p>This function contains the main training loop. It acquires the batches of training data iteratively and uses them to train the network. At the end of each epoch, this function calculates the test and/or validation errors if possible and prints one row in the training table.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>logBatchInfo</strong> (<em>Boolean</em>) – <p>If true, this function logs the learning rate and loss values for each batch during the training. After training this information is available in the <code class="docutils literal notranslate"><span class="pre">batchLogInfo</span></code> dictionary. This dictionary object has the following items:</p>
 <ul class="simple">
 <li><p>loss: A 1-D array of floating point values specifying the training loss for each batch.</p></li>
@@ -710,11 +779,28 @@ the arguments that may be included:</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="fireball.model.Model.getInferenceTime">
+<span class="sig-name descname"><span class="pre">getInferenceTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataSet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxSamples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.getInferenceTime" title="Permalink to this definition"></a></dt>
+<dd><p>This function runs the model in inference mode and calculates the average inference time for processing one sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataSet</strong> (<em>dataset object</em><em> (</em><em>Derived from &quot;BaseDSet&quot; class</em><em>)</em>) – The dataset object that is used for the evaluation. If this is None, the function uses the “testDs” specified when the model was created. If a test dataset was not specified, then a “ValueError” exception is thrown.</p></li>
+<li><p><strong>maxSamples</strong> (<em>int</em>) – The max number of samples from the “dataSet” to be processed for calculation of inference time. A larger value results in a more acurate estimate, but it also takes longer to complete. If this is None, then all of the samples in the specified dataset are used for the calculation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>The average inference time to process one sample.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="fireball.model.Model.evaluateDSet">
 <span class="sig-name descname"><span class="pre">evaluateDSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataSet</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnMetric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.evaluateDSet" title="Permalink to this definition"></a></dt>
 <dd><p>This function evaluates this model using the specified dataset.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataSet</strong> (<em>dataset object</em><em> (</em><em>Derived from &quot;BaseDSet&quot; class</em><em>)</em>) – The dataset object that is used for the evaluation.</p></li>
 <li><p><strong>batchSize</strong> (<em>int</em>) – The batchSize used for the evaluation process. This function processes one batch of the samples at a time. If this is None, the batch size specified by the dataset object is used instead.</p></li>
@@ -746,7 +832,7 @@ is a list of what can be included in this dictionary.</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>If returnMetric is True, the actual value of dataset’s main metric is returned.</em></p></li>
 <li><p><em>Otherwise, this function returns a dictionary containing the results of the evaluation process.</em></p></li>
@@ -761,16 +847,16 @@ is a list of what can be included in this dictionary.</p>
 <span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quiet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.evaluate" title="Permalink to this definition"></a></dt>
 <dd><p>This function evaluates this model using “testDs” dataset that was specified when the model was created.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>quiet</strong> (<em>Boolean</em>) – If true, no messages are printed to the “stdout” during the evaluation process.</p></li>
 <li><p><strong>**kwargs</strong> (<em>dict</em>) – This contains some additional task specific arguments. All these arguments are passed down to the “evaluateDSet” method. Please refer to the documentation for “evaluateDSet” for a list of possible arguments in “kwargs”</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A dictionary containing the results of the evaluation process.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -781,16 +867,16 @@ is a list of what can be included in this dictionary.</p>
 <span class="sig-name descname"><span class="pre">evalBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchSamples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batchLabels</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.evalBatch" title="Permalink to this definition"></a></dt>
 <dd><p>This function is used by the evalMultiDimRegression function defined in the BaseDSet class. It can help improve the evaluation time for some regression problems that support calculating the evaluation metrics as part of tensorflow graph. See the “evalMultiDimRegression” function for more info.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>batchSamples</strong> (<em>numpy array</em><em>, or </em><em>tuple of numpy arrays</em>) – The samples used for inference. If number of samples is a multiple of the number of towers, the sub-batches are assigned to each tower and the whole operation is done in one call to “session.run”. Otherwise the remaining samples are processed in an additional “session.run” call which uses only the first tower.</p></li>
-<li><p><strong>batchLabels</strong> (<em>numpy array</em><em>, or </em><em>tuple of numpy arrays</em>) – The labels used for evaluation of the predicted results. These labels are passed to the output layer supporting evaluation (its “supportsEval” is true), the output layer then calculates the evaluation metrics for this batch of samples.</p></li>
+<li><p><strong>batchSamples</strong> (<em>numpy array</em><em>, or </em><em>tuple</em><em> of </em><em>numpy arrays</em>) – The samples used for inference. If number of samples is a multiple of the number of towers, the sub-batches are assigned to each tower and the whole operation is done in one call to “session.run”. Otherwise the remaining samples are processed in an additional “session.run” call which uses only the first tower.</p></li>
+<li><p><strong>batchLabels</strong> (<em>numpy array</em><em>, or </em><em>tuple</em><em> of </em><em>numpy arrays</em>) – The labels used for evaluation of the predicted results. These labels are passed to the output layer supporting evaluation (its “supportsEval” is true), the output layer then calculates the evaluation metrics for this batch of samples.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The results depends on the implementation of the output layer. Currently the regression output layer “REG” returns a tuple containing sum squared errors and sum absolute errors. These values are passed back to the “evalMultiDimRegression” function which accumulates them for the calculation of other regression evaluation metrics such as MSE, MAE, PSNR.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Depends on the implementation of the output layer</p>
 </dd>
 </dl>
@@ -801,20 +887,20 @@ is a list of what can be included in this dictionary.</p>
 <span class="sig-name descname"><span class="pre">inferBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnProbs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.inferBatch" title="Permalink to this definition"></a></dt>
 <dd><p>Runs the model in inference mode using the specified batch of samples and returns the predicted outputs generated by the model. The inference is applied on all the samples in one or two operations. There is no loop going through the samples. The GPUs may run out of memory if all of the samples do not fit into the GPU memory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>samples</strong> (<em>numpy array</em><em>, or </em><em>tuple of numpy arrays</em>) – <p>The samples used for inference. If number of samples is a multiple of the number of towers, the sub-batches are assigned to each tower and the whole operation is done in one call to “session.run”. Otherwise the remaining samples are processed in an additional “session.run” call which uses only the first tower.</p>
+<li><p><strong>samples</strong> (<em>numpy array</em><em>, or </em><em>tuple</em><em> of </em><em>numpy arrays</em>) – <p>The samples used for inference. If number of samples is a multiple of the number of towers, the sub-batches are assigned to each tower and the whole operation is done in one call to “session.run”. Otherwise the remaining samples are processed in an additional “session.run” call which uses only the first tower.</p>
 <p>If this is a tuple, the input has multiple components. For example for NLP tasks, we have tokenIds and tokenTypes as two numpy arrays packed in a tuple and given to this function for inference.</p>
 </p></li>
 <li><p><strong>returnProbs</strong> (<em>Boolean</em>) – If true, the predicted probabilities (or Confidence) of each class is returned for each sample. Otherwise, only the predicted classes are returned. This parameter only applies to classification tasks.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><p>The output of the model is returned for each given sample. The output of this function depends on the type of model and the parameters passed to this function. The output layer used in the model determines what type of output is returned as a result of inference.</p>
 <p>The output can be a single numpy array containing one sub-tensor for each sample in “samples”. It can also be tuple of several numpy arrays each containing different components of the results for each sample. For example for object detection the result could be a tuple containing prediction scores and bounding boxes in different numpy arrays.</p>
 </p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Depends on the type of model and the parameters passed to this function</p>
 </dd>
 </dl>
@@ -825,16 +911,16 @@ is a list of what can be included in this dictionary.</p>
 <span class="sig-name descname"><span class="pre">inferOne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">returnProbs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.inferOne" title="Permalink to this definition"></a></dt>
 <dd><p>Runs inference for a single sample. This packages the single sample as an array of size one and calls the “inferBatch” function.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>samples</strong> (<em>numpy array</em>) – The sample used for inference. Please refer to the documentation of “inferBatch” function for more details.</p></li>
 <li><p><strong>returnProbs</strong> (<em>Boolean</em>) – If true, the predicted probabilities (or Confidence) of each class is returned for the sample. Otherwise, only the predicted class is returned. Ignored for non-classification tasks.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The output of the model is returned for the given sample. Please refer to the documentation of “inferBatch” function for more details.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Depends on the type of model and the parameters passed to this function</p>
 </dd>
 </dl>
@@ -846,10 +932,10 @@ is a list of what can be included in this dictionary.</p>
 <dd><p>This function calculates the gradients of loss with respect to each model parameter for every training sample. The sum of the absolute values of the gradients is then calculated for each model parameter. These values are then normalized so that the maximum value is 1. The returned values are numbers between 0 and 1 giving a measure of importance for each specific network parameter.</p>
 <p>This function saves the results of calculations in a file with “.grd” extension. When it is called again, if the the file already exist, there is no need to calculate the gradients info again.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The sum absolute gradients for each network parameter as a list of numpy arrays.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -869,12 +955,12 @@ is a list of what can be included in this dictionary.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="fireball.model.Model.getLayerOutputs">
-<span class="sig-name descname"><span class="pre">getLayerOutputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subLayer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.getLayerOutputs" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">getLayerOutputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subLayer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.getLayerOutputs" title="Permalink to this definition"></a></dt>
 <dd><p>Feeds the network with the specified sample(s) and for each sample, returns a tensor for outputs of the layer specified by “layer” and “subLayer”.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>samples</strong> (<em>numpy array</em><em>, or </em><em>tuple of numpy arrays</em>) – The samples that are fed to the network. If only one sample is provided by itself (not in a list), only one tensor will be returned.</p></li>
+<li><p><strong>samples</strong> (<em>numpy array</em><em>, or </em><em>tuple</em><em> of </em><em>numpy arrays</em>) – The samples that are fed to the network. If only one sample is provided by itself (not in a list), only one tensor will be returned.</p></li>
 <li><p><strong>layer</strong> (<em>int</em><em> or </em><em>str</em>) – <p>Specifies the layer whose output tensor will be calculated and returned.</p>
 <ul>
 <li><p>If this is int, it is the index of the layer starting at 0 for the first layer of the network.</p></li>
@@ -886,10 +972,6 @@ is a list of what can be included in this dictionary.</p>
 </pre></div>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 14%" />
-<col style="width: 86%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Sublayer</p></th>
 <th class="head"><p>Value</p></th>
@@ -918,10 +1000,10 @@ values for each type of layer.</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The output of the layer specified by “layer” and “subLayer” as tensor for each sample in “samples”.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>numpy array</p>
 </dd>
 </dl>
@@ -932,13 +1014,13 @@ values for each type of layer.</p>
 <span class="sig-name descname"><span class="pre">getLayerByName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layerScope</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.getLayerByName" title="Permalink to this definition"></a></dt>
 <dd><p>Finds and returns the layer object specified by the “layerScope”.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>layerScope</strong> (<em>str</em>) – Specifies the layer. It must be the name (Scope) of the layer as it is printed by the “printLayersInfo” function.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Returns the layer object specified by the “layerScope”.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Layer</p>
 </dd>
 </dl>
@@ -949,10 +1031,10 @@ values for each type of layer.</p>
 <span class="sig-name descname"><span class="pre">getAllNetParamValues</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.getAllNetParamValues" title="Permalink to this definition"></a></dt>
 <dd><p>Returns all model parameters as a list of numpy arrays.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A list of numpy arrays.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -963,7 +1045,7 @@ values for each type of layer.</p>
 <span class="sig-name descname"><span class="pre">getLayerParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orgNamesFile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.getLayerParams" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the network parameters for the specified layer.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>int</em><em> or </em><em>str</em>) – <p>Specifies the layer whose parameter are returned.</p>
 <ul>
@@ -975,10 +1057,10 @@ values for each type of layer.</p>
 <li><p><strong>orgNamesFile</strong> (<em>str</em>) – If specified, it must contain the path to the yaml file that was used to import the model from the original h5 file. In this case the names used in the returned parameter info are extracted from the specified file. This is only used if “layer” is set to None.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of numpy tensors for the network parameters of the specified layer. If a layer is not specified, it returns a list of tuples of the form (name, param) for all the network parameters.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -989,7 +1071,7 @@ values for each type of layer.</p>
 <span class="sig-name descname"><span class="pre">setLayerParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.setLayerParams" title="Permalink to this definition"></a></dt>
 <dd><p>Modifies the network parameters for the specified layer.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>int</em><em> or </em><em>str</em>) – <p>Specifies the layer whose parameter are returned.</p>
 <ul>
@@ -997,7 +1079,7 @@ values for each type of layer.</p>
 <li><p>If this is string, it must be the name (Scope) of the layer as it is printed by the “printLayersInfo” function.</p></li>
 </ul>
 </p></li>
-<li><p><strong>params</strong> (<em>list of numpy arrays</em>) – A list of numpy arrays for each parameter of the specified layer. The length of this list must match the actual number of parameters in the specified layer.</p></li>
+<li><p><strong>params</strong> (<em>list</em><em> of </em><em>numpy arrays</em>) – A list of numpy arrays for each parameter of the specified layer. The length of this list must match the actual number of parameters in the specified layer.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1008,13 +1090,27 @@ values for each type of layer.</p>
 <span class="sig-name descname"><span class="pre">freezeLayerParams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.freezeLayerParams" title="Permalink to this definition"></a></dt>
 <dd><p>Makes the parameters of specified layers non-trainable. This is not reversible.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>layers</strong> (<em>tuple</em><em> or </em><em>list of strings</em>) – <p>Specifies the layers to freeze:</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>layers</strong> (<em>tuple</em><em> or </em><em>list</em><em> of </em><em>strings</em>) – <p>Specifies the layers to freeze:</p>
 <ul class="simple">
 <li><p>If this is a tuple, it must have 2 strings specifying the first and last layer to freeze.</p></li>
 <li><p>If this is a list, it must contain the strings specifying the layers to freeze.</p></li>
 </ul>
 </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="fireball.model.Model.getFlops">
+<span class="sig-name descname"><span class="pre">getFlops</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.getFlops" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the model complexity in number of floating point operations (flops) for inference of one input sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An integer value giving the approximate number of floating point operations (flops) for inference of one input sample.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1030,7 +1126,7 @@ values for each type of layer.</p>
 <span class="sig-name descname"><span class="pre">setCallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">afterBatch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">afterEpoch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.setCallback" title="Permalink to this definition"></a></dt>
 <dd><p>Sets the callback functions that are called at the end of each epoch or batch.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>afterBatch</strong> (<em>function</em>) – <p>This function is called after each batch of training data is processed. The following parameters are passed to this function:</p>
 <ul>
@@ -1061,7 +1157,7 @@ following parameters are passed to this function:</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">printMsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">textStr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.printMsg" title="Permalink to this definition"></a></dt>
 <dd><p>print the specified text string only if the quiet flag is not set.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>textStr</strong> (<em>str</em>) – A text string.</p></li>
 <li><p><strong>eol</strong> (<em>Boolean</em>) – True means append the text with an end of line character.</p></li>
@@ -1075,7 +1171,7 @@ following parameters are passed to this function:</p>
 <span class="sig-name descname"><span class="pre">updateTrainingTable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.updateTrainingTable" title="Permalink to this definition"></a></dt>
 <dd><p>Updates the training table by printing new rows during the training. If the “quiet” flag is set, this function returns immediately without printing anything.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>code</strong> (<em>str</em>) – <p>Specifies the type of update to the table. One of the following:</p>
 <ul>
@@ -1094,7 +1190,7 @@ following parameters are passed to this function:</p>
 <li><p>”Batch”:        A tuple (epoch, batch) containing the epoch number and batch number.</p></li>
 <li><p>”AddRow”:       A tuple (epoch, batch, learningRate, loss, validMetric, testMetric) containing the epoch number, batch number, learning rate, loss, validation metric, and test metric for the epoch.</p></li>
 <li><p>”End”:          Optional text value. The text will be printed on the line immediately following the table.</p></li>
-<li><p>Anything else:  If not None, a new-line character is also print.</p></li>
+<li><p>Anything else:  If not None, a new-line character is also printed.</p></li>
 </ul>
 </p></li>
 </ul>
@@ -1107,7 +1203,7 @@ following parameters are passed to this function:</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">registerLayerClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layerClass</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fireball.model.Model.registerLayerClass" title="Permalink to this definition"></a></dt>
 <dd><p>Register a new layer class with fireball. This must be called before a Model is instantiated.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>layerClass</strong> (<em>class</em>) – A class derived from the “Layer” class.</p>
 </dd>
 </dl>

@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>layersInfo &mdash; Fireball 2.0.0 Documentation</title>
+  <title>layersInfo &mdash; Fireball 2.1.0 Documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -28,11 +29,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> Fireball 2.0.0
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Fireball 2.1.0
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -160,6 +165,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#id24">Attributes</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#rnd-round">RND: Round</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#netmarks">Netmarks</a></li>
@@ -181,15 +187,15 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">Fireball 2.0.0</a>
+          <a href="../index.html">Fireball 2.1.0</a>
       </nav>
 
       <div class="wy-nav-content">
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li><em>layersInfo</em></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><em>layersInfo</em></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/source/layers.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -200,11 +206,11 @@
            <div itemprop="articleBody">
              
   <section id="layersinfo">
-<h1><em>layersInfo</em><a class="headerlink" href="#layersinfo" title="Permalink to this headline"></a></h1>
+<h1><em>layersInfo</em><a class="headerlink" href="#layersinfo" title="Permalink to this heading"></a></h1>
 <p>In Fireball the model’s network structure is specified by a single text string called <em>layersInfo</em>. When a model is defined for the first time, the <em>layersInfo</em> should be passed to the <a class="reference internal" href="model.html#fireball.model.Model" title="fireball.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">fireball.model.Model</span></code></a> class constructor. This information is saved to the fireball model file <cite>(*.fbm)</cite> when the model is saved.</p>
 <p>Most common deep neural network structures can be implemented using the Fireball layers. The main building blocks of <em>layersInfo</em> are the layers of the network. Several layers can be grouped together. In Fireball these groups are called <em>stages</em>.</p>
 <section id="layersinfo-syntax">
-<h2><em>layersInfo</em> Syntax<a class="headerlink" href="#layersinfo-syntax" title="Permalink to this headline"></a></h2>
+<h2><em>layersInfo</em> Syntax<a class="headerlink" href="#layersinfo-syntax" title="Permalink to this heading"></a></h2>
 <p>Generally Fireball’s <em>layersInfo</em> can be represented as a semicolon-separated list of stages:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">LayersInfo</span><span class="p">:</span> <span class="n">stage1</span><span class="p">;</span><span class="n">stage2</span><span class="p">;</span> <span class="o">...</span> <span class="p">;</span><span class="n">stageN</span>
 </pre></div>
@@ -260,7 +266,7 @@
 <p>Also note that each <em>layerInfo</em> can be prefixed or postfixed with netmark notations. See <a class="reference internal" href="#netmark"><span class="std std-ref">Netmarks</span></a> for more information.</p>
 </section>
 <section id="layer-types">
-<h2>Layer Types<a class="headerlink" href="#layer-types" title="Permalink to this headline"></a></h2>
+<h2>Layer Types<a class="headerlink" href="#layer-types" title="Permalink to this heading"></a></h2>
 <dl>
 <dt>The following layers are supported by Fireball:</dt><dd><ul>
 <li><p>Input Layers:</p>
@@ -311,7 +317,7 @@
 </div></blockquote>
 </section>
 <section id="activation-functions">
-<span id="activation"></span><h2>Activation Functions<a class="headerlink" href="#activation-functions" title="Permalink to this headline"></a></h2>
+<span id="activation"></span><h2>Activation Functions<a class="headerlink" href="#activation-functions" title="Permalink to this heading"></a></h2>
 <p>Currently the following activation functions are supported by Fireball:</p>
 <blockquote>
 <div><ul class="simple">
@@ -334,7 +340,7 @@
 </div></blockquote>
 </section>
 <section id="post-activations">
-<span id="postactivation"></span><h2>Post-Activations<a class="headerlink" href="#post-activations" title="Permalink to this headline"></a></h2>
+<span id="postactivation"></span><h2>Post-Activations<a class="headerlink" href="#post-activations" title="Permalink to this heading"></a></h2>
 <p>Currently the following post-activations are supported by Fireball:</p>
 <blockquote>
 <div><ul class="simple">
@@ -352,6 +358,7 @@
 <li><p><a class="reference internal" href="#sel"><span class="std std-ref">SEL: Select netmark</span></a></p></li>
 <li><p><a class="reference internal" href="#wsum"><span class="std std-ref">WSUM: Weighted Sum Netmarks</span></a></p></li>
 <li><p><a class="reference internal" href="#tup"><span class="std std-ref">TUP: Tuple netmarks</span></a></p></li>
+<li><p><a class="reference internal" href="#rnd"><span class="std std-ref">RND: Round</span></a></p></li>
 </ul>
 </div></blockquote>
 <p>Each post-activation can have zero or more attributes. Each post-activation attribute is specified by a letter indicating the attribute (For example ‘R’ for “Drop-Rate”) followed by the value for the attribute which can be one or more numbers or letters.</p>
@@ -378,12 +385,12 @@
 </section>
 </section>
 <section id="layer-specifications">
-<span id="layerspecs"></span><h1>Layer Specifications<a class="headerlink" href="#layer-specifications" title="Permalink to this headline"></a></h1>
+<span id="layerspecs"></span><h1>Layer Specifications<a class="headerlink" href="#layer-specifications" title="Permalink to this heading"></a></h1>
 <section id="img-image-input-layer">
-<span id="img"></span><h2>IMG: Image Input Layer<a class="headerlink" href="#img-image-input-layer" title="Permalink to this headline"></a></h2>
+<span id="img"></span><h2>IMG: Image Input Layer<a class="headerlink" href="#img-image-input-layer" title="Permalink to this heading"></a></h2>
 <p>Image Input layer is used to feed a Fireball model with Images.</p>
 <section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>size<span class="classifier">S</span></dt><dd><p>The image dimensions in the form of <cite>width x height</cite>. For example <code class="docutils literal notranslate"><span class="pre">S800x600</span></code> means the model accepts images of the width 800 and height 600. This means the actual tensor shape is (600,800). If height is missing, it is assumed to be the same as width. For example <code class="docutils literal notranslate"><span class="pre">S224</span></code> means the model accepts 224x224 square images.</p>
@@ -403,10 +410,10 @@
 </section>
 </section>
 <section id="tensor-tensor-input-layer">
-<span id="tensor"></span><h2>TENSOR: Tensor Input Layer<a class="headerlink" href="#tensor-tensor-input-layer" title="Permalink to this headline"></a></h2>
+<span id="tensor"></span><h2>TENSOR: Tensor Input Layer<a class="headerlink" href="#tensor-tensor-input-layer" title="Permalink to this heading"></a></h2>
 <p>Tensor Input layer is used to feed a Fireball model with tensors of the specified shape.</p>
 <section id="id1">
-<h3>Attributes<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>shape<span class="classifier">S</span></dt><dd><p>The tensor shape. It is a list of positive integers separated by the ‘/’.</p>
@@ -424,7 +431,7 @@
 </section>
 </section>
 <section id="emb-embedding-input-layer">
-<span id="emb"></span><h2>EMB: Embedding Input Layer<a class="headerlink" href="#emb-embedding-input-layer" title="Permalink to this headline"></a></h2>
+<span id="emb"></span><h2>EMB: Embedding Input Layer<a class="headerlink" href="#emb-embedding-input-layer" title="Permalink to this heading"></a></h2>
 <p>Embedding Input layer is used with NLP and some other Time-Series tasks. Usually the inputs to this layer are prepared by a tokenizer. This layer is designed to work with Fireball’s <a class="reference internal" href="datasets.html#module-fireball.datasets.squad" title="fireball.datasets.squad"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SQuAD</span></code></a> and <a class="reference internal" href="datasets.html#module-fireball.datasets.glue" title="fireball.datasets.glue"><code class="xref py py-mod docutils literal notranslate"><span class="pre">GLUE</span></code></a> datasets and the Tokenizer Class.</p>
 <p>For each sample, the embedding input layer receives 2 arrays:</p>
 <blockquote>
@@ -435,7 +442,7 @@
 </div></blockquote>
 <p>The input to this layer is a tuple of tensors (TokenIds, TokenTypes). Each tensor is of the shape (batchSize, maxLen). When a batch of sequences is given to the model (For example during training), the sequences are padded with 0’s so that all of them have the same length.</p>
 <section id="id2">
-<h3>Attributes<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>outSize<span class="classifier">O</span></dt><dd><p>The output size of the embedding layer. This is also known as “Hidden Size”.</p>
@@ -468,10 +475,10 @@
 </section>
 </section>
 <section id="fc-fully-connected-layer">
-<span id="fc"></span><h2>FC: Fully Connected Layer<a class="headerlink" href="#fc-fully-connected-layer" title="Permalink to this headline"></a></h2>
+<span id="fc"></span><h2>FC: Fully Connected Layer<a class="headerlink" href="#fc-fully-connected-layer" title="Permalink to this heading"></a></h2>
 <p>Fully connected layer also known as <em>Dense</em> layer is used for a linear transformation of the input tensor.</p>
 <section id="id3">
-<h3>Attributes<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>outSize<span class="classifier">O</span></dt><dd><p>The size of output tensors also known as output channels.</p>
@@ -493,10 +500,10 @@
 </section>
 </section>
 <section id="conv-convolutional-layer">
-<span id="conv"></span><h2>CONV: Convolutional Layer<a class="headerlink" href="#conv-convolutional-layer" title="Permalink to this headline"></a></h2>
+<span id="conv"></span><h2>CONV: Convolutional Layer<a class="headerlink" href="#conv-convolutional-layer" title="Permalink to this heading"></a></h2>
 <p>This layer implements a convolution operation on the input tensor.</p>
 <section id="id4">
-<h3>Attributes<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl>
 <dt>kernel<span class="classifier">K</span></dt><dd><p>The kernel size for this layer. For square kernels, only one integer value is enough to specify the kernel size. For example <code class="docutils literal notranslate"><span class="pre">K3</span></code> specifies a 3x3 kernel. For non-square kernels, the width and height of the kernel are included and separated by ‘x’. For example <code class="docutils literal notranslate"><span class="pre">K3x5</span></code> specifies a 3x5 kernel. Please note that the actual <em>shape</em> of kernel is (5,3) in this case. (5 rows, 3 columns)</p>
@@ -540,10 +547,10 @@
 </section>
 </section>
 <section id="dwcn-depth-wise-convolutional-layer">
-<span id="dwcn"></span><h2>DWCN: Depth-Wise Convolutional Layer<a class="headerlink" href="#dwcn-depth-wise-convolutional-layer" title="Permalink to this headline"></a></h2>
+<span id="dwcn"></span><h2>DWCN: Depth-Wise Convolutional Layer<a class="headerlink" href="#dwcn-depth-wise-convolutional-layer" title="Permalink to this heading"></a></h2>
 <p>This layer implements a depth-wise convolution operation on the input tensor.</p>
 <section id="id5">
-<h3>Attributes<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl>
 <dt>kernel<span class="classifier">K</span></dt><dd><p>The kernel size for this layer. For square kernels, only one integer value is enough to specify the kernel size. For example <code class="docutils literal notranslate"><span class="pre">K3</span></code> specifies a 3x3 kernel. For non-square kernels, the width and height of the kernel are included and separated by ‘x’. For example <code class="docutils literal notranslate"><span class="pre">K3x5</span></code> specifies a 3x5 kernel. Please note that the actual <em>shape</em> of kernel is (5,3) in this case. (5 rows, 3 columns)</p>
@@ -574,10 +581,10 @@
 </section>
 </section>
 <section id="bn-batch-normalization-layer">
-<span id="bn"></span><h2>BN: Batch Normalization Layer<a class="headerlink" href="#bn-batch-normalization-layer" title="Permalink to this headline"></a></h2>
+<span id="bn"></span><h2>BN: Batch Normalization Layer<a class="headerlink" href="#bn-batch-normalization-layer" title="Permalink to this heading"></a></h2>
 <p>This layer implements a batch normalization operation on the input tensor.</p>
 <section id="id6">
-<h3>Attributes<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>epsilon<span class="classifier">E, optional, default: 0.001</span></dt><dd><p>The epsilon value used to prevent division by zero in calculations.</p>
@@ -587,10 +594,10 @@
 </section>
 </section>
 <section id="ln-layer-normalization-layer">
-<span id="ln"></span><h2>LN: Layer Normalization Layer<a class="headerlink" href="#ln-layer-normalization-layer" title="Permalink to this headline"></a></h2>
+<span id="ln"></span><h2>LN: Layer Normalization Layer<a class="headerlink" href="#ln-layer-normalization-layer" title="Permalink to this heading"></a></h2>
 <p>This layer implements a layer normalization operation on the input tensor.</p>
 <section id="id7">
-<h3>Attributes<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>epsilon<span class="classifier">E, optional, default: 1.0e-12</span></dt><dd><p>The epsilon value used to prevent division by zero in calculations.</p>
@@ -600,11 +607,11 @@
 </section>
 </section>
 <section id="afm-aggregate-feature-maps-layer">
-<span id="afm"></span><h2>AFM: Aggregate Feature Maps Layer<a class="headerlink" href="#afm-aggregate-feature-maps-layer" title="Permalink to this headline"></a></h2>
+<span id="afm"></span><h2>AFM: Aggregate Feature Maps Layer<a class="headerlink" href="#afm-aggregate-feature-maps-layer" title="Permalink to this heading"></a></h2>
 <p>This layer is used in object detection models (such as SSD). It gathers the feature maps from outputs of different layers and uses internal convolutional layers to calculate the predicted classes and box adjustments for each anchor box.</p>
 <p>The output of a layer is marked as a feature map using the <a class="reference internal" href="#fm"><span class="std std-ref">FM</span></a> post-activation.</p>
 <section id="id8">
-<h3>Attributes<a class="headerlink" href="#id8" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>numClasses<span class="classifier">C</span></dt><dd><p>Number of classes for the object detection model including the background class</p>
@@ -632,10 +639,10 @@
 </section>
 </section>
 <section id="bert-bert-layer">
-<span id="bert"></span><h2>BERT: BERT Layer<a class="headerlink" href="#bert-bert-layer" title="Permalink to this headline"></a></h2>
+<span id="bert"></span><h2>BERT: BERT Layer<a class="headerlink" href="#bert-bert-layer" title="Permalink to this heading"></a></h2>
 <p>This layer implements a Bidirectional Encoder Representations from Transformers layer. This implementation is based on <a class="reference external" href="https://github.com/google-research/bert">Google’s original BERT model</a>.</p>
 <section id="id9">
-<h3>Attributes<a class="headerlink" href="#id9" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>outSize<span class="classifier">O</span></dt><dd><p>The output size of this layer. This is also known as the <em>hidden size</em> of a BERT layer.</p>
@@ -655,10 +662,10 @@
 </section>
 </section>
 <section id="class-classification-output-layer">
-<span id="class"></span><h2>CLASS: Classification Output Layer<a class="headerlink" href="#class-classification-output-layer" title="Permalink to this headline"></a></h2>
+<span id="class"></span><h2>CLASS: Classification Output Layer<a class="headerlink" href="#class-classification-output-layer" title="Permalink to this heading"></a></h2>
 <p>This output layer is used for classification models. It implements the computation of loss function for training and the predicted probabilities of classes for inference.</p>
 <section id="id10">
-<h3>Attributes<a class="headerlink" href="#id10" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>numClasses<span class="classifier">C</span></dt><dd><p>The number of classes for the classification model.</p>
@@ -672,10 +679,10 @@
 </section>
 </section>
 <section id="reg-regression-output-layer">
-<span id="reg"></span><h2>REG: Regression Output Layer<a class="headerlink" href="#reg-regression-output-layer" title="Permalink to this headline"></a></h2>
+<span id="reg"></span><h2>REG: Regression Output Layer<a class="headerlink" href="#reg-regression-output-layer" title="Permalink to this heading"></a></h2>
 <p>This output layer is used for regression models. The output of the model can be a floating point scaler value or a tensor with floating values.</p>
 <section id="id11">
-<h3>Attributes<a class="headerlink" href="#id11" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>shape<span class="classifier">S, optional, default: 0</span></dt><dd><p>The shape of output. The default is 0 which means a scaler output.</p>
@@ -696,20 +703,20 @@
 </section>
 </section>
 <section id="object-object-detection-output-layer">
-<span id="object"></span><h2>OBJECT: Object Detection Output Layer<a class="headerlink" href="#object-object-detection-output-layer" title="Permalink to this headline"></a></h2>
+<span id="object"></span><h2>OBJECT: Object Detection Output Layer<a class="headerlink" href="#object-object-detection-output-layer" title="Permalink to this heading"></a></h2>
 <p>This output layer is used for object detection models. It usually follows an <a class="reference internal" href="#afm"><span class="std std-ref">AFM</span></a> layer.</p>
 <p>This layer does not have any attributes.</p>
 </section>
 <section id="answer-answer-output-layer">
-<span id="answer"></span><h2>ANSWER: Answer Output Layer<a class="headerlink" href="#answer-answer-output-layer" title="Permalink to this headline"></a></h2>
+<span id="answer"></span><h2>ANSWER: Answer Output Layer<a class="headerlink" href="#answer-answer-output-layer" title="Permalink to this heading"></a></h2>
 <p>This output layer is used for question-answering models (such as the model for SQuAD). It outputs the start and end indexes of the predicted answer in a given context for a given question.</p>
 <p>This layer does not have any attributes.</p>
 </section>
 <section id="rs-reshape">
-<span id="rs"></span><h2>RS: Reshape<a class="headerlink" href="#rs-reshape" title="Permalink to this headline"></a></h2>
+<span id="rs"></span><h2>RS: Reshape<a class="headerlink" href="#rs-reshape" title="Permalink to this heading"></a></h2>
 <p>This post-activation reshapes the output of current layer to the specified shape. The specified shape must be compatible with current shape of layer output.</p>
 <section id="id12">
-<h3>Attributes<a class="headerlink" href="#id12" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>shape<span class="classifier">S</span></dt><dd><p>The shape of output. The values for different dimensions of the output tensor are separated by ‘/’.</p>
@@ -724,10 +731,10 @@
 </section>
 </section>
 <section id="mp-max-pooling">
-<span id="mp"></span><h2>MP: Max Pooling<a class="headerlink" href="#mp-max-pooling" title="Permalink to this headline"></a></h2>
+<span id="mp"></span><h2>MP: Max Pooling<a class="headerlink" href="#mp-max-pooling" title="Permalink to this heading"></a></h2>
 <p>This post-activation implements the Max Pooling operation on the output of convolutional layers.</p>
 <section id="id13">
-<h3>Attributes<a class="headerlink" href="#id13" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl>
 <dt>kernel<span class="classifier">K</span></dt><dd><p>The kernel size for Max Pooling. For square kernels, only one integer value is enough to specify the kernel size. For example <code class="docutils literal notranslate"><span class="pre">K3</span></code> specifies a 3x3 kernel. For non-square kernels, the width and height of the kernel are included and separated by ‘x’. For example <code class="docutils literal notranslate"><span class="pre">K3x5</span></code> specifies a 3x5 kernel. Please note that the actual <em>shape</em> of kernel is (5,3) in this case. (5 rows, 3 columns)</p>
@@ -756,10 +763,10 @@
 </section>
 </section>
 <section id="ap-average-pooling">
-<span id="ap"></span><h2>AP: Average Pooling<a class="headerlink" href="#ap-average-pooling" title="Permalink to this headline"></a></h2>
+<span id="ap"></span><h2>AP: Average Pooling<a class="headerlink" href="#ap-average-pooling" title="Permalink to this heading"></a></h2>
 <p>This post-activation implements the Average Pooling operation on the output of convolutional layers.</p>
 <section id="id14">
-<h3>Attributes<a class="headerlink" href="#id14" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl>
 <dt>kernel<span class="classifier">K</span></dt><dd><p>The kernel size for Average Pooling. For square kernels, only one integer value is enough to specify the kernel size. For example <code class="docutils literal notranslate"><span class="pre">K3</span></code> specifies a 3x3 kernel. For non-square kernels, the width and height of the kernel are included and separated by ‘x’. For example <code class="docutils literal notranslate"><span class="pre">K3x5</span></code> specifies a 3x5 kernel. Please note that the actual <em>shape</em> of kernel is (5,3) in this case. (5 rows, 3 columns)</p>
@@ -788,10 +795,10 @@
 </section>
 </section>
 <section id="tp-transformer-pooling">
-<span id="tp"></span><h2>TP: Transformer pooling<a class="headerlink" href="#tp-transformer-pooling" title="Permalink to this headline"></a></h2>
+<span id="tp"></span><h2>TP: Transformer pooling<a class="headerlink" href="#tp-transformer-pooling" title="Permalink to this heading"></a></h2>
 <p>This post-activation is used in transformer models. It is usually used on the output of the last <a class="reference internal" href="#bert"><span class="std std-ref">BERT</span></a> layer. It uses the first <cite>n</cite> vectors from the output sequence of the BERT layer.</p>
 <section id="id15">
-<h3>Attributes<a class="headerlink" href="#id15" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>numVectors<span class="classifier">N, optional, default: 1</span></dt><dd><p>The number of vectors to include as the output of the BERT layer. The default is 1 which uses only the first vector in the sequence.</p>
@@ -802,15 +809,15 @@
 </section>
 </section>
 <section id="gap-global-average-pooling">
-<span id="gap"></span><h2>GAP: Global Average Pooling<a class="headerlink" href="#gap-global-average-pooling" title="Permalink to this headline"></a></h2>
+<span id="gap"></span><h2>GAP: Global Average Pooling<a class="headerlink" href="#gap-global-average-pooling" title="Permalink to this heading"></a></h2>
 <p>This post-activation implements the Global Average Pooling on the output of a convolutional layer.</p>
 <p>This post-activation does not have any attributes.</p>
 </section>
 <section id="up-upsampling">
-<span id="up"></span><h2>UP: Upsampling<a class="headerlink" href="#up-upsampling" title="Permalink to this headline"></a></h2>
+<span id="up"></span><h2>UP: Upsampling<a class="headerlink" href="#up-upsampling" title="Permalink to this heading"></a></h2>
 <p>This post-activation implements the Upsampling operation on the output of a convolutional layer.</p>
 <section id="id16">
-<h3>Attributes<a class="headerlink" href="#id16" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>scale<span class="classifier">S</span></dt><dd><p>The scale for upsampling. If the scale is the same for both dimensions, only one integer value is enough to specify the scale. Otherwise the scale along the width and height are included and separated by ‘x’. For example <code class="docutils literal notranslate"><span class="pre">S2x4</span></code> specifies a scale of 2 along the width and 4 along height.</p>
@@ -820,10 +827,10 @@
 </section>
 </section>
 <section id="do-dropout">
-<span id="do"></span><h2>DO: Dropout<a class="headerlink" href="#do-dropout" title="Permalink to this headline"></a></h2>
+<span id="do"></span><h2>DO: Dropout<a class="headerlink" href="#do-dropout" title="Permalink to this heading"></a></h2>
 <p>This post-activation implements the drop-out operation on the output of a fully connected or convolutional layer.</p>
 <section id="id17">
-<h3>Attributes<a class="headerlink" href="#id17" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl>
 <dt>dropRate<span class="classifier">R, optional, default: global drop rate</span></dt><dd><p>The rate or probability of drop out. Fireball allows the drop rate to be specified for each layer or globally for the whole model. The combination of the drop-rate values specified for each <cite>DO</cite> operation and the global drop-rate determines the drop-out behavior as follows:</p>
@@ -840,10 +847,10 @@
 </section>
 </section>
 <section id="clp-clip">
-<span id="clp"></span><h2>CLP: Clip<a class="headerlink" href="#clp-clip" title="Permalink to this headline"></a></h2>
+<span id="clp"></span><h2>CLP: Clip<a class="headerlink" href="#clp-clip" title="Permalink to this heading"></a></h2>
 <p>This post-activation clips the output of a layer to the specified min and max values.</p>
 <section id="id18">
-<h3>Attributes<a class="headerlink" href="#id18" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>hiVal<span class="classifier">H, optional, default: inf</span></dt><dd><p>The maximum value to clip to.</p>
@@ -863,10 +870,10 @@
 </section>
 </section>
 <section id="l2r-l2-regularization">
-<span id="l2r"></span><h2>L2R: L2 Regularization<a class="headerlink" href="#l2r-l2-regularization" title="Permalink to this headline"></a></h2>
+<span id="l2r"></span><h2>L2R: L2 Regularization<a class="headerlink" href="#l2r-l2-regularization" title="Permalink to this heading"></a></h2>
 <p>The L2 Regularization post-activation doesn’t actually change the output of a layer. It just marks the parameters of the layer to be included in the calculation of L2 regularization.</p>
 <section id="id19">
-<h3>Attributes<a class="headerlink" href="#id19" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl>
 <dt>factor<span class="classifier">F, optional, default: 1.0</span></dt><dd><p>The factor applied to the L2 norm of the parameters of this layer. Fireball allows the L2 Regularization factor to be specified for each layer or globally for the whole model. The combination of the factor specified for each <cite>L2R</cite> post-activation and the global regularization factor determines the regularization behavior as follows:</p>
@@ -883,10 +890,10 @@
 </section>
 </section>
 <section id="fm-feature-map">
-<span id="fm"></span><h2>FM: Feature Map<a class="headerlink" href="#fm-feature-map" title="Permalink to this headline"></a></h2>
+<span id="fm"></span><h2>FM: Feature Map<a class="headerlink" href="#fm-feature-map" title="Permalink to this heading"></a></h2>
 <p>The Feature Map post-activation is used with object detection models to specify the output of a layer as a Feature Map. An <a class="reference internal" href="#afm"><span class="std std-ref">AFM</span></a> layer near the end of the <em>layersInfo</em> is then used to “aggregate” these feature maps and create the class and box predictions for the objects detected in the image.</p>
 <section id="id20">
-<h3>Attributes<a class="headerlink" href="#id20" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>anchors<span class="classifier">A</span></dt><dd><p>The number of “Anchor boxes” for the feature map.</p>
@@ -899,10 +906,10 @@
 </section>
 </section>
 <section id="add-add-netmarks">
-<span id="add"></span><h2>ADD: Add netmarks<a class="headerlink" href="#add-add-netmarks" title="Permalink to this headline"></a></h2>
+<span id="add"></span><h2>ADD: Add netmarks<a class="headerlink" href="#add-add-netmarks" title="Permalink to this heading"></a></h2>
 <p>This post-activations adds the output this layer with the specified <a class="reference internal" href="#netmark"><span class="std std-ref">netmarks</span></a>.</p>
 <section id="id21">
-<h3>Attributes<a class="headerlink" href="#id21" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>netmarks<span class="classifier">N</span></dt><dd><p>The netmark IDs that are added to the output of current layer. At least one netmark must be specified. Multiple netmark IDs are separated by ‘/’.</p>
@@ -919,10 +926,10 @@
 </section>
 </section>
 <section id="sel-select-netmark">
-<span id="sel"></span><h2>SEL: Select netmark<a class="headerlink" href="#sel-select-netmark" title="Permalink to this headline"></a></h2>
+<span id="sel"></span><h2>SEL: Select netmark<a class="headerlink" href="#sel-select-netmark" title="Permalink to this heading"></a></h2>
 <p>This post-activations selects and outputs one of the specified <a class="reference internal" href="#netmark"><span class="std std-ref">netmarks</span></a> based on the output of this layer. This post-activation can only be used with <a class="reference internal" href="#fc"><span class="std std-ref">FC</span></a> layers.</p>
 <section id="id22">
-<h3>Attributes<a class="headerlink" href="#id22" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id22" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>netmarks<span class="classifier">N</span></dt><dd><p>The netmark IDs to choose from. This layer’s output determines which one of the specified netmarks is used as the output of this layer. Multiple netmark IDs are separated by ‘/’. At least 2 netmark ID are required for this post-activation to work.</p>
@@ -957,10 +964,10 @@
 </section>
 </section>
 <section id="wsum-weighted-sum-netmarks">
-<span id="wsum"></span><h2>WSUM: Weighted Sum Netmarks<a class="headerlink" href="#wsum-weighted-sum-netmarks" title="Permalink to this headline"></a></h2>
+<span id="wsum"></span><h2>WSUM: Weighted Sum Netmarks<a class="headerlink" href="#wsum-weighted-sum-netmarks" title="Permalink to this heading"></a></h2>
 <p>This post-activations outputs a weighted summation of the specified <a class="reference internal" href="#netmark"><span class="std std-ref">netmarks</span></a>. The summation is weighted by the output of this layer. This post-activation can only be used with <a class="reference internal" href="#fc"><span class="std std-ref">FC</span></a> layers and sigmoid or softmax activations.</p>
 <section id="id23">
-<h3>Attributes<a class="headerlink" href="#id23" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id23" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>netmarks<span class="classifier">N</span></dt><dd><p>The netmark IDs that are included in the weighted sum. The output of activation function in this layer determines the weights for each one of the specified netmarks. Multiple netmark IDs are separated by ‘/’. At least 2 netmark ID are required for this post-activation to work.</p>
@@ -986,10 +993,10 @@
 </section>
 </section>
 <section id="tup-tuple-netmarks">
-<span id="tup"></span><h2>TUP: Tuple netmarks<a class="headerlink" href="#tup-tuple-netmarks" title="Permalink to this headline"></a></h2>
+<span id="tup"></span><h2>TUP: Tuple netmarks<a class="headerlink" href="#tup-tuple-netmarks" title="Permalink to this heading"></a></h2>
 <p>This post-activations bundles the output of this layer with the specified <a class="reference internal" href="#netmark"><span class="std std-ref">netmarks</span></a> in a tuple and returns the whole tuple as the output of this layer.</p>
 <section id="id24">
-<h3>Attributes<a class="headerlink" href="#id24" title="Permalink to this headline"></a></h3>
+<h3>Attributes<a class="headerlink" href="#id24" title="Permalink to this heading"></a></h3>
 <blockquote>
 <div><dl class="simple">
 <dt>netmarks<span class="classifier">N</span></dt><dd><p>The netmark IDs that are included in tuple. At least one netmark is required for this post-activation to work.</p>
@@ -998,9 +1005,14 @@
 </div></blockquote>
 </section>
 </section>
+<section id="rnd-round">
+<span id="rnd"></span><h2>RND: Round<a class="headerlink" href="#rnd-round" title="Permalink to this heading"></a></h2>
+<p>This post-activations rounds the output of this layer to the nearest integer value.</p>
+<p>This post-activation does not have any attributes.</p>
+</section>
 </section>
 <section id="netmarks">
-<span id="netmark"></span><h1>Netmarks<a class="headerlink" href="#netmarks" title="Permalink to this headline"></a></h1>
+<span id="netmark"></span><h1>Netmarks<a class="headerlink" href="#netmarks" title="Permalink to this heading"></a></h1>
 <p>Most neural networks are made up of a sequence of layers where the output of each layer is fed to the input of following layer. However there are some cases where the network is a directed graph of layers. In other words there can be bypass paths (such as the ones in Residual Networks).</p>
 <p>Fireball uses the concept of Netmarks to allow implementation of multiple paths. A netmark is a location in the network structure (such as output of a layer) that is remembered (like a bookmark in a book). Each netmark is specified by a unique integer number. To add the output of a layer to the model’s list of netmarks, you can use the “&gt;X” notation where ‘X’ is the unique identifier of the netmark. In the following example the output of a convolutional layer is added to the netmarks with a netmark ID of 1:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># A Convolutional layer, 3x3 kernel, stride 2, ReLU activation</span>
@@ -1027,11 +1039,11 @@
 </div>
 </section>
 <section id="blocks">
-<span id="id25"></span><h1>Blocks<a class="headerlink" href="#blocks" title="Permalink to this headline"></a></h1>
+<span id="id25"></span><h1>Blocks<a class="headerlink" href="#blocks" title="Permalink to this heading"></a></h1>
 <p>Fireball blocks are like macros. You can define a combination of layers and connect them together as a block. The defined blocks can then be reused in the <em>layersInfo</em> just like any other fireball layer. A block is defined in a single text string called <em>blockInfo</em>. When creating a model, create a list of <em>blockInfo</em> strings and pass it to the <a class="reference internal" href="model.html#fireball.model.Model" title="fireball.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">fireball.model.Model</span></code></a> class.</p>
 <p>A block can have up to 10 different paths that are merged together and used as the output of the block.</p>
 <section id="blockinfo-syntax">
-<h2><em>blockInfo</em> Syntax:<a class="headerlink" href="#blockinfo-syntax" title="Permalink to this headline"></a></h2>
+<h2><em>blockInfo</em> Syntax:<a class="headerlink" href="#blockinfo-syntax" title="Permalink to this heading"></a></h2>
 <p>A <em>blockInfo</em> string has 4 main parts which are separated by  ‘|’:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">blockInfo</span> <span class="o">=</span> <span class="s2">&quot;&lt;name&gt;|&lt;attributes&gt;|&lt;mergeFunc&gt;|&lt;pathLayersInfo1&gt;;&lt;pathLayersInfo2&gt;;...&quot;</span>
 </pre></div>
@@ -1085,7 +1097,7 @@
 </div></blockquote>
 </section>
 <section id="block-examples">
-<h2>Block Examples<a class="headerlink" href="#block-examples" title="Permalink to this headline"></a></h2>
+<h2>Block Examples<a class="headerlink" href="#block-examples" title="Permalink to this heading"></a></h2>
 <p>Here are some examples (From MobileNetV2 and ResNet50) of how to define and use
 Blocks:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example 1:</span>
