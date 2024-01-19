@@ -29,6 +29,8 @@ function "Layers::__init__" below.
 #                                       Added the "quantize" function for all layers.
 # 10/12/2022    Shahab                  ONNX export now supports transformer pools.
 #                                       Fixed ONNX export problems with combination BERT/Conv. layers.
+# 07/22/2023    Shahab                  Fixed a minor bug in the "ClassOutLayer.postProcessResults" function.
+# 08/02/2023    Shahab                  Added the "Transpose" (XP) post-activation.
 # **********************************************************************************************************************
 import numpy as np
 
@@ -1062,6 +1064,9 @@ class Layer(object):
             if pa.name == 'RS':
                 outputs += [ tf.reshape(outputs[-1], [-1] + pa.shape) ]
 
+            if pa.name == 'XP':
+                outputs += [ tf.transpose(outputs[-1], perm=[0]+[x+1 for x in pa.axes]) ]
+
             elif pa.name in ['MP','AP']:
                 kernelX, kernelY = pa.kernel
                 strideX, strideY = pa.stride
@@ -1227,6 +1232,11 @@ class Layer(object):
                     onnxBuilder.addReshape(inputName, [-1] + pa.shape, outputName)
                 inputName = outputName
                 
+            elif pa.name == 'XP':
+                outputName = s[:-1]
+                onnxBuilder.addNode('Transpose', [inputName], [outputName], s+'/Transpose', perm=[0] + [1+x for x in pa.axes])
+                inputName = outputName
+
             elif pa.name in ['MP','AP']:
                 kernelX, kernelY = pa.kernel
                 strideX, strideY = pa.stride
@@ -1305,7 +1315,12 @@ class Layer(object):
                 outputName = s[:-1]
                 cmlBuilder.add_reshape(outputName, inputName, outputName, tuple(pa.shape), mode=0)
                 inputName = outputName
-                
+            
+            elif pa.name == 'XP':
+                outputName = s[:-1]
+                cmlBuilder.add_transpose(outputName, tuple([0] + [x+1 for x in pa.axes]), inputName, outputName)
+                inputName = outputName
+
             elif pa.name in ['MP','AP']:
                 outputName = s[:-1]
                 kernelX, kernelY = pa.kernel
@@ -1383,6 +1398,9 @@ class Layer(object):
         for p, pa in enumerate(self.postActivations):
             if pa.name=='RS':
                 tfBuilder.addToGraph("out = tf.reshape(out, [-1, %s])"%(', '.join(str(x) for x in pa.shape)))
+
+            if pa.name=='XP':
+                tfBuilder.addToGraph("out = tf.transpose(out, perm=[0, %s])"%(', '.join(str(x+1) for x in pa.axes)))
 
             elif pa.name in ['MP','AP']:
                 kernelX, kernelY = pa.kernel
@@ -4895,7 +4913,7 @@ class ClassOutLayer(Layer):
                 return rawResults.reshape(-1,self.seqLen)            # Shape:  [batchSize, seqLen] (sequences of probabilities/float32)
 
             if self.seqLen==1: return np.int32(np.round(rawResults.reshape(-1)))    # Shape: [batchSize] (classIndexes (0/1), int32)
-            return np.int32(np.round(rawResults.reshape(-1,seqLen)))                # Shape: [batchSize, seqLen] (sequences of classIndexes (0/1), int32)
+            return np.int32(np.round(rawResults.reshape(-1,self.seqLen)))           # Shape: [batchSize, seqLen] (sequences of classIndexes (0/1), int32)
         
         if returnProbs:
             return rawResults               # Shape: [batchSize, numClasses] (probabilities/float32) or [batchSize, seqLen, numClasses]
@@ -5872,6 +5890,29 @@ class PaReshape(PostActivation):
         return 'RS: %s'%("x".join(str(x) for x in self.shape))
 
 # **********************************************************************************************************************
+class PaTranspose(PostActivation):
+    argsDic = {
+                'a': ('axes', 'u*?', None)
+              }
+    orderedKeys = 'a'
+    name = 'XP'
+    # ******************************************************************************************************************
+    def __init__(self, layer, argsInfo):
+        super().__init__(layer, argsInfo)
+
+    # ******************************************************************************************************************
+    def getOutShape(self, inShape ):
+        if len(inShape) != len(self.axes):
+            raise ValueError( "Input shape %s does not match the specified axes %s for RS!"%(str(inShape),str(self.axes)) )
+        if len(inShape) != (max(self.axes)+1):
+            raise ValueError( "Invalid permutation 'axes' specified %s!"%(str(self.axes)) )
+        return (np.int32(inShape)[self.axes]).tolist()
+
+    # ******************************************************************************************************************
+    def getShortDesc(self):
+        return 'XP: %s'%(",".join(str(x) for x in self.axes))
+
+# **********************************************************************************************************************
 class PaMaxPool(PostActivation):
     argsDic = {
                 'k': ('kernel', 'uxu', None),
@@ -6284,6 +6325,7 @@ PostActivation.paClasses = {
     'rs': (PaReshape, 14),
     'rnd': (PaRound,15),
     'bbn': (PaBinBottleNeck, 16),
+    'xp': (PaTranspose, 17),
 }
 
 # **********************************************************************************************************************

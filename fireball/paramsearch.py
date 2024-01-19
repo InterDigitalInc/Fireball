@@ -10,6 +10,8 @@ This file contains the implementation for fireball's parameter search functional
 # 12/14/2016    Shahab                  Added support for automatic handling of new lines in the description of the
 #                                       options.
 # 08/22/2020    Shahab                  Added support for specific combinations.
+# 07/22/2023    Shahab                  Added support to keep only the best performing models. See the functions
+#                                       "checkModelPerformance" and "saveResultsFile" for more details.
 # **********************************************************************************************************************
 
 import numpy as np
@@ -75,8 +77,36 @@ def processOneCombination(params, combinationStr, combinationNo, threadId):
     if shouldStop:
         printInfo('Worker %02d: Forced Stop while Processing combination %d (%s, %.2f Sec.).'%(threadId, combinationNo, combinationStr, dt), logFile)
     else:
+        # Process exited without any problem.
         updateProgressAndSave(combinationStr, combinationNo, threadId, dt)
     availableThreads += [threadId]
+
+# **********************************************************************************************************************
+bestPerformers = {} # This dictionary keeps the information about the best performing models.
+def checkModelPerformance(threadId):
+    # Check for results file. The result files are created by workers by calling the "saveResultsFile" function.
+    # Here we compare the performance of the model just trained with the best performance so far and update
+    # the best model info if the new one is better. Otherwise we just delete the "no-so-good" model that was just
+    # trained. The yamel file itself also gets deleted in the end of the process.
+    ymlFileName = "Worker%02dResults.yml"%(threadId)
+    if os.path.exists( ymlFileName ):
+        global bestPerformance, bestModelFileName
+        yamlData = yaml.safe_load(open(ymlFileName, 'r'))
+        key = yamlData['key']
+        modelFileName = yamlData['modelFileName']
+        performance = yamlData['performance']
+        resultStr = yamlData['resultStr']
+        if key not in bestPerformers:
+            bestPerformers[key] = [modelFileName, performance, resultStr]
+        elif bestPerformers[key][1] < performance:
+            # delete previous best
+            if os.path.exists( bestPerformers[key][0] ): os.remove( bestPerformers[key][0] )
+            bestPerformers[key] = [modelFileName, performance, resultStr]
+            resultStr = "." if resultStr is None else (": %s"%(resultStr))
+            printInfo('Worker %02d: Updated the best results%s'%(threadId, resultStr), logFile)
+        else:
+            if os.path.exists( modelFileName ): os.remove( modelFileName )
+        os.remove( ymlFileName )
 
 # **********************************************************************************************************************
 savingInProgress = False
@@ -87,12 +117,13 @@ def updateProgressAndSave(combinationStr, combinationNo, threadId, dt):
         time.sleep(threadId*0.1)
 
     savingInProgress = True
+    checkModelPerformance(threadId)
     if (threadId!=0) and (combinationStr is not None):
         threadStates[threadId]['processed'] += [combinationStr]
         threadStates[threadId]['workingOn'] = None
         printInfo('Worker %02d: Finished Processing combination %d (%s, %.2f Sec.).'%(threadId, combinationNo, combinationStr, dt), logFile)
 
-    yamlData = { 'numWorkers': numWorkers, 'threadStates': threadStates }
+    yamlData = { 'numWorkers': numWorkers, 'threadStates': threadStates, 'bestPerformers': bestPerformers }
     yamlFile = '%sParamSearch.yml'%(sys.argv[0].split('.')[0])
     with open(yamlFile, 'w') as outfile:
         outfile.write( yaml.dump(yamlData) )
@@ -138,9 +169,11 @@ def paramSearch(parameterChoices, additionalParams=None, nWorkers=1, doLog=True,
         if os.path.exists( resultsFileName ): os.remove( resultsFileName )
 
     if os.path.exists( yamlFile ):
-        yamlData = yaml.load(open(yamlFile, 'r'))
+        global bestPerformers
+        yamlData = yaml.safe_load(open(yamlFile, 'r'))
         numWorkers = yamlData['numWorkers']
         threadStates = yamlData['threadStates']
+        bestPerformers = yamlData['bestPerformers']
         printWarning('\nDetected interrupted precess.', logFile)
         printInfo('Skipping the following Combinations:', logFile)
         for threadInfo in threadStates:
@@ -260,5 +293,19 @@ def saveResults(resultsCsvFile, paramValues, model=None):
     resultsFile.write(rowStr + '\n')
     unlockFile(resultsFile)
     resultsFile.close()
+
+# **********************************************************************************************************************
+def saveResultsFile(workerId, modelFileName, performance, resultStr=None, key="AllOthers"):
+    # The workers call this function at the end of training with information about the preformance of the model just
+    # trained.
+    # The best model file is kept for all training with the same "key" values. The "resultStr" is only used in the log
+    # messages. Only the model with the highest "preformance" value is kept.
+    # The parameter search thread for the worker will use the yaml file created here. See the function
+    # "checkModelPerformance" for more details.
+    # This feature is enabled by calling this function from workers. Otherwise all the models are kept.
+    yamlData = { 'key': key, 'modelFileName': modelFileName, 'performance': performance, 'resultStr': resultStr }
+    ymlFileName = "Worker%02dResults.yml"%(workerId)
+    with open(ymlFileName, 'w') as outfile:
+        outfile.write( yaml.dump(yamlData) )
 
 
