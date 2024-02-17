@@ -81,40 +81,6 @@ def floatStr(f, strLen):
     return returnStr
 
 # **********************************************************************************************************************
-def getCurrentGpus(returnHalfGpus=False):
-    """
-    getCurrentGpus
-    This is function gets list of GPU devices from TensorFlow library and returns an integer array of GPU numbers
-    for the detected GPU devices.
-        
-    Arguments:
-        returnHalfGpus: Boolean, default:False
-            If true, Only half of the detected devices will be returned in the integer array.
-            Otherwise the GPU numbers of all detected GPUs will be returned.
-    
-    Returns:
-        If an integer array of GPU numbers for the detected GPU devices. If no GPU device was found or an error happens
-        while detecting the GPU devices, this function returns a list with a single item of -1 in it.
-    """
-    try:
-        from tensorflow.python.client import device_lib
-        localDeviceProtos = device_lib.list_local_devices()
-        gpus = []
-        for x in localDeviceProtos:
-            if x.device_type.lower() != 'gpu': continue
-            gpus += [ int(x.name.split(':')[-1]) ]
-        if returnHalfGpus:
-            if len(gpus)>=2:
-                return gpus[:len(gpus)//2]
-        if len(gpus)==0:
-            return [-1]
-    except:
-        print('ERROR: Cannot get list of current GPUs! Using only CPU.')
-        return [-1]
-
-    return gpus
-
-# **********************************************************************************************************************
 def printVersionInfo():
     """
     printVersionInfo
@@ -145,5 +111,15 @@ def printVersionInfo():
     try:
         import cv2
         print("OpenCV Version:          %s"%(cv2.__version__))
+    except:
+        pass
+    try:
+        availGPUs = tf.config.list_physical_devices('GPU')  # Available physical GPUs
+        if availGPUs:
+            print("GPUs:                    %d"%(len(availGPUs)))
+            for i,gpu in enumerate(availGPUs):
+                print("  GPU%d:                  %s"%(i, tf.config.experimental.get_device_details(gpu)['device_name']))
+        else:
+            print("GPUs:                    %s"%("None"))
     except:
         pass

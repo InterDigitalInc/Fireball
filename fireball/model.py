@@ -109,6 +109,9 @@ layers currently supported by Fireball.
 #                                           running in Jupyter Notebook.
 #                                         * Added support for using TensorBoard in Tensorflow Version 2.x.
 #                                         * Added the new getInferenceTime method.
+# 01/22/2024    Shahab                  Fireball 2.2.0 features:
+#                                         * Fixed the GPU usage with newer versions of tensorflow. See Model::__init__
+#                                           and initSession methods.
 # **********************************************************************************************************************
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -166,6 +169,8 @@ class Model:
         r"""
         The configuration information used for object detection networks such as SSD.
         """
+        # The following are good for evaluation, use the values in the comments for inference. These are
+        # not used in training.
         maxDetectionsPerImage=200   # For inference, use 20
         maxDetectionPerClass=100    # For inference, use 20
         iouThreshold=.45
@@ -346,15 +351,29 @@ class Model:
         self.trainingState = trainingState
         
         # Setting GPUs to use:
+        # Note self.gpus has a list of physical gpu indexes
+        availGPUs = tf.config.list_physical_devices('GPU')  # Available physical GPUs
+        if availGPUs is None:   availGPUs = []
+        tf.config.set_soft_device_placement(True)
+        for gpu in availGPUs:
+            tf.config.experimental.set_memory_growth(gpu, True)   # Use as much GPU memory as needed.
+            
         if type(gpus) == list:              self.gpus = gpus
         elif type(gpus) == tuple:           self.gpus = list(gpus)
         elif type(gpus) == str:
-            if gpus.lower() == 'all':       self.gpus = getCurrentGpus()
-            elif gpus.lower() == 'half':    self.gpus = getCurrentGpus(True)
+            if 'upto' == gpus.lower()[:4]:  self.gpus = list(range(min(len(availGPUs),int(gpus[4:]))))
+            elif gpus.lower() == 'all':     self.gpus = list(range(len(availGPUs)))
+            elif gpus.lower() == 'half':    self.gpus = list(range(len(availGPUs)//2))
             else:
                 self.gpus = [ int(x) for x in gpus.split(',') ]
         elif type(gpus) == int:             self.gpus = [gpus]
-        else:                               self.gpus = getCurrentGpus(False)[-1:] # Pick last GPU or CPU if none
+        else:                               self.gpus = [len(availGPUs)-1]      # Pick last GPU or CPU if none
+        
+        # Setup logical GPUs
+        if len(self.gpus)==1 and self.gpus[0]==-1:
+            tf.config.set_visible_devices([], 'GPU')    # No GPUs! Run on CPU
+        else:
+            tf.config.set_visible_devices([availGPUs[physicalGpu] for physicalGpu in self.gpus], 'GPU')
 
         self.afterBatch = None
         self.afterEpoch = None
@@ -1575,7 +1594,7 @@ class Model:
                     self.tfSummaries += [ tf1.summary.scalar('LearningRate', self.tfLearningRate) ]
 
                 if self.optimizer == 'GradientDescent':
-                    self.tfOptimizer = tf.train.GradientDescentOptimizer(self.tfLearningRate)
+                    self.tfOptimizer = tf1.train.GradientDescentOptimizer(self.tfLearningRate)
 
                 elif self.optimizer == 'Momentum':
                     self.tfOptimizer = tf1.train.MomentumOptimizer(self.tfLearningRate, 0.9)
@@ -1664,14 +1683,7 @@ class Model:
             * Otherwise this should be a TensorFlow summaryWriter object.
         """
         if session is None:
-            # If gpus==[-1], it means we don't want to use GPUs.
-            # In this case we set visibleGpus = "0" which means GPU0 is visible. But it is not used
-            # Couldn't make all GPUs invisible for this case.
-            visibleGpus = "0" if self.gpus==[-1] else ','.join(str(x) for x in self.gpus if x>=0)
-            tfConfig = tf1.ConfigProto(allow_soft_placement=True,        # Needed for proper operation of towers
-                                       gpu_options=tf1.GPUOptions(allow_growth=True, visible_device_list=visibleGpus))
-            
-            self.session = tf1.Session(config=tfConfig, graph=self.graph)
+            self.session = tf1.Session(graph=self.graph)
             self.session.run( self.initializer )
         else:
             self.session = session
@@ -1761,8 +1773,9 @@ class Model:
                 feedDic = self.layers.input.feed(batchSamples, self.towers)
                 if feedDic is None: break   # We are done with this epoch
                 feedDic.update( self.layers.output.feed(batchLabels, self.towers) )
-                
-                thingsToDo = [ self.tfOptimize if batch>=self.trainAllBatch else self.tfOptimizeNT ]
+
+                if (batch<self.trainAllBatch) and (self.tfOptimizeNT is not None):  thingsToDo = [ self.tfOptimizeNT ]
+                else:                                                               thingsToDo = [ self.tfOptimize ]
                 thingsToDo += [self.tfLearningRate, self.tfBatch, self.tfLoss]
                 if self.summaryWriter is not None:
                     thingsToDo += [ self.tfSummaries ]

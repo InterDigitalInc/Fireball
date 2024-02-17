@@ -596,15 +596,14 @@ class NetParam:
         if numWorkers > 0:
             numDone = 0
             while numDone<n:
-                time.sleep(.1)
-                numDone = 0
+                time.sleep(.5)
+                nn = 0
                 for i in range(n):
                     try:
-                        if processes[i].successful(): numDone += 1
+                        if processes[i].successful(): nn += 1
                     except: pass
-                if not quiet:
-                    myPrint('    Compressed %d tensor%s (of %d).\r'%(numDone, "" if numDone==1 else "s", n), False)
-            
+                if (not quiet) and (nn>numDone):  myPrint('    Compressed %d tensors (of %d).\r'%(nn, n), False)
+                numDone = nn
             pool.close()
             pool.join()
 

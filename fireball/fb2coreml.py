@@ -20,6 +20,7 @@ neural_network.builder: https://apple.github.io/coremltools/source/coremltools.m
 #                                       BERT models.
 # 11/29/2020    Shahab                  Restructured the code. Defined the CmlBuilder class. The "layers.py"
 #                                       file was also updated accordingly.
+# 02/23/2024    Shahab                  Fixed a problem with importing "datatypes" in newer versions of coremltools.
 # **********************************************************************************************************************
 import numpy as np
 import tensorflow as tf
@@ -28,7 +29,9 @@ import time
 from . import __version__ as fbVersion
 from .printutils import myPrint
 
-from coremltools.models.neural_network import datatypes, NeuralNetworkBuilder
+from coremltools.models.neural_network import NeuralNetworkBuilder
+try:    from coremltools.models.neural_network import datatypes     # For old versions of coremltools (<=5.2.0)
+except: from coremltools.models import datatypes                    # For newer versions of coremltools
 from coremltools.models.utils import save_spec
 import coremltools
 from coremltools.models.pipeline import Pipeline
@@ -182,7 +185,7 @@ class CmlBuilder(NeuralNetworkBuilder):
         nms.confidenceThresholdInputFeatureName = "confidenceThreshold"
 
         nms.iouThreshold = 0.6          # This is the default value if "iouThreshold" input is not provided.
-        nms.confidenceThreshold = 0.4   # This is the default value if "confidenceThreshold" input is not provided.
+        nms.confidenceThreshold = 0.5   # This is the default value if "confidenceThreshold" input is not provided.
 
         nms.pickTop.perClass = True
         nms.stringClassLabels.vector.extend(self.classNames)
@@ -197,12 +200,13 @@ class CmlBuilder(NeuralNetworkBuilder):
 
         # Copy first input (the image) from the network model
         pipeline.spec.description.input[0].ParseFromString(networkModel._spec.description.input[0].SerializeToString())
-        addInputToSpec(pipeline.spec, "IouThreshold", (1,), 'float',
+        # FIXME: The following 2 inputs currently don't work properly.
+        addInputToSpec(pipeline.spec, "iouThreshold", (1,), 'double',
                        "A floating point value that defines the IOU threshold for the Non-Maximum-Suppression "\
                        "algorithm. The default is 0.6.")
-        addInputToSpec(pipeline.spec, "ConfidenceThreshold", (1,), 'float',
+        addInputToSpec(pipeline.spec, "confidenceThreshold", (1,), 'double',
                        "A floating point value that defines the threshold for the confidence (probability) of the "\
-                       "detected objects to be considered by the Non-Maximum suppression. The default is 0.4.")
+                       "detected objects to be considered by the Non-Maximum suppression. The default is 0.5.")
 
         pipeline.spec.description.output[0].ParseFromString(nmsModel._spec.description.output[0].SerializeToString())
         pipeline.spec.description.output[1].ParseFromString(nmsModel._spec.description.output[1].SerializeToString())

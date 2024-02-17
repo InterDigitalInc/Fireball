@@ -146,7 +146,9 @@ class OnnxBuilder:
         graph = oh.make_graph(self.nodes, self.fbModel.name, self.inputs, self.outputs, self.inits, docString)
         
         docString = kwargs.get('modelDocStr', "")
-        onnxModel = oh.make_model(graph, producer_name='Fireball', producer_version=fbVersion, doc_string=docString)
+        onnxModel = oh.make_model(graph, producer_name='Fireball', producer_version=fbVersion, doc_string=docString,
+                                  opset_imports = [oh.make_opsetid("", 17)])
+        onnxModel.ir_version = 8
         onnx.save(onnxModel, onnxFilePath)
 
         if not quiet:

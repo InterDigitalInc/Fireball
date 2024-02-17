@@ -1333,10 +1333,12 @@ class CocoDSet(BaseDSet):
                                                                             # the specified area size and maxDet
 
         maxMaxDet = max([maxDet for _, _, maxDet, _ in areaAndMaxDetInfo])
-        
+
+        prevTime = 0
         for img, (imgId, dt) in enumerate(results):
-            if quiet==False:
+            if (quiet==False) and ((time.time()-prevTime)>0.5):
                 myPrint( '\r  Finding matches - Image ID:%-6d (%d of %d) ... '%(imgId, img+1, numImages), False)
+                prevTime = time.time()
             dtClasses4Img, dtBoxes4Img, dtScores4Img = dt
 
             _, gtClasses4Img, _, gtAreas4Img, gtIsCrowds4Img = self.samples[ self.imgIdToIndex[ imgId ] ]
@@ -1485,9 +1487,11 @@ class CocoDSet(BaseDSet):
         C = np.zeros(A)
         
         startTime = time.time()
+        prevTime = 0
         for classId in range(1,numClasses): # Only real classes not the "background"
-            if quiet==False:
+            if (quiet==False) and ((time.time()-prevTime)>0.5):
                 myPrint( '\r  Processing the matches - Class %-2d ... '%(classId), False)
+                prevTime = time.time()
             classMatches = dtMatches[classId]   # [ A x I x D ]
             classScores = dtScores[classId]     # [ A x I x D ]
             classNumGts = numGts[classId]       # [ A ]
@@ -1669,15 +1673,17 @@ class CocoDSet(BaseDSet):
 
         inferResults = []
         totalTime = 0 # If batchSize is 1, we want to calculate the average inference time per sample.
+        prevTime = 0
         for b, (batchSamples, batchLabels) in enumerate(self.batches(batchSize)):
             if totalSamples>=maxSamples: break
             if returnMetric and (not quiet):
                 model.updateTrainingTable('  Running Inference for %s sample %d ... '%(self.dsName.lower(), totalSamples))
-            if not quietProcess:
+            if (not quietProcess) and ((time.time()-prevTime)>0.5):
                 if batchSize==1:
                     myPrint('\r  Processing sample %d ... '%(b+1), False)
                 else:
                     myPrint('\r  Processing batch %d - (Total Samples so far: %d) ... '%(b+1, totalSamples), False)
+                prevTime = time.time()
             totalSamples += batchSamples.shape[0]
             if batchSize == 1: t0 = time.time()
             dtClasses, dtBoxes, dtScores, dtNums = model.inferBatch(batchSamples)

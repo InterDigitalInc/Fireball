@@ -572,13 +572,14 @@ class BaseDSet:
 
         predictions, actuals = [], []
         inferResults = []
-        
+        prevTime = 0
         for b, (batchSamples, batchLabels) in enumerate(self.batches(batchSize, sampleIndexes=specifiedSamples)):
             if totalSamples>=maxSamples: break
             if returnMetric and (not quiet):
                 model.updateTrainingTable('  Running Inference for %s sample %d ... '%(self.dsName.lower(), totalSamples))
-            if not processQuiet:
+            if (not processQuiet) and ((time.time()-prevTime)>0.5):
                 myPrint('\r  Processing batch %d - (Total Samples so far: %d) ... '%(b+1, totalSamples), False)
+                prevTime = time.time()
             
             if type(batchSamples) == tuple:     totalSamples += len(batchSamples[0])
             else:                               totalSamples += len(batchSamples)
@@ -652,13 +653,15 @@ class BaseDSet:
 
         sumSquaredErrors, sumAbsoluteErrors, sumGtPowers = [], [], []
         labelSize = None
+        prevTime = 0
         for b, (batchSamples, batchLabels) in enumerate(self.batches(batchSize)):
             if labelSize is None: labelSize = np.prod(batchLabels.shape[1:])
             if totalSamples>=maxSamples: break
             if returnMetric and (not quiet):
                 model.updateTrainingTable('  Running Evaluation for %s sample %d ... '%(self.dsName.lower(), totalSamples))
-            if not processQuiet:
+            if (not processQuiet) and ((time.time()-prevTime)>0.5):
                 myPrint('\r  Processing batch %d - (Total Samples so far: %d) ... '%(b+1, totalSamples), False)
+                prevTime = time.time()
             
             if type(batchSamples) == tuple:     totalSamples += len(batchSamples[0])
             else:                               totalSamples += len(batchSamples)

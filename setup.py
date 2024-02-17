@@ -1,50 +1,43 @@
 import sys
 
 # Get version from "fireball/__init__.py":
-with open("fireball/__init__.py") as f: lines = f.read()
-fbVersion = lines.split('\n',1)[0].split("'")[1]
+with open("fireball/__init__.py") as f: lines = f.read().split('\n')
+fbVersion = '0.0.0'
+for line in lines:
+    if line[:11]=="__version__":
+        fbVersion = line.split("'")[1]
+        break
 
-m1Installation = False
-if 'bdist_wheel' in sys.argv:
-    m1Installation = any(['m1' in x.lower() for x in sys.argv])
-    print("\n>>> Making %sInstallation files ...\n"%('M1 ' if m1Installation else ''))
-    
-else:
-    import platform
-    import subprocess
-    if platform.system().lower() == "darwin":
-        processor = subprocess.check_output(['sysctl','-n','machdep.cpu.brand_string']).decode('utf-8')
-        if "apple m1" in processor.lower():
-            m1Installation = True
+appleSiliconInstallation = False
+import platform
+if platform.system().lower() == "darwin":
+    if 'arm' in platform.processor().lower():
+        appleSiliconInstallation = True
 
 import setuptools
 
-if m1Installation:
-    installedPackages = [ "tensorflow-macos==2.8.0",
-                          'numpy==1.23.5',
-                          "tensorflow-metal==0.4.0",
-                          'pyyaml==6.0',
-                          'opencv-python==4.5.5.64',
-                          'coremltools==5.2.0',
-                          'onnx==1.11.0',
-                          "onnxruntime-silicon==1.11.1",
-                          'matplotlib',
-                          'pillow==9.1.0',
-                          'notebook',
-                          'netron' ]
+if appleSiliconInstallation:
+    installedPackages = [ 'matplotlib', 'scikit-learn', 'scipy', 'netron', 'pytest', 'pytest-forked',
+                          'numpy', 'pyyaml', 'opencv-python', 'pillow',
+                          'notebook==6.5.4', 'traitlets==5.9.0',         # Notebook 6.5.4 (I don't like version 7 yet!)
+                          'Sphinx', 'sphinx_rtd_theme', 'nbsphinx',      # For documentation
+                          # The following is the best combination that works with all Fireball functionality on Mac as of Feb. 13, 2024
+                          "onnx==1.11.0",
+                          "tensorflow-macos==2.9.2",
+                          "tensorflow-metal==0.5.0",
+                          "coremltools==7.1",
+                          "onnxruntime==1.16.3",
+                        ]
 else:
-    installedPackages = [ "tensorflow==2.8.0",
-                          'numpy==1.23.5',
-                          'pyyaml==6.0',
-                          'opencv-python==4.5.5.64',
-                          'coremltools==5.2.0',
-                          'onnx==1.11.0',
-                          "onnxruntime==1.11.1",
-                          "protobuf==3.20.0",
-                          'matplotlib',
-                          'pillow==9.1.0',
-                          'notebook',
-                          'netron' ]
+    installedPackages = [ 'matplotlib', 'scikit-learn', 'scipy', 'netron', 'pytest', 'pytest-forked',
+                          'numpy', 'pyyaml', 'opencv-python', 'pillow',
+                          'notebook==6.5.4', 'traitlets==5.9.0',         # Notebook 6.5.4 (I don't like version 7 yet!)
+                          'Sphinx', 'sphinx_rtd_theme', 'nbsphinx',      # For documentation
+                          "onnx==1.14.1",
+                          "protobuf==3.20.3",
+                          "tensorflow==2.13.1",
+                          "coremltools==7.1",
+                          "onnxruntime==1.16.3"]
 
 setuptools.setup(name="fireball",
                  version = fbVersion,

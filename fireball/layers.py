@@ -31,6 +31,8 @@ function "Layers::__init__" below.
 #                                       Fixed ONNX export problems with combination BERT/Conv. layers.
 # 07/22/2023    Shahab                  Fixed a minor bug in the "ClassOutLayer.postProcessResults" function.
 # 08/02/2023    Shahab                  Added the "Transpose" (XP) post-activation.
+# 01/23/2024    Shahab                  Fixed the dropout problem with tensorflow's layout optimizer. It can be removed
+#                                       later once this problem is fixed in tensorflow.
 # **********************************************************************************************************************
 import numpy as np
 
@@ -955,10 +957,14 @@ class Layer(object):
         if dropRate==1:     # Drop Rate not specified in layerInfo. Use global rate:
             dropRate = self.model.dropRate
         if dropRate<=0.0 or dropRate>=1.0:  return None
-        try:
-            return tf.nn.dropout(input, rate=dropRate, seed=SEED, name='Dropout')
-        except:
-            return tf.nn.dropout(input, keep_prob=1.0-dropRate, seed=SEED, name='Dropout')
+        
+        # Note: We need to disable layout optimizer with dropout. It can be removed later once this problem is fixed.
+        oldOptions = tf.config.optimizer.get_experimental_options()                 # Save current options
+        tf.config.optimizer.set_experimental_options({"layout_optimizer": False})   # Disable Layout Optimizer
+        try:        output = tf.nn.dropout(input, rate=dropRate, seed=SEED, name='Dropout')
+        except:     output = tf.nn.dropout(input, keep_prob=1.0-dropRate, seed=SEED, name='Dropout')
+        tf.config.optimizer.set_experimental_options(oldOptions)                    # Restore original options
+        return output
 
     # ******************************************************************************************************************
     def buildOnnxActivation(self, onnxBuilder, inputName):
@@ -1313,7 +1319,10 @@ class Layer(object):
             s = self.deepScope(pa.name)
             if pa.name == 'RS':
                 outputName = s[:-1]
-                cmlBuilder.add_reshape(outputName, inputName, outputName, tuple(pa.shape), mode=0)
+                print(pa.shape)
+                cmlBuilder.add_reshape(outputName, inputName, outputName,
+                                       (1,)+tuple(pa.shape) if len(pa.shape)<3 else tuple(pa.shape),
+                                       mode=0)
                 inputName = outputName
             
             elif pa.name == 'XP':
@@ -2109,6 +2118,11 @@ class TensorInLayer(Layer):
                             
         tfBuilder.addToInfer("feedDic = { self.modelInput: samples }")
         tfBuilder.addToTrain("feedDic = { self.modelInput: batchSamples }")
+        
+        if len(self.postActivations)>0:
+            tfBuilder.addToGraph("out = self.modelInput")
+        self.buildTfActivation(tfBuilder)
+        self.buildTfPostActivation(tfBuilder)
 
 # **********************************************************************************************************************
 class EmbeddingInLayer(Layer):
@@ -2378,7 +2392,6 @@ class EmbeddingInLayer(Layer):
         # Note:
         #    Since this is an input layer, we ignore "inputName" and use the hardcoded names "TokIds" and "TokTypes"
         #    Also all the following BERT layers, use the hardcoded name 'Attention_Mask'
-        
         del cmlBuilder.spec.description.input[-1]   # Delete the dummy input
 
         # We need seqLen. Get it from the builder:
@@ -2943,6 +2956,7 @@ class FcLayer(Layer):
                                 
         if not self.prevLayer.isInput:      layerIn = 'out'
         elif self.prevLayer.name == 'EMB':  layerIn = 'out'
+        elif len(self.prevLayer.postActivations)>0: layerIn = 'out'
         else:                               layerIn = 'self.modelInput'
         l2LossFactor = tfBuilder.getL2LossFactor(self)
 
@@ -3295,9 +3309,10 @@ class ConvLayer(Layer):
                                  "    return out",
                                  ""))
                                  
-        if not self.prevLayer.isInput:      layerIn = 'out'
-        elif self.prevLayer.name == 'EMB':  layerIn = 'out'
-        else:                               layerIn = 'self.modelInput'
+        if not self.prevLayer.isInput:              layerIn = 'out'
+        elif self.prevLayer.name == 'EMB':          layerIn = 'out'
+        elif len(self.prevLayer.postActivations)>0: layerIn = 'out'
+        else:                                       layerIn = 'self.modelInput'
         l2LossFactor = tfBuilder.getL2LossFactor(self)
         tfBuilder.addToGraph( tfBuilder.getScopeStr(self.scope) )
         tfBuilder.graphIndent += 1
@@ -5012,15 +5027,17 @@ class ClassOutLayer(Layer):
         
     # ******************************************************************************************************************
     def buildCml(self, cmlBuilder, inputName):
+        assert self.seqLen==1, "CoreML multi-dimensional classification is not supported yet!"
         del cmlBuilder.spec.description.output[-1]   # Delete the dummy output
-        
+
         s = self.deepScope()
         if self.numClasses==2:
             cmlBuilder.add_activation(s+'SIGMOID', 'SIGMOID', inputName, '1Prob')
             cmlBuilder.add_scale(s+'scale', -1, 1, True, '1Prob', '0Prob', [1], [1])
             cmlBuilder.add_concat_nd(s+'concat', ['0Prob','1Prob'], 'ClassProbs', 0 if self.seqLen==1 else 1)
-        else:
-            cmlBuilder.add_softmax_nd(s+'softmax', inputName, 'ClassProbs', -1)
+            
+        elif self.seqLen==1:    cmlBuilder.add_softmax(s+'softmax', inputName, 'ClassProbs')
+        else:                   assert False
 
         desc = 'A dictionary containing the probability values for each one of %s classes.'%(self.numClasses)
         if self.seqLen==1:  cmlBuilder.addOutput('ClassProbs', (self.numClasses,), 'float', desc)
@@ -5037,7 +5054,6 @@ class ClassOutLayer(Layer):
     def buildTf(self, tfBuilder):
         shapeStr = "[None]" if self.seqLen==1 else ("[None,%d]"%(self.seqLen))
         tfBuilder.addToInit("self.labels = tf1.placeholder( tf.int32, shape=%s, name='LabelIndexes')"%(shapeStr))
-        tfBuilder.addToInit("self.labels = tf1.placeholder( tf.int32, shape=[None], name='LabelIndexes')")
         tfBuilder.addToInfer(("return self.session.run(self.inferOut, feedDic)",
                               ""))
         tfBuilder.addToTrain(("feedDic[ self.labels ] = batchLabels",
@@ -5253,8 +5269,8 @@ class AnswerOutLayer(Layer):
                "the index of highest value in the array (argmax), then subtract the question offset (which is " +
                "length of question tokens plus 2). The actual answer is then:\n\n" +
                "    answerStr = ' '.join(contextTokens[int(startTok):int(endTok+1)])")
-        onnxBuilder.addParam('StartLogits', 'float', [-1,-1], paramType='output', docStr=doc%("start", "start", "start"))
-        onnxBuilder.addParam('EndLogits', 'float', [-1,-1], paramType='output', docStr=doc%("end", "end", "end"))
+        onnxBuilder.addParam('StartLogits', 'float', [-1], paramType='output', docStr=doc%("start", "start", "start"))
+        onnxBuilder.addParam('EndLogits', 'float', [-1], paramType='output', docStr=doc%("end", "end", "end"))
 
         s = self.deepScope()
         onnxBuilder.addNode('Split', [inputName], [s+'startLogits3D', s+'endLogits3d'], s+'Split', axis=2)
