@@ -1,7 +1,3 @@
-.. Fireball documentation master file, created by
-   sphinx-quickstart on Fri Jan  8 12:06:52 2021.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
 .. image:: Fireball.png
     :align: right
@@ -21,7 +17,7 @@ Fireball is a Deep Neural Network (DNN) library for creating, training, evaluati
 
    source/introduction
    source/installation
-   source/playgrounds
+   source/Playgrounds/playgrounds
 
 .. toctree::
    :maxdepth: 1
