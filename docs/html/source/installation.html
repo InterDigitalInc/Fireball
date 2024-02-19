@@ -53,7 +53,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installation-for-apple-silicon">Installation for Apple Silicon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-for-apple-m1">Installation for Apple M1</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation-on-unix-and-macos-intel">Installation on Unix and MacOS (Intel)</a></li>
 </ul>
 </li>
@@ -99,15 +99,14 @@
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
 <p>Fireball currently works with <strong>python 3.8</strong> or later and uses <strong>Tensorflow 2.7</strong> or later.</p>
-<section id="installation-for-apple-silicon">
-<h2>Installation for Apple Silicon<a class="headerlink" href="#installation-for-apple-silicon" title="Link to this heading"></a></h2>
+<section id="installation-for-apple-m1">
+<h2>Installation for Apple M1<a class="headerlink" href="#installation-for-apple-m1" title="Link to this heading"></a></h2>
 <p>For apple M1 machines, you need to use conda environment management system. First create a conda environment, activate it, and install the required conda packages:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>xcode-select<span class="w"> </span>--install
-conda<span class="w"> </span>update<span class="w"> </span>-n<span class="w"> </span>base<span class="w"> </span>-c<span class="w"> </span>defaults<span class="w"> </span>conda
-conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>fb22<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9<span class="w"> </span>-y
-conda<span class="w"> </span>activate<span class="w"> </span>fb22
-pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip<span class="w"> </span>setuptools
-conda<span class="w"> </span>install<span class="w"> </span>pandoc<span class="w"> </span>-y
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>FB2<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9<span class="w"> </span>-y
+conda<span class="w"> </span>activate<span class="w"> </span>FB2
+pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>pip<span class="w"> </span>setuptools<span class="w"> </span>wheel
+conda<span class="w"> </span>install<span class="w"> </span>cmake<span class="w"> </span>-y
+conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span><span class="nv">protobuf</span><span class="o">==</span><span class="m">3</span>.19.6<span class="w"> </span>-y
 conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>apple<span class="w"> </span>tensorflow-deps<span class="w"> </span>-y
 </pre></div>
 </div>
